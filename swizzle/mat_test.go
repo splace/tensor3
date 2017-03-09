@@ -3,22 +3,29 @@ package tensor3
 import "testing"
 import "fmt"
 
-func TestMatrixPrint(t *testing.T) {
+func TestMatrixIdentityPrint(t *testing.T) {
 	if fmt.Sprint(Identity) != "{{1 0 0} {0 1 0} {0 0 1}}" {
 		t.Error("identity")
 	}
 }
-func TestNewMatrix(t *testing.T) {
+func TestMatrixNew(t *testing.T) {
 	v := new(Matrix)
 	if fmt.Sprint(v) != "&{{0 0 0} {0 0 0} {0 0 0}}" {
 		t.Error(v)
 	}
 }
 
-func TestNewMatrixPrint(t *testing.T) {
-	v := NewMatrix(1, 2, 3)
-	if fmt.Sprint(v) != "{{1 2 3} {0 0 0} {0 0 0}}" {
-		t.Error(v)
+func TestMatrixPrint(t *testing.T) {
+	m := NewMatrix(1, 2, 3)
+	if fmt.Sprint(m) != "{{1 2 3} {0 0 0} {0 0 0}}" {
+		t.Error(m)
+	}
+}
+func TestMatrixAdd(t *testing.T) {
+	m := new(Matrix)
+	m.Add(Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}})
+	if fmt.Sprint(m) != "&{{1 2 3} {4 5 6} {7 8 9}}" {
+		t.Error(m)
 	}
 }
 
@@ -56,7 +63,7 @@ func TestMatrixMultiply(t *testing.T) {
 	}
 }
 
-func TestMatrixApplyRunning(t *testing.T) {
+func TestMatrixReduce(t *testing.T) {
 	m := Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}
 	m.Reduce(Matrices{Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}, Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}}, (*Matrix).Add)
 	if fmt.Sprint(m) != "{{3 6 9} {12 15 18} {21 24 27}}" {
@@ -68,6 +75,14 @@ func TestMatrixApplyXAdd(t *testing.T) {
 	m := Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}
 	m.applyX((*Vector).Add, Vector{1, 2, 3})
 	if fmt.Sprint(m) != "{{2 4 6} {4 5 6} {7 8 9}}" {
+		t.Error(m)
+	}
+}
+
+func TestMatrixApplyZAdd(t *testing.T) {
+	m := Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}
+	m.applyZ((*Vector).Add, Vector{1, 2, 3})
+	if fmt.Sprint(m) != "{{1 2 3} {4 5 6} {8 10 12}}" {
 		t.Error(m)
 	}
 }
