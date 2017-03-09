@@ -13,7 +13,6 @@ arrays selectively broken into chunks for optimised parallelization.
 
 Example:  100 x 1 million matrix multiplications, single threaded then parallel.
 
-```
 	package main
 
 	import . "github.com/splace/tensor3"
@@ -39,7 +38,7 @@ Example:  100 x 1 million matrix multiplications, single threaded then parallel.
 		}
 		fmt.Println(time.Since(start))	
 	}
-```
+
 
 */
 package tensor3
