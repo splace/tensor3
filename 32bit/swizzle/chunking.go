@@ -4,7 +4,7 @@ import "runtime"
 
 func init() {
 	Hints.CoresOverOne = uint(runtime.NumCPU()) - 1
-	Hints.DefaultChunkSize = 100000
+	Hints.DefaultChunkSize = 10000
 	//runtime.GOMAXPROCS(1)
 }
 
