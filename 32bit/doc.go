@@ -6,10 +6,17 @@ useful methods on same, operating in-place, not returning reference, so no singl
 
 arrays of both, called Vectors and Matrices, with their useful methods.
 
+64 or 32bit
+
+with or without swizzle methods.
+
 operations are selectively parallel.
 
 arrays selectively broken into chunks for optimised parallelization.
 
+4 packages: (get github.com/splace/[tensor3|tensor3/swizzle|tensor3/32bit|tensor3/32bit/swizzle])
+
+drop-in replacement (except, obviously, can not use swizzle method and drop-in not swizzle package.)
 
 Example:  100 x 1 million matrix multiplications, single threaded then parallel.
 
@@ -44,4 +51,5 @@ Example:  100 x 1 million matrix multiplications, single threaded then parallel.
 
 package tensor3
 
-// Overview/docs: [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3)
+// Overview/docs: [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3) [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3/swizzle) [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3/32bit) Overview/docs: [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3/32bit/swizzle)
+
