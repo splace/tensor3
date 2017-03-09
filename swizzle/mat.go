@@ -4,6 +4,14 @@ type Matrix struct {
 	x, y, z Vector
 }
 
+type exposedMatrix struct{
+	X, Y, Z Vector
+}
+
+func (m Matrix) Components() exposedMatrix{
+	return exposedMatrix{m.x,m.y,m.z}
+}
+
 // missing components default to zero, more than 9 are ignored
 func NewMatrix(cs ...Float) (m Matrix) {
 	switch len(cs) {

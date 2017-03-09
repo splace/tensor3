@@ -4,6 +4,14 @@ type Vector struct {
 	x, y, z Float
 }
 
+type exposedVector struct{
+	X, Y, Z Float
+}
+
+func (v Vector)Components() exposedVector{
+	return exposedVector{v.x,v.y,v.z}
+}
+
 var XAxis, YAxis, ZAxis = Vector{1, 0, 0}, Vector{0, 1, 0}, Vector{0, 0, 1}
 var XAxisPlane, YAxisPlane, ZAxisPlane = Vector{0, 1, 1}, Vector{1, 0, 1}, Vector{1, 1, 0}
 var Axes = [3]Vector{XAxis, YAxis, ZAxis}
