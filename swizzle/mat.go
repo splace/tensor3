@@ -136,7 +136,6 @@ func (m *Matrix) ApplyComponentWise(fn func(*Vector, Vector),m2 Matrix) {
 		fn(&m.z, m2.z)
 	}else{	
 		done := make(chan struct{}, 1)
-		var running uint =3
 		go func() {
 			fn(&m.x, m2.x)
 			done <- struct{}{}
@@ -149,9 +148,9 @@ func (m *Matrix) ApplyComponentWise(fn func(*Vector, Vector),m2 Matrix) {
 			fn(&m.z, m2.z)
 			done <- struct{}{}
 		}()
-		for ; running > 0; running-- {
-			<-done
-		}
+		<-done
+		<-done
+		<-done
 	}
 }
 
@@ -169,7 +168,6 @@ func (m *Matrix) Apply(fn func(*Vector, Vector),v Vector) {
 		fn(&m.z, v)
 	}else{	
 		done := make(chan struct{}, 1)
-		var running uint =3
 		go func() {
 			fn(&m.x, v)
 			done <- struct{}{}
@@ -182,9 +180,9 @@ func (m *Matrix) Apply(fn func(*Vector, Vector),v Vector) {
 			fn(&m.z, v)
 			done <- struct{}{}
 		}()
-		for ; running > 0; running-- {
-			<-done
-		}
+		<-done
+		<-done
+		<-done
 	}
 }
 
