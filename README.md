@@ -1,14 +1,16 @@
 /*
 
-Vector, 3-components, and Matrix, 3x3 components
+Vector, 3-components, and Matrix, 3x3 components.
 
-useful methods on same, operating in-place, not returning reference, so no single line chained functions
+useful methods on same, operating in-place, not returning reference. (so no single line chained functions.)
 
 arrays of both, called Vectors and Matrices, with their useful methods.
 
 64 or 32bit
 
-with or without swizzle methods.
+with or without swizzled methods.
+
+swizzle, component remapping, is a no-cost op.
 
 operations are selectively parallel.
 
