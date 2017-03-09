@@ -1,4 +1,4 @@
 package tensor3
 
-type float float32
+type Float float32
 
