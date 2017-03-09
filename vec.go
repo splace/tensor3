@@ -4,12 +4,8 @@ type Vector struct {
 	x, y, z Float
 }
 
-type exposedVector struct{
-	X, Y, Z Float
-}
-
-func (v Vector)Components() exposedVector{
-	return exposedVector{v.x,v.y,v.z}
+func (v Vector)Components() (Float,Float,Float){
+	return v.x,v.y,v.z
 }
 
 var XAxis, YAxis, ZAxis = Vector{1, 0, 0}, Vector{0, 1, 0}, Vector{0, 0, 1}
