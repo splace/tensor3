@@ -107,19 +107,19 @@ func (m *Matrix) ProductRightT(m2 Matrix) {
 }
 
 func (m *Matrix) Project(m2 Matrix) {
-	m.ApplyComponentWise((*Vector).Project,(m2))
+	m.ApplyComponentWise((*Vector).Project,m2)
 }
 
 func (m *Matrix) Set(m2 Matrix) {
-	m.ApplyComponentWise((*Vector).Set,(m2))
+	m.ApplyComponentWise((*Vector).Set,m2)
 }
 
 func (m *Matrix) Max(m2 Matrix) {
-	m.ApplyComponentWise((*Vector).Max,(m2))
+	m.ApplyComponentWise((*Vector).Max,m2)
 }
 
 func (m *Matrix) Min(m2 Matrix) {
-	m.ApplyComponentWise((*Vector).Min,(m2))
+	m.ApplyComponentWise((*Vector).Min,m2)
 }
 
 func (m *Matrix) Reduce(ms Matrices, fn func(*Matrix, Matrix)) {
