@@ -52,4 +52,12 @@ func main(){
 2.081455544s
 Thu 9 Mar 21:46:43 GMT 2017
 */
+/*  Hal3 Thu 9 Mar 22:13:54 GMT 2017  go version go1.8 linux/amd64
+
+4.025525437s
+3.875234189s
+2.889553996s
+2.010033329s
+Thu 9 Mar 22:14:11 GMT 2017
+*/
 

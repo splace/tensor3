@@ -156,7 +156,7 @@ func (m *Matrix) ApplyComponentWise(fn func(*Vector, Vector),m2 Matrix) {
 
 
 // apply a vector(vector) function by each axis
-func (m *Matrix) ApplyAxes(fn func(*Vector, Vector)) {
+func (m *Matrix) ApplyComponentWiseAxes(fn func(*Vector, Vector)) {
 	m.ApplyComponentWise(fn,Identity)
 }
 
