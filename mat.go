@@ -49,13 +49,11 @@ func (m *Matrix) Subtract(m2 Matrix) {
 
 // component-vector-wise cross with vector
 func (m *Matrix) Cross(v Vector) {
-	m.x.Cross(v)
-	m.y.Cross(v)
-	m.z.Cross(v)
+	m.Apply((*Vector).Cross,v)
 }
 
-// component-vector-wise length squared with vector
-func (m *Matrix) lengthLength() (v Vector){
+// component-vector-wise length squared
+func (m *Matrix) LengthLength() (v Vector){
 	v.x=m.x.LengthLength()
 	v.y=m.y.LengthLength()
 	v.z=m.z.LengthLength()
@@ -201,9 +199,5 @@ func (m *Matrix) applyY(fn func(*Vector, Vector), v Vector) {
 
 func (m *Matrix) applyZ(fn func(*Vector, Vector), v Vector) {
 	fn(&m.z, v)
-}/*  Hal3 Thu 9 Mar 18:46:50 GMT 2017 go version go1.6.2 linux/amd64
-PASS
-ok  	_/home/simon/Dropbox/github/working/tensor3	0.006s
-Thu 9 Mar 18:46:52 GMT 2017
-*/
+}
 
