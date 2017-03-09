@@ -40,15 +40,32 @@ func NewMatrix(cs ...Float) (m Matrix) {
 var Identity = Matrix{XAxis, YAxis, ZAxis}
 
 func (m *Matrix) Add(m2 Matrix) {
-	m.x.Add(m2.x)
-	m.y.Add(m2.y)
-	m.z.Add(m2.z)
+	m.ApplyComponentWise((*Vector).Add,m2)
 }
 
 func (m *Matrix) Subtract(m2 Matrix) {
-	m.x.Subtract(m2.x)
-	m.y.Subtract(m2.y)
-	m.z.Subtract(m2.z)
+	m.ApplyComponentWise((*Vector).Subtract,m2)
+}
+
+// component-vector-wise cross with vector
+func (m *Matrix) Cross(v Vector) {
+	m.Apply((*Vector).Cross,v)
+}
+
+// component-vector-wise length squared
+func (m *Matrix) LengthLength() (v Vector){
+	v.x=m.x.LengthLength()
+	v.y=m.y.LengthLength()
+	v.z=m.z.LengthLength()
+	return
+}
+
+// component-vector-wise dot with vector
+func (m Matrix) Dot(v2 Vector) (v Vector) {
+	v.x=m.x.Dot(v2)
+	v.y=m.y.Dot(v2)
+	v.z=m.z.Dot(v2)
+	return
 }
 
 func (m *Matrix) Multiply(s Float) {
@@ -90,32 +107,82 @@ func (m *Matrix) ProductRightT(m2 Matrix) {
 }
 
 func (m *Matrix) Project(m2 Matrix) {
-	m.x.Project(m2.x)
-	m.y.Project(m2.y)
-	m.z.Project(m2.z)
+	m.ApplyComponentWise((*Vector).Project,(m2))
 }
 
 func (m *Matrix) Set(m2 Matrix) {
-	m.x.Set(m2.x)
-	m.y.Set(m2.y)
-	m.z.Set(m2.z)
+	m.ApplyComponentWise((*Vector).Set,(m2))
 }
 
 func (m *Matrix) Max(m2 Matrix) {
-	m.x.Max(m2.x)
-	m.y.Max(m2.y)
-	m.z.Max(m2.z)
+	m.ApplyComponentWise((*Vector).Max,(m2))
 }
 
 func (m *Matrix) Min(m2 Matrix) {
-	m.x.Min(m2.x)
-	m.y.Min(m2.y)
-	m.z.Min(m2.z)
+	m.ApplyComponentWise((*Vector).Min,(m2))
 }
 
 func (m *Matrix) Reduce(ms Matrices, fn func(*Matrix, Matrix)) {
 	for _, m2 := range ms {
 		fn(m, m2)
+	}
+}
+
+// apply a vector(vector) function by each axis
+func (m *Matrix) ApplyComponentWise(fn func(*Vector, Vector),m2 Matrix) {
+	if !Parallel{
+		fn(&m.x, m2.x)
+		fn(&m.y, m2.y)
+		fn(&m.z, m2.z)
+	}else{	
+		done := make(chan struct{}, 1)
+		go func() {
+			fn(&m.x, m2.x)
+			done <- struct{}{}
+		}()
+		go func() {
+			fn(&m.y, m2.y)
+			done <- struct{}{}
+		}()
+		go func() {
+			fn(&m.z, m2.z)
+			done <- struct{}{}
+		}()
+		<-done
+		<-done
+		<-done
+	}
+}
+
+
+// apply a vector(vector) function by each axis
+func (m *Matrix) ApplyAxes(fn func(*Vector, Vector)) {
+	m.ApplyComponentWise(fn,Identity)
+}
+
+// apply a vector(vector) function
+func (m *Matrix) Apply(fn func(*Vector, Vector),v Vector) {
+	if !Parallel{
+		fn(&m.x, v)
+		fn(&m.y, v)
+		fn(&m.z, v)
+	}else{	
+		done := make(chan struct{}, 1)
+		go func() {
+			fn(&m.x, v)
+			done <- struct{}{}
+		}()
+		go func() {
+			fn(&m.y, v)
+			done <- struct{}{}
+		}()
+		go func() {
+			fn(&m.z, v)
+			done <- struct{}{}
+		}()
+		<-done
+		<-done
+		<-done
 	}
 }
 
@@ -131,3 +198,4 @@ func (m *Matrix) applyY(fn func(*Vector, Vector), v Vector) {
 func (m *Matrix) applyZ(fn func(*Vector, Vector), v Vector) {
 	fn(&m.z, v)
 }
+
