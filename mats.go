@@ -86,29 +86,29 @@ func (ms Matrices) ApplyComponentWiseVariac(v Vector, fns ...interface{}) {
 
 func (ms Matrices) ForEach(fn func(*Matrix, Matrix), v Matrix) {
 	if !Parallel {
-		matrixesApply(ms, fn, v)
+		MatricesApply(ms, fn, v)
 	} else {
 		if Hints.ChunkSizeFixed {
-			matrixesApplyChunked(ms, fn, v, Hints.DefaultChunkSize)
+			MatricesApplyChunked(ms, fn, v, Hints.DefaultChunkSize)
 		} else {
-			matrixesApplyChunked(ms, fn, v, Hints.DefaultChunkSize+uint(len(ms))/(Hints.CoresOverOne+1))
+			MatricesApplyChunked(ms, fn, v, Hints.DefaultChunkSize+uint(len(ms))/(Hints.CoresOverOne+1))
 		}
 	}
 }
 
-func matrixesApply(ms Matrices, fn func(*Matrix, Matrix), v Matrix) {
+func MatricesApply(ms Matrices, fn func(*Matrix, Matrix), v Matrix) {
 	for i := range ms {
 		fn(&ms[i], v)
 	}
 }
 
-func matrixesApplyChunked(ms Matrices, fn func(*Matrix, Matrix), v Matrix, chunkSize uint) {
+func MatricesApplyChunked(ms Matrices, fn func(*Matrix, Matrix), v Matrix, chunkSize uint) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range matrixesInChunks(ms, chunkSize) {
+	for chunk := range MatricesInChunks(ms, chunkSize) {
 		running++
 		go func(c Matrices) {
-			matrixesApply(c, fn, v)
+			MatricesApply(c, fn, v)
 			done <- struct{}{}
 		}(chunk)
 	}
@@ -117,7 +117,7 @@ func matrixesApplyChunked(ms Matrices, fn func(*Matrix, Matrix), v Matrix, chunk
 	}
 }
 
-func matrixesInChunks(ms Matrices, chunkSize uint) chan Matrices {
+func MatricesInChunks(ms Matrices, chunkSize uint) chan Matrices {
 	c := make(chan Matrices)
 	length := uint(len(ms))
 	go func() {
@@ -157,7 +157,7 @@ func vectorApply(ms Matrices, mfn func(*Matrix, func(*Vector, Vector), Vector), 
 func vectorApplyChunked(ms Matrices, mfn func(*Matrix, func(*Vector, Vector), Vector), fn func(*Vector, Vector), v Vector, chunkSize uint) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range matrixesInChunks(ms, chunkSize) {
+	for chunk := range MatricesInChunks(ms, chunkSize) {
 		running++
 		go func(c Matrices) {
 			vectorApply(c, mfn, fn, v)
