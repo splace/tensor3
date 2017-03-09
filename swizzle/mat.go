@@ -4,7 +4,8 @@ type Matrix struct {
 	x, y, z Vector
 }
 
-func NewMatrix(cs ...float64) (m Matrix) {
+// missing components default to zero, more than 9 are ignored
+func NewMatrix(cs ...float) (m Matrix) {
 	switch len(cs) {
 	case 9:
 		m.z.z = cs[8]
@@ -50,7 +51,7 @@ func (m *Matrix) Subtract(m2 Matrix) {
 	m.z.Subtract(m2.z)
 }
 
-func (m *Matrix) Multiply(s float64) {
+func (m *Matrix) Multiply(s float) {
 	m.x.Multiply(s)
 	m.y.Multiply(s)
 	m.z.Multiply(s)

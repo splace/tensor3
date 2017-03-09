@@ -43,7 +43,7 @@ func (vs Vectors) Min() (v Vector) {
 	return
 }
 
-func (vs Vectors) Interpolate(v Vector, f float64) {
+func (vs Vectors) Interpolate(v Vector, f float) {
 	vs.ForEach(interpolater(f), v)
 }
 

@@ -75,8 +75,9 @@ func TestMatrixApplyXAdd(t *testing.T) {
 func BenchmarkMatrixProduct(b *testing.B) {
 	b.StopTimer()
 	m := Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}
+	m2 := Matrix{Vector{9, 8, 7}, Vector{6, 5, 4}, Vector{3, 2, 1}}
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
-		m.Product(Matrix{Vector{9, 8, 7}, Vector{6, 5, 4}, Vector{3, 2, 1}})
+		m.Product(m2)
 	}
 }

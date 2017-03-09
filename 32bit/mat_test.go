@@ -81,3 +81,5 @@ func BenchmarkMatrixProduct(b *testing.B) {
 		m.Product(m2)
 	}
 }
+
+
