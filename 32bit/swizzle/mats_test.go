@@ -79,7 +79,6 @@ func BenchmarkMatsProductParallel(b *testing.B) {
 
 }
 
-
 /*  Hal3 Thu 9 Mar 16:55:05 GMT 2017 go version go1.6.2 linux/amd64
 PASS
 BenchmarkMatsProduct-2        	      30	  44015188 ns/op
@@ -95,4 +94,3 @@ PASS
 ok  	3.110s
 Thu 9 Mar 16:56:11 GMT 2017
 */
-

@@ -55,31 +55,31 @@ func (v *Vector) XZY() {
 	v.x, v.z, v.y = v.x, v.y, v.z
 }
 
-func (v Vector) DotR(v2 Vector) float {
+func (v Vector) DotR(v2 Vector) Float {
 	return v.DotYZX(v2)
 }
 
-func (v Vector) DotYZX(v2 Vector) float {
+func (v Vector) DotYZX(v2 Vector) Float {
 	return v.y*v2.x + v.z*v2.y + v.x*v2.z
 }
 
-func (v Vector) DotRR(v2 Vector) float {
+func (v Vector) DotRR(v2 Vector) Float {
 	return v.DotZXY(v2)
 }
 
-func (v Vector) DotZXY(v2 Vector) float {
+func (v Vector) DotZXY(v2 Vector) Float {
 	return v.z*v2.x + v.x*v2.y + v.y*v2.z
 
 }
-func (v Vector) DotYXZ(v2 Vector) float {
+func (v Vector) DotYXZ(v2 Vector) Float {
 	return v.y*v2.x + v.x*v2.y + v.z*v2.z
 }
 
-func (v Vector) DotZYX(v2 Vector) float {
+func (v Vector) DotZYX(v2 Vector) Float {
 	return v.z*v2.x + v.y*v2.y + v.x*v2.z
 }
 
-func (v Vector) DotXZY(v2 Vector) float {
+func (v Vector) DotXZY(v2 Vector) Float {
 	return v.x*v2.x + v.z*v2.y + v.y*v2.z
 }
 
