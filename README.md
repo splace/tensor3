@@ -1,10 +1,8 @@
 Vector, 3-components, and Matrix, 3x3 components.
 
-usual methods on same, operating in-place, not returning reference, so no single line chained functions
+useful methods on same, operating in-place, not returning reference, so no single line chained functions
 
-arrays of both, Vectors and Matrices, with their usual methods.
-
-separate package adding many methods swizzled.
+arrays of both, called Vectors and Matrices, with their useful methods.
 
 operations are selectively parallel.
 
