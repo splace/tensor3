@@ -14,9 +14,14 @@ operations are selectively parallel.
 
 arrays selectively broken into chunks for optimised parallelization.
 
-4 packages: (get github.com/splace/[tensor3|tensor3/swizzle|tensor3/32bit|tensor3/32bit/swizzle])
+4, drop-in replacement,packages:
 
-drop-in replacement (except, obviously, can not use swizzle method and drop-in not swizzle package.)
+	get github.com/splace/tensor3
+	get github.com/splace/tensor3/swizzle
+	get github.com/splace/tensor3/32bit
+	get github.com/splace/tensor3/32bit/swizzle
+
+(except, obviously, can not use swizzle method and drop-in not swizzle package.)
 
 Example:  100 x 1 million matrix multiplications, single threaded then parallel.
 
@@ -51,5 +56,5 @@ Example:  100 x 1 million matrix multiplications, single threaded then parallel.
 
 package tensor3
 
-// Overview/docs: [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3) [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3/swizzle) [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3/32bit) Overview/docs: [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3/32bit/swizzle)
+// Overview/docs: [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3) [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3/swizzle) [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3/32bit) [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3/32bit/swizzle)
 
