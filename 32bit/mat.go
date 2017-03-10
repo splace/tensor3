@@ -164,7 +164,7 @@ func (m *Matrix) ApplyToComponents(fn func(*Vector, Vector), m2 Matrix) {
 
 // apply a vector(vector) function by each axis
 func (m *Matrix) ApplyToComponentsByAxes(fn func(*Vector, Vector)) {
-	m.ApplyToComponents(fn, Identity)
+	m.ApplyToComponents(fn, Matrix{xAxis, yAxis, zAxis})
 }
 
 // apply a vector(vector) function
