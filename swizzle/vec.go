@@ -114,7 +114,7 @@ func (v *Vector) Reduce(vs Vectors, fn func(*Vector, Vector)) {
 	}
 }
 
-// component wise multiplication, using axis-plane to project to that axis
+// component wise multiplication. Use an axis-plane and will project the vector to that axis.
 func (v *Vector) Project(axis Vector) {
 	v.x *= axis.x
 	v.y *= axis.y
