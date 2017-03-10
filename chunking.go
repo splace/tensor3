@@ -14,10 +14,10 @@ var Hints struct {
 	DefaultChunkSize uint
 }
 
-// selects parallel application of functions to Vectors and Matrices types (slics of Vector and Matrix types).
-// this occures in chunks whose size is controlled by Hints.
+// selects parallel application of functions to Vectors and Matrices types (slices of Vector and Matrix types).
+// this occurs in chunks whose size is controlled by Hints.
 var Parallel bool
 
 // selects parallel application of functions to Matrix components,(its Vector fields).
-// only improves performance if using costly functions, non of the built-ins are likely to benfit. YRMV.
+// only improves performance if using costly functions, non of the built-ins are likely to benefit. YRMV.
 var ParallelComponents bool
