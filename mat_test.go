@@ -96,9 +96,9 @@ func TestMatrixApplyComponentWiseAxesAdd(t *testing.T) {
 }
 
 func TestMatrixApplyComponentWiseAxesCross(t *testing.T) {
-	m := Matrix{ZAxis, XAxis, YAxis}
+	m := Matrix{zAxis, xAxis, yAxis}
 	m.ApplyToComponentsByAxes((*Vector).Cross)
-	m2 := Matrix{YAxis, ZAxis, XAxis}
+	m2 := Matrix{yAxis, zAxis, xAxis}
 	if m != m2 {
 		t.Error(m)
 	}

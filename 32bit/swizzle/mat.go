@@ -41,7 +41,7 @@ func NewMatrix(cs ...ComponentType) (m Matrix) {
 	return
 }
 
-var Identity = Matrix{XAxis, YAxis, ZAxis}
+var Identity = Matrix{xAxis, yAxis, zAxis}
 
 func (m *Matrix) Add(m2 Matrix) {
 	m.ApplyToComponents((*Vector).Add, m2)

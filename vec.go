@@ -8,10 +8,10 @@ func (v Vector) Components() (ComponentType, ComponentType, ComponentType) {
 	return v.x, v.y, v.z
 }
 
-var XAxis, YAxis, ZAxis = Vector{1, 0, 0}, Vector{0, 1, 0}, Vector{0, 0, 1}
-var XAxisPlane, YAxisPlane, ZAxisPlane = Vector{0, 1, 1}, Vector{1, 0, 1}, Vector{1, 1, 0}
-var Axes = [3]Vector{XAxis, YAxis, ZAxis}
-var AxePlanes = [3]Vector{XAxisPlane, YAxisPlane, ZAxisPlane}
+var xAxis, yAxis, zAxis = Vector{1, 0, 0}, Vector{0, 1, 0}, Vector{0, 0, 1}
+var xAxisPlane, yAxisPlane, zAxisPlane = Vector{0, 1, 1}, Vector{1, 0, 1}, Vector{1, 1, 0}
+var Axes = [3]Vector{xAxis, yAxis, zAxis}
+var AxisPlanes = [3]Vector{xAxisPlane, yAxisPlane, zAxisPlane}
 
 // missing components default to zero, more than 3 are ignored
 func NewVector(cs ...ComponentType) (v Vector) {
