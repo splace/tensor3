@@ -72,37 +72,37 @@ func (m *Matrix) SubtractXZY(m2 Matrix) {
 	m.y.Subtract(m2.z)
 }
 
-func (m *Matrix) MultiplyR(s Float) {
+func (m *Matrix) MultiplyR(s ComponentType) {
 	m.MultiplyYZX(s)
 }
 
-func (m *Matrix) MultiplyYZX(s Float) {
+func (m *Matrix) MultiplyYZX(s ComponentType) {
 	m.y.Multiply(s)
 	m.z.Multiply(s)
 	m.x.Multiply(s)
 }
 
-func (m *Matrix) MultiplyRR(s Float) {
+func (m *Matrix) MultiplyRR(s ComponentType) {
 	m.MultiplyZXY(s)
 }
 
-func (m *Matrix) MultiplyZXY(s Float) {
+func (m *Matrix) MultiplyZXY(s ComponentType) {
 	m.z.Multiply(s)
 	m.x.Multiply(s)
 	m.y.Multiply(s)
 }
 
-func (m *Matrix) MultiplyYXZ(s Float) {
+func (m *Matrix) MultiplyYXZ(s ComponentType) {
 	m.y.Multiply(s)
 	m.x.Multiply(s)
 	m.z.Multiply(s)
 }
-func (m *Matrix) MultiplyZYX(s Float) {
+func (m *Matrix) MultiplyZYX(s ComponentType) {
 	m.z.Multiply(s)
 	m.y.Multiply(s)
 	m.x.Multiply(s)
 }
-func (m *Matrix) MultiplyXZY(s Float) {
+func (m *Matrix) MultiplyXZY(s ComponentType) {
 	m.x.Multiply(s)
 	m.z.Multiply(s)
 	m.y.Multiply(s)

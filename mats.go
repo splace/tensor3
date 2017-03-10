@@ -91,7 +91,7 @@ func (ms Matrices) ForEach(fn func(*Matrix, Matrix), v Matrix) {
 		if Hints.ChunkSizeFixed {
 			MatricesApplyChunked(ms, fn, v, Hints.DefaultChunkSize)
 		} else {
-			MatricesApplyChunked(ms, fn, v, Hints.DefaultChunkSize+uint(len(ms))/(Hints.CoresOverOne+1))
+			MatricesApplyChunked(ms, fn, v, Hints.DefaultChunkSize+uint(len(ms))/(Hints.Threads+1))
 		}
 	}
 }
@@ -139,7 +139,7 @@ func (ms Matrices) vectorApply(mfn func(*Matrix, func(*Vector, Vector), Vector),
 		if Hints.ChunkSizeFixed {
 			vectorApplyChunked(ms, mfn, fn, v, Hints.DefaultChunkSize)
 		} else {
-			cs := uint(len(ms)) / (Hints.CoresOverOne + 1)
+			cs := uint(len(ms)) / (Hints.Threads + 1)
 			if cs < Hints.DefaultChunkSize {
 				cs = Hints.DefaultChunkSize
 			}

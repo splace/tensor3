@@ -54,7 +54,7 @@ func (vs Vectors) ForEach(fn func(*Vector, Vector), v Vector) {
 		if Hints.ChunkSizeFixed {
 			vectorsApplyChunked(vs, fn, v, Hints.DefaultChunkSize)
 		} else {
-			cs := uint(len(vs)) / (Hints.CoresOverOne + 1)
+			cs := uint(len(vs)) / (Hints.Threads + 1)
 			if cs < Hints.DefaultChunkSize {
 				cs = Hints.DefaultChunkSize
 			}
@@ -106,7 +106,7 @@ func (m Matrix) ForEach(fn func(*Vector, Matrix), vs Vectors) {
 		if Hints.ChunkSizeFixed {
 			matrixApplyChunked(vs, fn, m, Hints.DefaultChunkSize)
 		} else {
-			cs := uint(len(vs)) / (Hints.CoresOverOne + 1)
+			cs := uint(len(vs)) / (Hints.Threads + 1)
 			if cs < Hints.DefaultChunkSize {
 				cs = Hints.DefaultChunkSize
 			}

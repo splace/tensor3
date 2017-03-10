@@ -138,7 +138,7 @@ func (m *Matrix) Reduce(ms Matrices, fn func(*Matrix, Matrix)) {
 
 // apply a vector(vector) function by each axis
 func (m *Matrix) ApplyToComponents(fn func(*Vector, Vector), m2 Matrix) {
-	if !Parallel {
+	if !ParallelComponents {
 		fn(&m.x, m2.x)
 		fn(&m.y, m2.y)
 		fn(&m.z, m2.z)
@@ -169,7 +169,7 @@ func (m *Matrix) ApplyToComponentsByAxes(fn func(*Vector, Vector)) {
 
 // apply a vector(vector) function
 func (m *Matrix) ApplyToComponentsBySameVector(fn func(*Vector, Vector), v Vector) {
-	if !Parallel {
+	if !ParallelComponents {
 		fn(&m.x, v)
 		fn(&m.y, v)
 		fn(&m.z, v)
