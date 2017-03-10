@@ -89,21 +89,20 @@ func TestMatrixApplyZAdd(t *testing.T) {
 
 func TestMatrixApplyComponentWiseAxesAdd(t *testing.T) {
 	m := Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}
-	m.ApplyComponentWiseAxes((*Vector).Add)
+	m.ApplyToComponentsByAxes((*Vector).Add)
 	if fmt.Sprint(m) != "{{2 2 3} {4 6 6} {7 8 10}}" {
 		t.Error(m)
 	}
 }
 
 func TestMatrixApplyComponentWiseAxesCross(t *testing.T) {
-	m := Matrix{ ZAxis, XAxis,YAxis}
-	m.ApplyComponentWiseAxes((*Vector).Cross)
+	m := Matrix{ZAxis, XAxis, YAxis}
+	m.ApplyToComponentsByAxes((*Vector).Cross)
 	m2 := Matrix{YAxis, ZAxis, XAxis}
 	if m != m2 {
 		t.Error(m)
 	}
 }
-
 
 func BenchmarkMatrixProduct(b *testing.B) {
 	b.StopTimer()

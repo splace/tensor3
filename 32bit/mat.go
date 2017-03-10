@@ -4,8 +4,8 @@ type Matrix struct {
 	x, y, z Vector
 }
 
-func (m Matrix) Components() (Vector,Vector,Vector){
-	return m.x,m.y,m.z
+func (m Matrix) Components() (Vector, Vector, Vector) {
+	return m.x, m.y, m.z
 }
 
 // missing components default to zero, more than 9 are ignored
@@ -44,31 +44,31 @@ func NewMatrix(cs ...Float) (m Matrix) {
 var Identity = Matrix{XAxis, YAxis, ZAxis}
 
 func (m *Matrix) Add(m2 Matrix) {
-	m.ApplyComponentWise((*Vector).Add,m2)
+	m.ApplyToComponents((*Vector).Add, m2)
 }
 
 func (m *Matrix) Subtract(m2 Matrix) {
-	m.ApplyComponentWise((*Vector).Subtract,m2)
+	m.ApplyToComponents((*Vector).Subtract, m2)
 }
 
 // component-vector-wise cross with vector
 func (m *Matrix) Cross(v Vector) {
-	m.Apply((*Vector).Cross,v)
+	m.ApplyToComponentsBySameVector((*Vector).Cross, v)
 }
 
 // component-vector-wise length squared
-func (m *Matrix) LengthLength() (v Vector){
-	v.x=m.x.LengthLength()
-	v.y=m.y.LengthLength()
-	v.z=m.z.LengthLength()
+func (m *Matrix) LengthLength() (v Vector) {
+	v.x = m.x.LengthLength()
+	v.y = m.y.LengthLength()
+	v.z = m.z.LengthLength()
 	return
 }
 
 // component-vector-wise dot with vector
 func (m Matrix) Dot(v2 Vector) (v Vector) {
-	v.x=m.x.Dot(v2)
-	v.y=m.y.Dot(v2)
-	v.z=m.z.Dot(v2)
+	v.x = m.x.Dot(v2)
+	v.y = m.y.Dot(v2)
+	v.z = m.z.Dot(v2)
 	return
 }
 
@@ -111,19 +111,19 @@ func (m *Matrix) ProductRightT(m2 Matrix) {
 }
 
 func (m *Matrix) Project(m2 Matrix) {
-	m.ApplyComponentWise((*Vector).Project,m2)
+	m.ApplyToComponents((*Vector).Project, m2)
 }
 
 func (m *Matrix) Set(m2 Matrix) {
-	m.ApplyComponentWise((*Vector).Set,m2)
+	m.ApplyToComponents((*Vector).Set, m2)
 }
 
 func (m *Matrix) Max(m2 Matrix) {
-	m.ApplyComponentWise((*Vector).Max,m2)
+	m.ApplyToComponents((*Vector).Max, m2)
 }
 
 func (m *Matrix) Min(m2 Matrix) {
-	m.ApplyComponentWise((*Vector).Min,m2)
+	m.ApplyToComponents((*Vector).Min, m2)
 }
 
 func (m *Matrix) Reduce(ms Matrices, fn func(*Matrix, Matrix)) {
@@ -133,12 +133,12 @@ func (m *Matrix) Reduce(ms Matrices, fn func(*Matrix, Matrix)) {
 }
 
 // apply a vector(vector) function by each axis
-func (m *Matrix) ApplyComponentWise(fn func(*Vector, Vector),m2 Matrix) {
-	if !Parallel{
+func (m *Matrix) ApplyToComponents(fn func(*Vector, Vector), m2 Matrix) {
+	if !Parallel {
 		fn(&m.x, m2.x)
 		fn(&m.y, m2.y)
 		fn(&m.z, m2.z)
-	}else{	
+	} else {
 		done := make(chan struct{}, 1)
 		go func() {
 			fn(&m.x, m2.x)
@@ -158,19 +158,18 @@ func (m *Matrix) ApplyComponentWise(fn func(*Vector, Vector),m2 Matrix) {
 	}
 }
 
-
 // apply a vector(vector) function by each axis
-func (m *Matrix) ApplyComponentWiseAxes(fn func(*Vector, Vector)) {
-	m.ApplyComponentWise(fn,Identity)
+func (m *Matrix) ApplyToComponentsByAxes(fn func(*Vector, Vector)) {
+	m.ApplyToComponents(fn, Identity)
 }
 
 // apply a vector(vector) function
-func (m *Matrix) Apply(fn func(*Vector, Vector),v Vector) {
-	if !Parallel{
+func (m *Matrix) ApplyToComponentsBySameVector(fn func(*Vector, Vector), v Vector) {
+	if !Parallel {
 		fn(&m.x, v)
 		fn(&m.y, v)
 		fn(&m.z, v)
-	}else{	
+	} else {
 		done := make(chan struct{}, 1)
 		go func() {
 			fn(&m.x, v)
@@ -202,4 +201,3 @@ func (m *Matrix) applyY(fn func(*Vector, Vector), v Vector) {
 func (m *Matrix) applyZ(fn func(*Vector, Vector), v Vector) {
 	fn(&m.z, v)
 }
-
