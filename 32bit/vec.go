@@ -1,10 +1,10 @@
 package tensor3
 
 type Vector struct {
-	x, y, z Float
+	x, y, z ComponentType
 }
 
-func (v Vector) Components() (Float, Float, Float) {
+func (v Vector) Components() (ComponentType, ComponentType, ComponentType) {
 	return v.x, v.y, v.z
 }
 
@@ -14,7 +14,7 @@ var Axes = [3]Vector{XAxis, YAxis, ZAxis}
 var AxePlanes = [3]Vector{XAxisPlane, YAxisPlane, ZAxisPlane}
 
 // missing components default to zero, more than 3 are ignored
-func NewVector(cs ...Float) (v Vector) {
+func NewVector(cs ...ComponentType) (v Vector) {
 	switch len(cs) {
 	case 3:
 		v.z = cs[2]
@@ -41,13 +41,13 @@ func (v *Vector) Subtract(v2 Vector) {
 }
 
 // components independently operated on
-func (v *Vector) Multiply(s Float) {
+func (v *Vector) Multiply(s ComponentType) {
 	v.x *= s
 	v.y *= s
 	v.z *= s
 }
 
-func (v Vector) Dot(v2 Vector) Float {
+func (v Vector) Dot(v2 Vector) ComponentType {
 	return v.x*v2.x + v.y*v2.y + v.z*v2.z
 }
 
@@ -56,7 +56,7 @@ func (v *Vector) Cross(v2 Vector) {
 }
 
 // length squared. (enables this package to not depend on math package.)
-func (v Vector) LengthLength() Float {
+func (v Vector) LengthLength() ComponentType {
 	return v.Dot(v)
 }
 
@@ -96,13 +96,13 @@ func (v *Vector) Mid(v2 Vector) {
 	v.z = (v2.z + v.z) / 2
 }
 
-func (v *Vector) Interpolate(v2 Vector, f Float) {
+func (v *Vector) Interpolate(v2 Vector, f ComponentType) {
 	v2.Multiply(1 - f)
 	v.Multiply(f)
 	v.Add(v2)
 }
 
-func interpolater(f Float) func(*Vector, Vector) {
+func interpolater(f ComponentType) func(*Vector, Vector) {
 	return func(v *Vector, v2 Vector) {
 		v.Interpolate(v2, f)
 	}

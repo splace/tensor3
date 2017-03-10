@@ -1,3 +1,3 @@
 package tensor3
 
-type Float float64
+type ComponentType float64

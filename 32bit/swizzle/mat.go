@@ -9,7 +9,7 @@ func (m Matrix) Components() (Vector, Vector, Vector) {
 }
 
 // missing components default to zero, more than 9 are ignored
-func NewMatrix(cs ...Float) (m Matrix) {
+func NewMatrix(cs ...ComponentType) (m Matrix) {
 	switch len(cs) {
 	case 9:
 		m.z.z = cs[8]
@@ -72,11 +72,11 @@ func (m Matrix) Dot(v2 Vector) (v Vector) {
 	return
 }
 
-func (m Matrix) Determinant() Float
-	return m.x.x*m.y.y*m.z.z-m.x.x*m.y.z*m.z.y+m.x.y*m.y.z*m.z.x-m.x.y*m.y.x*m.z.z+m.x.z*m.y.x*m.z.y-m.x.z*m.y.y*m.z.x
+func (m Matrix) Determinant() ComponentType {
+	return m.x.x*m.y.y*m.z.z - m.x.x*m.y.z*m.z.y + m.x.y*m.y.z*m.z.x - m.x.y*m.y.x*m.z.z + m.x.z*m.y.x*m.z.y - m.x.z*m.y.y*m.z.x
 }
 
-func (m *Matrix) Multiply(s Float) {
+func (m *Matrix) Multiply(s ComponentType) {
 	m.x.Multiply(s)
 	m.y.Multiply(s)
 	m.z.Multiply(s)
