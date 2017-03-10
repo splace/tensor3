@@ -48,40 +48,58 @@ func (ms Matrices) ReduceComponentWise(v Vector, fn func(*Vector, Vector)) {
 }
 
 func (ms Matrices) ApplyComponentWiseVariac(v Vector, fns ...interface{}) {
-	done := make(chan struct{}, 1)
-	var running uint
-	switch len(fns) {
-	case 3:
-		if fn, ok := fns[2].(func(*Vector, Vector)); ok {
-			running++
-			go func() {
+	if !Parallel {
+		switch len(fns) {
+		case 3:
+			if fn, ok := fns[2].(func(*Vector, Vector)); ok {
 				vectorApply(ms, (*Matrix).applyZ, fn, v)
-				done <- struct{}{}
-			}()
-		}
-		fallthrough
-	case 2:
-		if fn, ok := fns[1].(func(*Vector, Vector)); ok {
-			running++
-			go func() {
+			}
+			fallthrough
+		case 2:
+			if fn, ok := fns[1].(func(*Vector, Vector)); ok {
 				vectorApply(ms, (*Matrix).applyY, fn, v)
-				done <- struct{}{}
-			}()
-		}
-		fallthrough
-	case 1:
-		if fn, ok := fns[0].(func(*Vector, Vector)); ok {
-			running++
-			go func() {
+			}
+			fallthrough
+		case 1:
+			if fn, ok := fns[0].(func(*Vector, Vector)); ok {
 				vectorApply(ms, (*Matrix).applyX, fn, v)
-				done <- struct{}{}
-			}()
+			}
+		}
+	}else{
+		done := make(chan struct{}, 1)
+		var running uint
+		switch len(fns) {
+		case 3:
+			if fn, ok := fns[2].(func(*Vector, Vector)); ok {
+				running++
+				go func() {
+					vectorApply(ms, (*Matrix).applyZ, fn, v)
+					done <- struct{}{}
+				}()
+			}
+			fallthrough
+		case 2:
+			if fn, ok := fns[1].(func(*Vector, Vector)); ok {
+				running++
+				go func() {
+					vectorApply(ms, (*Matrix).applyY, fn, v)
+					done <- struct{}{}
+				}()
+			}
+			fallthrough
+		case 1:
+			if fn, ok := fns[0].(func(*Vector, Vector)); ok {
+				running++
+				go func() {
+					vectorApply(ms, (*Matrix).applyX, fn, v)
+					done <- struct{}{}
+				}()
+			}
+		}
+		for ; running > 0; running-- {
+			<-done
 		}
 	}
-	for ; running > 0; running-- {
-		<-done
-	}
-
 }
 
 func (ms Matrices) ForEach(fn func(*Matrix, Matrix), v Matrix) {

@@ -40,7 +40,7 @@ func (v *Vector) Subtract(v2 Vector) {
 	v.z -= v2.z
 }
 
-// components independently operated on
+// components independently multipled, see Product for matrix multiplication
 func (v *Vector) Multiply(s ComponentType) {
 	v.x *= s
 	v.y *= s
@@ -91,9 +91,9 @@ func (v *Vector) Min(v2 Vector) {
 }
 
 func (v *Vector) Mid(v2 Vector) {
-	v.x = (v2.x + v.x) / 2
-	v.y = (v2.y + v.y) / 2
-	v.z = (v2.z + v.z) / 2
+	v.x = (v2.x + v.x) * 0.5
+	v.y = (v2.y + v.y) * 0.5
+	v.z = (v2.z + v.z) * 0.5
 }
 
 func (v *Vector) Interpolate(v2 Vector, f ComponentType) {
@@ -114,7 +114,7 @@ func (v *Vector) Reduce(vs Vectors, fn func(*Vector, Vector)) {
 	}
 }
 
-// component wise multiplication. Use an axis-plane and will project the vector to that axis.
+// component wise multiplication. Use an axis-plane and this will project the vector to that axis.
 func (v *Vector) Project(axis Vector) {
 	v.x *= axis.x
 	v.y *= axis.y
