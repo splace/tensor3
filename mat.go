@@ -76,6 +76,20 @@ func (m Matrix) Determinant() ComponentType {
 	return m.x.x*m.y.y*m.z.z - m.x.x*m.y.z*m.z.y + m.x.y*m.y.z*m.z.x - m.x.y*m.y.x*m.z.z + m.x.z*m.y.x*m.z.y - m.x.z*m.y.y*m.z.x
 }
 
+func (m *Matrix) Invert() {
+	det:=m.Determinant()
+	var D func( ComponentType, ComponentType, ComponentType, ComponentType)ComponentType
+	D = func(a,b,c,d ComponentType)ComponentType{
+		return a*d-b*c
+	}
+	m.x.x, m.x.y, m.x.z, m.y.x, m.y.y, m.y.z, m.z.x, m.z.y, m.z.z = 
+		D(m.y.y,m.y.z,m.z.y,m.z.z),D(m.x.z,m.x.y,m.z.z,m.z.y),D(m.x.y,m.x.z,m.y.y,m.y.z),
+		D(m.y.z,m.y.x,m.z.z,m.z.x),D(m.x.x,m.x.z,m.z.x,m.z.z),D(m.x.z,m.x.x,m.y.z,m.y.x),
+		D(m.y.x,m.y.y,m.z.x,m.z.y),D(m.x.y,m.x.x,m.z.y,m.z.x),D(m.x.x,m.x.y,m.y.x,m.y.y)
+	m.Multiply(1/det)
+}
+
+
 func (m *Matrix) Multiply(s ComponentType) {
 	m.x.Multiply(s)
 	m.y.Multiply(s)
@@ -101,14 +115,14 @@ func (m *Matrix) Transpose() {
 }
 
 func (m *Matrix) ProductT(m2 Matrix) {
-	m.x.x, m.x.y, m.x.z, m.y.x, m.y.y, m.y.z, m.z.x, m.z.y, m.z.z =
+	m.x.x, m.y.x, m.z.x, m.x.y, m.y.y, m.z.y, m.x.z, m.y.z, m.z.z =
 		m.x.x*m2.x.x+m.x.y*m2.x.y+m.x.z*m2.x.z, m.x.x*m2.y.x+m.x.y*m2.y.y+m.x.z*m2.y.z, m.x.x*m2.z.x+m.x.y*m2.z.y+m.x.z*m2.z.z,
 		m.y.x*m2.x.x+m.y.y*m2.x.y+m.y.z*m2.x.z, m.y.x*m2.y.x+m.y.y*m2.y.y+m.y.z*m2.y.z, m.y.x*m2.z.x+m.y.y*m2.z.y+m.y.z*m2.z.z,
 		m.z.x*m2.x.x+m.z.y*m2.x.y+m.z.z*m2.x.z, m.z.x*m2.y.x+m.z.y*m2.y.y+m.z.z*m2.y.z, m.z.x*m2.z.x+m.z.y*m2.z.y+m.z.z*m2.z.z
 }
 
 func (m *Matrix) ProductRightT(m2 Matrix) {
-	m.x.x, m.x.y, m.x.z, m.y.x, m.y.y, m.y.z, m.z.x, m.z.y, m.z.z =
+	m.x.x, m.y.x, m.z.x, m.x.y, m.y.y, m.z.y, m.x.z, m.y.z, m.z.z =
 		m2.x.x*m.x.x+m2.x.y*m.x.y+m2.x.z*m.x.z, m2.x.x*m.y.x+m2.x.y*m.y.y+m2.x.z*m.y.z, m2.x.x*m.z.x+m2.x.y*m.z.y+m2.x.z*m.z.z,
 		m2.y.x*m.x.x+m2.y.y*m.x.y+m2.y.z*m.x.z, m2.y.x*m.y.x+m2.y.y*m.y.y+m2.y.z*m.y.z, m2.y.x*m.z.x+m2.y.y*m.z.y+m2.y.z*m.z.z,
 		m2.z.x*m.x.x+m2.z.y*m.x.y+m2.z.z*m.x.z, m2.z.x*m.y.x+m2.z.y*m.y.y+m2.z.z*m.y.z, m2.z.x*m.z.x+m2.z.y*m.z.y+m2.z.z*m.z.z
@@ -205,3 +219,4 @@ func (m *Matrix) applyY(fn func(*Vector, Vector), v Vector) {
 func (m *Matrix) applyZ(fn func(*Vector, Vector), v Vector) {
 	fn(&m.z, v)
 }
+

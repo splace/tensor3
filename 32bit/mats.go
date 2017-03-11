@@ -31,11 +31,11 @@ func (ms Matrices) ProductRightT(m Matrix) {
 }
 
 func (ms Matrices) Transpose() {
-	var transposer func(*Matrix, Matrix)
-	transposer = func(m1 *Matrix, _ Matrix) {
-		m1.Transpose()
-	}
-	ms.ForEach(transposer, Matrix{})
+	ms.ForEachNoParameter((*Matrix).Transpose)
+}
+
+func (ms Matrices) Invert() {
+	ms.ForEachNoParameter((*Matrix).Invert)
 }
 
 func (ms Matrices) Sum() (m Matrix) {
@@ -186,3 +186,14 @@ func vectorApplyChunked(ms Matrices, mfn func(*Matrix, func(*Vector, Vector), Ve
 		<-done
 	}
 }
+
+
+// apply a function without matrix parameter using a dummy matrix
+func (ms Matrices) ForEachNoParameter(fn func(*Matrix)) {
+	var inner func(*Matrix, Matrix)
+	inner = func(m1 *Matrix, _ Matrix) {
+		fn(m1)
+	}
+	ms.ForEach(inner, Matrix{})
+}
+

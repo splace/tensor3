@@ -36,6 +36,16 @@ func TestMatrixDeterminant(t *testing.T) {
 	}
 }
 
+func TestMatrixInvert(t *testing.T) {
+	m := Matrix{Vector{2, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}
+	var m2 Matrix
+	m2.Set(m)
+	m2.Invert()
+	m.Product(m2)
+	if m != Identity {
+		t.Error(m)
+	}
+}
 
 func TestMatrixProduct(t *testing.T) {
 	m := Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}
@@ -47,10 +57,11 @@ func TestMatrixProduct(t *testing.T) {
 
 func TestMatrixProductT(t *testing.T) {
 	m := Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}
-	m2 := Matrix{Vector{9, 8, 7}, Vector{6, 5, 4}, Vector{3, 2, 1}}
-	m2.Transpose()
+	m2 := Matrix{Vector{9, 6, 3}, Vector{8, 5, 2}, Vector{7, 4, 1}}
 	m.ProductT(m2)
+	m.Transpose()
 	if fmt.Sprint(m) != "{{30 24 18} {84 69 54} {138 114 90}}" {
+//	if fmt.Sprint(m) != "{{46 118 190} {28 73 118} {10 28 46}}" {
 		t.Error(m)
 	}
 }
