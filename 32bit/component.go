@@ -1,4 +1,4 @@
 package tensor3
 
-// base type
-type ComponentType float32
+// component type
+type BaseType float32

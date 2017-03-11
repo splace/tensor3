@@ -65,7 +65,7 @@ func (ms Matrices) ApplyComponentWiseVariac(v Vector, fns ...interface{}) {
 				vectorApply(ms, (*Matrix).applyX, fn, v)
 			}
 		}
-	}else{
+	} else {
 		done := make(chan struct{}, 1)
 		var running uint
 		switch len(fns) {
@@ -187,7 +187,6 @@ func vectorApplyChunked(ms Matrices, mfn func(*Matrix, func(*Vector, Vector), Ve
 	}
 }
 
-
 // apply a function without matrix parameter using a dummy matrix
 func (ms Matrices) ForEachNoParameter(fn func(*Matrix)) {
 	var inner func(*Matrix, Matrix)
@@ -196,4 +195,3 @@ func (ms Matrices) ForEachNoParameter(fn func(*Matrix)) {
 	}
 	ms.ForEach(inner, Matrix{})
 }
-

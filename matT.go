@@ -1,6 +1,6 @@
 package tensor3
-//	methods with a matrix parameter can come with 'T' prefixed version, meaning the result is post transposed, or a "T" postfix meaning the parameter is transposed before the operation.(these are no cost operations.)
 
+//	methods with a matrix parameter can come with 'T' prefixed version, meaning the result is post transposed, or a "T" postfix meaning the parameter is transposed before the operation.(these are no cost operations.)
 
 func (m *Matrix) TProductT(m2 Matrix) {
 	m.x.x, m.y.x, m.z.x, m.x.y, m.y.y, m.z.y, m.x.z, m.y.z, m.z.z =
@@ -16,14 +16,12 @@ func (m *Matrix) ProductT(m2 Matrix) {
 		m.z.x*m2.x.x+m.z.y*m2.y.x+m.z.z*m2.z.x, m.z.x*m2.x.y+m.z.y*m2.y.y+m.z.z*m2.z.y, m.z.x*m2.x.z+m.z.y*m2.y.z+m.z.z*m2.z.z
 }
 
-
 func (m *Matrix) TProduct(m2 Matrix) {
 	m.x.x, m.y.x, m.z.x, m.x.y, m.y.y, m.z.y, m.x.z, m.y.z, m.z.z =
 		m.x.x*m2.x.x+m.x.y*m2.x.y+m.x.z*m2.x.z, m.x.x*m2.y.x+m.x.y*m2.y.y+m.x.z*m2.y.z, m.x.x*m2.z.x+m.x.y*m2.z.y+m.x.z*m2.z.z,
 		m.y.x*m2.x.x+m.y.y*m2.x.y+m.y.z*m2.x.z, m.y.x*m2.y.x+m.y.y*m2.y.y+m.y.z*m2.y.z, m.y.x*m2.z.x+m.y.y*m2.z.y+m.y.z*m2.z.z,
 		m.z.x*m2.x.x+m.z.y*m2.x.y+m.z.z*m2.x.z, m.z.x*m2.y.x+m.z.y*m2.y.y+m.z.z*m2.y.z, m.z.x*m2.z.x+m.z.y*m2.z.y+m.z.z*m2.z.z
 }
-
 
 func (m *Matrix) TProductRight(m2 Matrix) {
 	m.x.x, m.y.x, m.z.x, m.x.y, m.y.y, m.z.y, m.x.z, m.y.z, m.z.z =
@@ -44,4 +42,3 @@ func (m *Matrix) ProductRightT(m2 Matrix) {
 		m2.y.x*m.x.x+m2.y.y*m.x.y+m2.y.z*m.x.z, m2.y.x*m.y.x+m2.y.y*m.y.y+m2.y.z*m.y.z, m2.y.x*m.z.x+m2.y.y*m.z.y+m2.y.z*m.z.z,
 		m2.z.x*m.x.x+m2.z.y*m.x.y+m2.z.z*m.x.z, m2.z.x*m.y.x+m2.z.y*m.y.y+m2.z.z*m.y.z, m2.z.x*m.z.x+m2.z.y*m.z.y+m2.z.z*m.z.z
 }
-

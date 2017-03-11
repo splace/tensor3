@@ -55,14 +55,13 @@ func TestMatrixProduct(t *testing.T) {
 	}
 }
 
-
 func TestMatrixTProduct(t *testing.T) {
 	m := Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}
 	m2 := Matrix{Vector{9, 6, 3}, Vector{8, 5, 2}, Vector{7, 4, 1}}
 	m.TProduct(m2)
 	m.Transpose()
 	if fmt.Sprint(m) != "{{30 24 18} {84 69 54} {138 114 90}}" {
-//	if fmt.Sprint(m) != "{{46 118 190} {28 73 118} {10 28 46}}" {
+		//	if fmt.Sprint(m) != "{{46 118 190} {28 73 118} {10 28 46}}" {
 		t.Error(m)
 	}
 }

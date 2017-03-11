@@ -9,7 +9,7 @@ func (m Matrix) Components() (Vector, Vector, Vector) {
 }
 
 // missing components default to zero, more than 9 are ignored
-func NewMatrix(cs ...ComponentType) (m Matrix) {
+func NewMatrix(cs ...BaseType) (m Matrix) {
 	switch len(cs) {
 	case 9:
 		m.z.z = cs[8]
@@ -72,25 +72,24 @@ func (m Matrix) Dot(v2 Vector) (v Vector) {
 	return
 }
 
-func (m Matrix) Determinant() ComponentType {
+func (m Matrix) Determinant() BaseType {
 	return m.x.x*m.y.y*m.z.z - m.x.x*m.y.z*m.z.y + m.x.y*m.y.z*m.z.x - m.x.y*m.y.x*m.z.z + m.x.z*m.y.x*m.z.y - m.x.z*m.y.y*m.z.x
 }
 
 func (m *Matrix) Invert() {
-	det:=m.Determinant()
-	var det2x2 func( ComponentType, ComponentType, ComponentType, ComponentType)ComponentType
-	det2x2 = func(a,b,c,d ComponentType)ComponentType{
-		return a*d-b*c
+	det := m.Determinant()
+	var det2x2 func(BaseType, BaseType, BaseType, BaseType) BaseType
+	det2x2 = func(a, b, c, d BaseType) BaseType {
+		return a*d - b*c
 	}
-	m.x.x, m.x.y, m.x.z, m.y.x, m.y.y, m.y.z, m.z.x, m.z.y, m.z.z = 
-		det2x2(m.y.y,m.y.z,m.z.y,m.z.z),det2x2(m.x.z,m.x.y,m.z.z,m.z.y),det2x2(m.x.y,m.x.z,m.y.y,m.y.z),
-		det2x2(m.y.z,m.y.x,m.z.z,m.z.x),det2x2(m.x.x,m.x.z,m.z.x,m.z.z),det2x2(m.x.z,m.x.x,m.y.z,m.y.x),
-		det2x2(m.y.x,m.y.y,m.z.x,m.z.y),det2x2(m.x.y,m.x.x,m.z.y,m.z.x),det2x2(m.x.x,m.x.y,m.y.x,m.y.y)
-	m.Multiply(1/det)
+	m.x.x, m.x.y, m.x.z, m.y.x, m.y.y, m.y.z, m.z.x, m.z.y, m.z.z =
+		det2x2(m.y.y, m.y.z, m.z.y, m.z.z), det2x2(m.x.z, m.x.y, m.z.z, m.z.y), det2x2(m.x.y, m.x.z, m.y.y, m.y.z),
+		det2x2(m.y.z, m.y.x, m.z.z, m.z.x), det2x2(m.x.x, m.x.z, m.z.x, m.z.z), det2x2(m.x.z, m.x.x, m.y.z, m.y.x),
+		det2x2(m.y.x, m.y.y, m.z.x, m.z.y), det2x2(m.x.y, m.x.x, m.z.y, m.z.x), det2x2(m.x.x, m.x.y, m.y.x, m.y.y)
+	m.Multiply(1 / det)
 }
 
-
-func (m *Matrix) Multiply(s ComponentType) {
+func (m *Matrix) Multiply(s BaseType) {
 	m.x.Multiply(s)
 	m.y.Multiply(s)
 	m.z.Multiply(s)
@@ -205,4 +204,3 @@ func (m *Matrix) applyY(fn func(*Vector, Vector), v Vector) {
 func (m *Matrix) applyZ(fn func(*Vector, Vector), v Vector) {
 	fn(&m.z, v)
 }
-
