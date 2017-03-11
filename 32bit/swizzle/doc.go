@@ -8,22 +8,21 @@ arrays of both, called Vectors and Matrices, with their useful methods.
 
 64 or 32bit
 
-with or without swizzled methods.
-
-swizzle, component remapping, is a no-cost op.
-
 operations are selectively parallel.
 
 arrays selectively broken into chunks for optimised parallelization.
 
-4, drop-in replacement,packages:
+matrix methods can come with 'T' prefix, meaning post transposed.(no cost op.)
+
+
+
+installation:
 
 	get github.com/splace/tensor3
-	get github.com/splace/tensor3/swizzle
 	get github.com/splace/tensor3/32bit
-	get github.com/splace/tensor3/32bit/swizzle
 
-(except, obviously, can not use swizzle method and drop-in not swizzle package.)
+
+
 
 Example:  100 x 1 million matrix multiplications, single threaded then parallel.
 
@@ -58,4 +57,7 @@ Example:  100 x 1 million matrix multiplications, single threaded then parallel.
 
 package tensor3
 
-// Overview/docs: [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3) [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3/swizzle) [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3/32bit) [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3/32bit/swizzle)
+// Overview/docs: [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3) 
+
+// Overview/docs:(32bit) [![GoDoc](https://godoc.org/github.com/splace/tensor3/32bit?status.svg)](https://godoc.org/github.com/splace/tensor3/32bit) 
+
