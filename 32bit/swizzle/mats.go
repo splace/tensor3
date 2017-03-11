@@ -22,12 +22,12 @@ func (ms Matrices) ProductRight(m Matrix) {
 	ms.ForEach((*Matrix).ProductRight, m)
 }
 
-func (ms Matrices) ProductT(m Matrix) {
-	ms.ForEach((*Matrix).ProductT, m)
+func (ms Matrices) TProduct(m Matrix) {
+	ms.ForEach((*Matrix).TProduct, m)
 }
 
-func (ms Matrices) ProductRightT(m Matrix) {
-	ms.ForEach((*Matrix).ProductRightT, m)
+func (ms Matrices) TProductRight(m Matrix) {
+	ms.ForEach((*Matrix).TProductRight, m)
 }
 
 func (ms Matrices) Transpose() {
