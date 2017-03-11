@@ -12,10 +12,6 @@ operations are selectively parallel.
 
 arrays selectively broken into chunks for optimised parallelization.
 
-Notes
-1: 	methods with a matrix parameter can come with 'T' prefixed version, meaning the result is post transposed, or a "T" postfix meaning the parameter is transposed before the operation.(these are no cost operations.)
-
-
 
 installation:
 
