@@ -55,7 +55,7 @@ func (v *Vector) Cross(v2 Vector) {
 	v.x, v.y, v.z = v.y*v2.z-v.z*v2.y, v.z*v2.x-v.x*v2.z, v.x*v2.y-v.y*v2.x
 }
 
-// length squared. (enables this package to not depend on math package.)
+// length squared. (returning squared means this package is not dependent on math package.)
 func (v Vector) LengthLength() ComponentType {
 	return v.Dot(v)
 }
@@ -102,11 +102,6 @@ func (v *Vector) Interpolate(v2 Vector, f ComponentType) {
 	v.Add(v2)
 }
 
-func interpolater(f ComponentType) func(*Vector, Vector) {
-	return func(v *Vector, v2 Vector) {
-		v.Interpolate(v2, f)
-	}
-}
 
 func (v *Vector) Reduce(vs Vectors, fn func(*Vector, Vector)) {
 	for _, v2 := range vs {

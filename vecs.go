@@ -44,8 +44,17 @@ func (vs Vectors) Min() (v Vector) {
 }
 
 func (vs Vectors) Interpolate(v Vector, f ComponentType) {
-	vs.ForEach(interpolater(f), v)
+	f2:=1-f
+	var interpolate func(*Vector, Vector)
+	interpolate = func(v *Vector, v2 Vector) {
+		v2.Multiply(f2)
+		v.Multiply(f)
+		v.Add(v2)
+	}
+	vs.ForEach(interpolate, v)
 }
+
+
 
 func (vs Vectors) ForEach(fn func(*Vector, Vector), v Vector) {
 	if !Parallel {
