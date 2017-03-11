@@ -29,6 +29,14 @@ func TestMatrixAdd(t *testing.T) {
 	}
 }
 
+func TestMatrixDeterminant(t *testing.T) {
+	m := Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}
+	if m.Determinant() != 0 {
+		t.Error(m.Determinant())
+	}
+}
+
+
 func TestMatrixProduct(t *testing.T) {
 	m := Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}
 	m.Product(Matrix{Vector{9, 8, 7}, Vector{6, 5, 4}, Vector{3, 2, 1}})
