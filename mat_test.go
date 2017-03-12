@@ -55,6 +55,31 @@ func TestMatrixProduct(t *testing.T) {
 	}
 }
 
+func TestMatrixProductDet(t *testing.T) {
+	m1 := Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}
+	m2:=Matrix{Vector{9, 8, 7}, Vector{6, 5, 4}, Vector{3, 2, 1}}
+	d1:=m1.Determinant()
+	d2:=m2.Determinant()
+	m1.Product(m2)
+	dp:=m1.Determinant()
+	if d1*d2 - dp >1e-8{
+		t.Error("The determinant of a matrix product of square matrices did NOT equal the product of their determinants:")
+	}
+}
+
+func TestMatrixInvertDet(t *testing.T) {
+	m := Matrix{Vector{1, 2, 3}, Vector{4, -5, 6}, Vector{7, 8, 9}}
+	d:=m.Determinant()
+	m.Invert()
+	di:=m.Determinant()
+	if d - 1/di>1e-8{
+		fmt.Println(d,1/di)
+		t.Error("The determinant of a matrix product of square matrices did NOT equal the product of their determinants:")
+	}
+}
+
+
+
 func TestMatrixTProduct(t *testing.T) {
 	m := Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}
 	m2 := Matrix{Vector{9, 6, 3}, Vector{8, 5, 2}, Vector{7, 4, 1}}
