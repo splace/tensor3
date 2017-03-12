@@ -1,6 +1,6 @@
 /*
 
-Vector, 3-components, and Matrix, 3xVector components.
+Vector, (3-component), and Matrix, (3-Vector).
 
 useful methods on same, operating in-place, not returning reference. (so no single line chained functions.)
 
