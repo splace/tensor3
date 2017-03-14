@@ -86,6 +86,14 @@ func TestVecProject(t *testing.T) {
 	}
 }
 
+func TestVecLongestAxis(t *testing.T) {
+	v := Vector{1, 2, 3}
+	if v.LongestAxis() != zAxisIndex {
+		t.Error(v.LongestAxis())
+	}
+}
+
+
 func TestVecMax(t *testing.T) {
 	v := Vector{1, 2, 3}
 	v.Max(Vector{-2, 1, -1})

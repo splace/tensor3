@@ -9,9 +9,18 @@ func (v Vector) Components() (BaseType, BaseType, BaseType) {
 }
 
 var xAxis, yAxis, zAxis = Vector{1, 0, 0}, Vector{0, 1, 0}, Vector{0, 0, 1}
-var xPlane, yPlane, zPlane = Vector{0, 1, 1}, Vector{1, 0, 1}, Vector{1, 1, 0}
+var yzPlane, xzPlane, zxPlane = Vector{0, 1, 1}, Vector{1, 0, 1}, Vector{1, 1, 0}
+
+type Axis uint
+
+const ( 
+	xAxisIndex Axis = iota 
+	yAxisIndex
+	zAxisIndex
+)
+
 var Axes = [3]Vector{xAxis, yAxis, zAxis}
-var AxisPlanes = [3]Vector{xPlane, yPlane, zPlane}
+var AxisPlanes = [3]Vector{yzPlane, xzPlane, zxPlane}
 
 // missing components default to zero, more than 3 are ignored
 func NewVector(cs ...BaseType) (v Vector) {
@@ -115,6 +124,22 @@ func (v *Vector) Project(axis Vector) {
 	v.x *= axis.x
 	v.y *= axis.y
 	v.z *= axis.z
+}
+
+// axis which vector is most aligned with. 
+func (v *Vector) LongestAxis() Axis {
+	if v.z >v.y {
+		if v.y>v.x {
+			return zAxisIndex
+			}
+		if v.x > v.z{
+			return xAxisIndex
+			}
+		}
+	if v.x >v.y {
+		return xAxisIndex
+	}
+	return yAxisIndex
 }
 
 // vector - matrix multiplication
