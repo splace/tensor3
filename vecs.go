@@ -39,6 +39,14 @@ func (vs Vectors) Sum() (v Vector) {
 	return
 }
 
+func (vs Vectors) Multiply(s BaseType) {
+	var multiply func(*Vector)
+	multiply = func(v *Vector) {
+		v.Multiply(s)
+	}
+	vs.ForEachNoParameter(multiply)
+}
+
 func (vs Vectors) Max() (v Vector) {
 	v.Set(vs[0])
 	v.Reduce(vs[1:], (*Vector).Max)
@@ -150,3 +158,14 @@ func matrixApplyChunked(vs Vectors, fn func(*Vector, Matrix), m Matrix, chunkSiz
 		<-done
 	}
 }
+
+
+// apply a function without a vector parameter using a dummy
+func (vs Vectors) ForEachNoParameter(fn func(*Vector)) {
+	var inner func(*Vector, Vector)
+	inner = func(v *Vector, _ Vector) {
+		fn(v)
+	}
+	vs.ForEach(inner, Vector{})
+}
+

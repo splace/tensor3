@@ -187,11 +187,11 @@ func vectorApplyChunked(ms Matrices, mfn func(*Matrix, func(*Vector, Vector), Ve
 	}
 }
 
-// apply a function without matrix parameter using a dummy matrix
+// apply a function without matrix parameter using a dummy
 func (ms Matrices) ForEachNoParameter(fn func(*Matrix)) {
 	var inner func(*Matrix, Matrix)
 	inner = func(m1 *Matrix, _ Matrix) {
 		fn(m1)
 	}
-	ms.ForEach(inner, Matrix{})
+	ms.ForEach(inner, Matrix{})   //TODO make new each time?
 }
