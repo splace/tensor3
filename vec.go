@@ -130,7 +130,7 @@ func (v *Vector) Project(axis Vector) {
 func (v *Vector) LongestAxis() Axis {
 	var ll Vector
 	ll.Set(*v)
-	ll.LengthLength()
+	ll.Project(*v)
 	if ll.z >ll.y {
 		if ll.y>ll.x {
 			return zAxisIndex
