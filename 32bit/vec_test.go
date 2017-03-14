@@ -91,6 +91,10 @@ func TestVecLongestAxis(t *testing.T) {
 	if v.LongestAxis() != zAxisIndex {
 		t.Error(v.LongestAxis())
 	}
+	v.Subtract( Vector{0, 0, 3})
+	if v.LongestAxis() != yAxisIndex {
+		t.Error(v.LongestAxis())
+	}
 }
 
 

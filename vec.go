@@ -128,15 +128,18 @@ func (v *Vector) Project(axis Vector) {
 
 // axis which vector is most aligned with. 
 func (v *Vector) LongestAxis() Axis {
-	if v.z >v.y {
-		if v.y>v.x {
+	var ll Vector
+	ll.Set(*v)
+	ll.LengthLength()
+	if ll.z >ll.y {
+		if ll.y>ll.x {
 			return zAxisIndex
 			}
-		if v.x > v.z{
+		if ll.x > ll.z{
 			return xAxisIndex
 			}
 		}
-	if v.x >v.y {
+	if ll.x >ll.y {
 		return xAxisIndex
 	}
 	return yAxisIndex
