@@ -10,6 +10,13 @@ func TestVecsPrint(t *testing.T) {
 	}
 }
 
+func TestVecsNew(t *testing.T) {
+	v := NewVectors(1, 2, 3, 4, 5, 6,7)
+	if fmt.Sprint(v) != "[{1 2 3} {4 5 6} {7 0 0}]" {
+		t.Error(fmt.Sprint(v))
+	}
+}
+
 func TestVecsCrossLen1(t *testing.T) {
 	v := Vectors{Vector{1, 2, 3}}
 	v.Cross(Vector{4, 5, 6})

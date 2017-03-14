@@ -16,7 +16,7 @@ var AxisPlanes = [3]Vector{xPlane, yPlane, zPlane}
 // missing components default to zero, more than 3 are ignored
 func NewVector(cs ...BaseType) (v Vector) {
 	switch len(cs) {
-	case 3:
+	default:
 		v.z = cs[2]
 		fallthrough
 	case 2:
@@ -24,6 +24,8 @@ func NewVector(cs ...BaseType) (v Vector) {
 		fallthrough
 	case 1:
 		v.x = cs[0]
+	case 0:
+		return
 	}
 	return
 }

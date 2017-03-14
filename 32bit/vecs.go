@@ -2,6 +2,14 @@ package tensor3
 
 type Vectors []Vector
 
+func NewVectors(cs ...BaseType)(vs Vectors){
+	vs=make(Vectors,(len(cs)+2)/3)
+	for i:=range(vs){
+		vs[i]=NewVector(cs[i*3:]...)
+	}
+	return
+}
+
 func (vs Vectors) Cross(v Vector) {
 	vs.ForEach((*Vector).Cross, v)
 }
