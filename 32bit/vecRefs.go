@@ -11,6 +11,22 @@ func NewVectorRefs(cs ...BaseType)(vs VectorRefs){
 	return
 }
 
+func NewVectorRefsFromIndexes(indexes []uint, cs ...Vector)(vs VectorRefs){
+	vs=make(VectorRefs,len(indexes))
+	for i:=range(vs){
+		vs[i]=&cs[indexes[i]-1]
+	}
+	return
+}
+
+func (vsr VectorRefs) Dereference() (vs Vectors) {
+	vs=make(Vectors,len(vsr))
+	for i:=range(vs){
+		vs[i]=*vsr[i]
+	}
+	return
+}
+
 func (vs VectorRefs) Cross(v Vector) {
 	vs.ForEach((*Vector).Cross, v)
 }
