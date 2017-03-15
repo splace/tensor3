@@ -119,6 +119,12 @@ func (v *Vector) Reduce(vs Vectors, fn func(*Vector, Vector)) {
 	}
 }
 
+func (v *Vector) ReduceRefs(vs VectorRefs, fn func(*Vector, Vector)) {
+	for _, v2 := range vs {
+		fn(v, *v2)
+	}
+}
+
 // component wise multiplication. Use an axis-plane and this will project the vector to that axis.
 func (v *Vector) Project(axis Vector) {
 	v.x *= axis.x
