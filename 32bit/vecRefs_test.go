@@ -19,8 +19,9 @@ func TestVecRefsDereference(t *testing.T) {
 
 
 func TestVecsFromVectorRefs(t *testing.T) {
-	vr1:=NewVectorRefsFromIndexes([]uint{1},NewVectors(1, 2, 3, 4, 5, 6,7)...)
-	vr2:=NewVectorRefsFromIndexes([]uint{3},NewVectors(1, 2, 3, 4, 5, 6,7)...)
+	vs:=NewVectors(1, 2, 3, 4, 5, 6,7)
+	vr1:=NewVectorRefsFromIndexes([]uint{1},vs...)
+	vr2:=NewVectorRefsFromIndexes([]uint{3},vs...)
 	vr:=NewVectorsFromVectorRefs(vr1,vr2)
 	if fmt.Sprint(vr) != "[{1 2 3} {7 0 0}]" {
 		t.Error(fmt.Sprint(vr))
@@ -31,6 +32,21 @@ func TestVecsFromVectorRefs(t *testing.T) {
 	if fmt.Sprint(vr2.Dereference()) != "[{7 0 0}]" {
 		t.Error(fmt.Sprint(vr2.Dereference()))
 	}
+}
+
+func TestVecsIndexesFromVectorRefs(t *testing.T) {
+	vs:=NewVectors(1, 2, 3, 4, 5, 6,7)
+	vr1:=NewVectorRefsFromIndexes([]uint{3},vs...)
+	vr2:=NewVectorRefsFromIndexes([]uint{2},vs...)
+	vr:=NewVectorsFromVectorRefs(vr2,vr1)
+	if fmt.Sprint(vr) != "[{4 5 6} {7 0 0}]" {
+		t.Error(fmt.Sprint(vr))
+	}
+	is:=vr.Indexes(vr1)
+	if fmt.Sprint(is) != "[2]" {
+		t.Error(fmt.Sprint(is))
+	}
+
 }
 
 
