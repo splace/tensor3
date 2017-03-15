@@ -72,7 +72,7 @@ func TestMatrixInvertDet(t *testing.T) {
 	d:=m.Determinant()
 	m.Invert()
 	di:=m.Determinant()
-	if d - 1/di>1e-8{
+	if d - 1/di>1e-5{
 		fmt.Println(d,1/di)
 		t.Error("The determinant of a matrix product of square matrices did NOT equal the product of their determinants:")
 	}
