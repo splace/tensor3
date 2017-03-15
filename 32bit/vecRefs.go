@@ -19,8 +19,8 @@ func NewVectorRefsFromIndexes(indexes []uint, cs ...Vector)(vs VectorRefs){
 	return
 }
 
+// rebases a number of vectorrefs to point into a new returned vectors.
 func NewVectorsFromVectorRefs(vss ...VectorRefs) Vectors {
-	// make a new underlying Vectors, returned, and modify VectorRefs to point into it
 	m:=make(map[*Vector]uint)
 	for _,vs :=range(vss){
 		for _,v:=range(vs) {
@@ -30,7 +30,14 @@ func NewVectorsFromVectorRefs(vss ...VectorRefs) Vectors {
 		}
 	}
 	nv:=make(Vectors,len(m))
-	// TODO	
+	for vr,index:=range(m){
+		nv[index]=*vr
+	}
+	for _,vs :=range(vss){
+		for i,vr:=range(vs) {
+			vs[i]=&nv[m[vr]]
+		}
+	}	
 	return nv
 }
 
