@@ -19,6 +19,22 @@ func NewVectorRefsFromIndexes(indexes []uint, cs ...Vector)(vs VectorRefs){
 	return
 }
 
+func NewVectorsFromVectorRefs(vss ...VectorRefs) Vectors {
+	// make a new underlying Vectors, returned, and modify VectorRefs to point into it
+	m:=make(map[*Vector]uint)
+	for _,vs :=range(vss){
+		for _,v:=range(vs) {
+			if _,ok:=m[v];!ok{
+				m[v]=uint(len(m))
+			}
+		}
+	}
+	nv:=make(Vectors,len(m))
+	// TODO	
+	return nv
+}
+
+
 func (vsr VectorRefs) Dereference() (vs Vectors) {
 	vs=make(Vectors,len(vsr))
 	for i:=range(vs){
