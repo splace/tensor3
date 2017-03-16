@@ -14,9 +14,9 @@ var yzPlane, xzPlane, zxPlane = Vector{0, 1, 1}, Vector{1, 0, 1}, Vector{1, 1, 0
 type Axis uint
 
 const ( 
-	xAxisIndex Axis = iota 
-	yAxisIndex
-	zAxisIndex
+	XAxisIndex Axis = iota 
+	YAxisIndex
+	ZAxisIndex
 )
 
 var Axes = [3]Vector{xAxis, yAxis, zAxis}
@@ -139,16 +139,16 @@ func (v *Vector) LongestAxis() Axis {
 	ll.Project(*v)
 	if ll.z >ll.y {
 		if ll.y>ll.x {
-			return zAxisIndex
+			return ZAxisIndex
 			}
 		if ll.x > ll.z{
-			return xAxisIndex
+			return XAxisIndex
 			}
 		}
 	if ll.x >ll.y {
-		return xAxisIndex
+		return XAxisIndex
 	}
-	return yAxisIndex
+	return YAxisIndex
 }
 
 // vector - matrix multiplication

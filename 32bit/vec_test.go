@@ -88,15 +88,15 @@ func TestVecProject(t *testing.T) {
 
 func TestVecLongestAxis(t *testing.T) {
 	v := Vector{1, 2, 3}
-	if v.LongestAxis() != zAxisIndex {
+	if v.LongestAxis() != ZAxisIndex {
 		t.Error(v.LongestAxis())
 	}
 	v.Subtract( Vector{0, 0, 3})
-	if v.LongestAxis() != yAxisIndex {
+	if v.LongestAxis() != YAxisIndex {
 		t.Error(v.LongestAxis())
 	}
 	v.Subtract( Vector{4, 0, 0})
-	if v.LongestAxis() != xAxisIndex {
+	if v.LongestAxis() != XAxisIndex {
 		t.Error(v.LongestAxis())
 	}
 }

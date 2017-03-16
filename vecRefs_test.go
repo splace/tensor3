@@ -35,16 +35,14 @@ func TestVecsFromVectorRefs(t *testing.T) {
 }
 
 func TestVecsIndexesFromVectorRefs(t *testing.T) {
-	vs:=NewVectors(1, 2, 3, 4, 5, 6,7)
-	vr1:=NewVectorRefsFromIndexes([]uint{3},vs...)
-	vr2:=NewVectorRefsFromIndexes([]uint{2},vs...)
+	vs:=NewVectors(1, 2, 3, 4, 5, 6,7,8,9,10,11,12,13,14,15,16)
+	vr1:=NewVectorRefsFromIndexes([]uint{3,5,1},vs...)
+	vr2:=NewVectorRefsFromIndexes([]uint{2,5},vs...)
 	vr:=NewVectorsFromVectorRefs(vr2,vr1)
-	if fmt.Sprint(vr) != "[{4 5 6} {7 0 0}]" {
-		t.Error(fmt.Sprint(vr))
-	}
-	is:=vr.Indexes(vr1)
-	if fmt.Sprint(is) != "[2]" {
-		t.Error(fmt.Sprint(is))
+	is1:=vr.Indexes(vr1)
+	is2:=vr.Indexes(vr2)
+	if fmt.Sprint(is1,is2,vr) != "[3 2 4] [1 2] [{4 5 6} {13 14 15} {7 8 9} {1 2 3}]" {
+		t.Error(fmt.Sprint(is1,is2,vr))
 	}
 
 }
