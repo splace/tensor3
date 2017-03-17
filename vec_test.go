@@ -95,12 +95,26 @@ func TestVecLongestAxis(t *testing.T) {
 	if v.LongestAxis() != YAxisIndex {
 		t.Error(v.LongestAxis())
 	}
-	v.Subtract( Vector{4, 0, 0})
+	v.Subtract( Vector{0, 2, 0})
 	if v.LongestAxis() != XAxisIndex {
 		t.Error(v.LongestAxis())
 	}
 }
 
+func TestVecShortestAxis(t *testing.T) {
+	v := Vector{1, 2, 3}
+	if v.ShortestAxis() != XAxisIndex {
+		t.Error(v.ShortestAxis())
+	}
+	v.Subtract( Vector{-1, 0, 3})
+	if v.ShortestAxis() != ZAxisIndex {
+		t.Error(v.ShortestAxis())
+	}
+	v.Subtract( Vector{-1, 0, -3})
+	if v.ShortestAxis() != YAxisIndex {
+		t.Error(v.ShortestAxis())
+	}
+}
 
 func TestVecMax(t *testing.T) {
 	v := Vector{1, 2, 3}

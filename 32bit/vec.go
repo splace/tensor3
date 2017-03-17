@@ -133,22 +133,33 @@ func (v *Vector) Project(axis Vector) {
 }
 
 // axis which vector is most aligned with. 
-func (v *Vector) LongestAxis() Axis {
-	var ll Vector
-	ll.Set(*v)
-	ll.Project(*v)
-	if ll.z >ll.y {
-		if ll.y>ll.x {
+func (v Vector) LongestAxis() Axis {
+	v.Project(v)
+	if v.z >v.y {
+		if v.z>v.x {
 			return ZAxisIndex
 			}
-		if ll.x > ll.z{
-			return XAxisIndex
-			}
+		return XAxisIndex
 		}
-	if ll.x >ll.y {
+	if v.x >v.y {
 		return XAxisIndex
 	}
 	return YAxisIndex
+}
+
+// axis which vector is least aligned with. 
+func (v Vector) ShortestAxis() Axis {
+	v.Project(v)
+	if v.z <v.y {
+		if v.x<v.z {
+			return XAxisIndex
+			}
+		return ZAxisIndex
+		}
+	if v.x >v.y {
+		return YAxisIndex
+	}
+	return XAxisIndex
 }
 
 // vector - matrix multiplication
