@@ -11,13 +11,14 @@ func NewVectorRefs(cs ...BaseType)(vs VectorRefs){
 	return
 }
 
-func NewVectorRefsFromIndexes(indexes []uint, cs ...Vector)(vs VectorRefs){
+func NewVectorRefsFromIndexes(cs Vectors,indexes ...uint)(vs VectorRefs){
 	vs=make(VectorRefs,len(indexes))
 	for i:=range(vs){
 		vs[i]=&cs[indexes[i]-1]
 	}
 	return
 }
+
 
 // rebases a number of vectorrefs to point into a new returned vectors.
 func NewVectorsFromVectorRefs(vss ...VectorRefs) Vectors {
