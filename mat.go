@@ -135,7 +135,7 @@ func (m *Matrix) Reduce(ms Matrices, fn func(*Matrix, Matrix)) {
 	}
 }
 
-// apply a vector(vector) function by each axis
+// apply a function to each of the matrices 3 vector components, using the existing component and the corresponding component of the passed matrix. 
 func (m *Matrix) ApplyToComponents(fn func(*Vector, Vector), m2 Matrix) {
 	if !ParallelComponents {
 		fn(&m.x, m2.x)
@@ -161,12 +161,12 @@ func (m *Matrix) ApplyToComponents(fn func(*Vector, Vector), m2 Matrix) {
 	}
 }
 
-// apply a vector(vector) function by each axis
+// apply a function to each of the matrices 3 vector components, using the existing component and the corresponding axis vector. 
 func (m *Matrix) ApplyToComponentsByAxes(fn func(*Vector, Vector)) {
 	m.ApplyToComponents(fn, Matrix{xAxis, yAxis, zAxis})
 }
 
-// apply a vector(vector) function
+// apply a function to each of the matrices 3 vector components, using the existing component and the passed vector. 
 func (m *Matrix) ApplyToComponentsBySameVector(fn func(*Vector, Vector), v Vector) {
 	if !ParallelComponents {
 		fn(&m.x, v)
@@ -192,15 +192,17 @@ func (m *Matrix) ApplyToComponentsBySameVector(fn func(*Vector, Vector), v Vecto
 	}
 }
 
-// apply a vector(vector) function to a component of a matrix
+// apply a function to matrices first vector component, using the existing component and the passed vector. 
 func (m *Matrix) applyX(fn func(*Vector, Vector), v Vector) {
 	fn(&m.x, v)
 }
 
+// apply a function to matrices second vector component, using the existing component and the passed vector. 
 func (m *Matrix) applyY(fn func(*Vector, Vector), v Vector) {
 	fn(&m.y, v)
 }
 
+// apply a function to matrices third vector component, using the existing component and the passed vector. 
 func (m *Matrix) applyZ(fn func(*Vector, Vector), v Vector) {
 	fn(&m.z, v)
 }
