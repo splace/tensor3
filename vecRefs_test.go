@@ -39,8 +39,8 @@ func TestVecsIndexesFromVectorRefs(t *testing.T) {
 	vr1:=NewVectorRefsFromIndexes(vs,3,5,1)
 	vr2:=NewVectorRefsFromIndexes(vs,2,5)
 	vr:=NewVectorsFromVectorRefs(vr2,vr1)
-	is1:=vr.Indexes(vr1)
-	is2:=vr.Indexes(vr2)
+	is1:=vr1.Indexes(vr)
+	is2:=vr2.Indexes(vr)
 	if fmt.Sprint(is1,is2,vr) != "[3 2 4] [1 2] [{4 5 6} {13 14 15} {7 8 9} {1 2 3}]" {
 		t.Error(fmt.Sprint(is1,is2,vr))
 	}

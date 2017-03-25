@@ -42,8 +42,9 @@ func NewVectorsFromVectorRefs(vss ...VectorRefs) Vectors {
 	return nv
 }
 
+
 // TODO find index from pointer, use unsafe? or read text?
-func (vs Vectors) Indexes(vsr VectorRefs) (is []uint) {
+func (vsr VectorRefs) Indexes(vs Vectors) (is []uint) {
 	is=make([]uint,len(vsr))
 	for ir,r:=range(vsr) {
 		for i:=range(vs) {
@@ -52,7 +53,6 @@ func (vs Vectors) Indexes(vsr VectorRefs) (is []uint) {
 	}
 	return is
 }
-
 
 
 func (vsr VectorRefs) Dereference() (vs Vectors) {
