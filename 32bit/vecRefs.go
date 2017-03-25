@@ -72,6 +72,7 @@ func (vs VectorRefs) Add(v Vector) {
 	vs.ForEach((*Vector).Add, v)
 }
 
+
 func (vs VectorRefs) Subtract(v Vector) {
 	vs.ForEach((*Vector).Subtract, v)
 }
@@ -149,7 +150,7 @@ func VectorRefsApply(vs VectorRefs, fn func(*Vector, Vector), v Vector) {
 func VectorRefsApplyChunked(vs VectorRefs, fn func(*Vector, Vector), v Vector, chunkSize uint) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range VectorRefsInChunks(vs, chunkSize) {
+	for chunk := range vectorRefsInChunks(vs, chunkSize) {
 		running++
 		go func(c VectorRefs) {
 			VectorRefsApply(c, fn, v)
@@ -161,7 +162,7 @@ func VectorRefsApplyChunked(vs VectorRefs, fn func(*Vector, Vector), v Vector, c
 	}
 }
 
-func VectorRefsInChunks(vs VectorRefs, chunkSize uint) chan VectorRefs {
+func vectorRefsInChunks(vs VectorRefs, chunkSize uint) chan VectorRefs {
 	c := make(chan VectorRefs, 1)
 	length := uint(len(vs))
 	go func() {
@@ -201,7 +202,7 @@ func matrixApplyRef(vs VectorRefs, fn func(*Vector, Matrix), m Matrix) {
 func matrixApplyRefChunked(vs VectorRefs, fn func(*Vector, Matrix), m Matrix, chunkSize uint) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range VectorRefsInChunks(vs, chunkSize) {
+	for chunk := range vectorRefsInChunks(vs, chunkSize) {
 		running++
 		go func(c VectorRefs) {
 			matrixApplyRef(c, fn, m)
@@ -222,4 +223,176 @@ func (vs VectorRefs) ForEachNoParameter(fn func(*Vector)) {
 	}
 	vs.ForEach(inner, Vector{})
 }
+
+
+func (vs Vectors) CrossAllRefs(vs2 VectorRefs) {
+	vs.ForAllRefs((*Vector).Cross, vs2)
+}
+
+
+func (vs Vectors) AddAllRefs(vs2 VectorRefs) {
+	vs.ForAllRefs((*Vector).Add, vs2)
+}
+
+
+func (vs Vectors) SubtractAllRefs(vs2 VectorRefs) {
+	vs.ForAllRefs((*Vector).Subtract, vs2)
+}
+
+func (vs Vectors) ProjectAllRefs(vs2 VectorRefs) {
+	vs.ForAllRefs((*Vector).Project, vs2)
+}
+
+func (vs Vectors) ForAllRefs(fn func(*Vector, Vector), vs2 VectorRefs) {
+	if !Parallel {
+		vectorsApplyAllRefs(vs, fn, vs2)
+	} else {
+		if Hints.ChunkSizeFixed {
+			vectorsApplyAllRefsChunked(vs, fn, vs2, Hints.DefaultChunkSize)
+		} else {
+			cs := uint(len(vs)) / (Hints.Threads + 1)
+			if cs < Hints.DefaultChunkSize {
+				cs = Hints.DefaultChunkSize
+			}
+			vectorsApplyAllRefsChunked(vs, fn, vs2, cs)
+		}
+	}
+}
+
+func vectorsApplyAllRefs(vs Vectors, fn func(*Vector, Vector), vs2 VectorRefs) {
+	for i := range vs {
+		fn(&vs[i], *vs2[i])
+	}
+}
+
+func vectorsApplyAllRefsChunked(vs Vectors, fn func(*Vector, Vector), vs2 VectorRefs, chunkSize uint) {
+	done := make(chan struct{}, 1)
+	var running uint
+	chunks2:=vectorRefsInChunks(vs2, chunkSize)
+	for chunk := range vectorsInChunks(vs, chunkSize) {
+		running++
+		go func(c Vectors) {
+			vectorsApplyAllRefs(c, fn, <-chunks2)
+			done <- struct{}{}
+		}(chunk)
+	}
+	for ; running > 0; running-- {
+		<-done
+	}
+}
+
+
+func (vs VectorRefs) CrossAllRefs(vs2 VectorRefs) {
+	vs.ForAllRefs((*Vector).Cross, vs2)
+}
+
+
+func (vs VectorRefs) AddAllRefs(vs2 VectorRefs) {
+	vs.ForAllRefs((*Vector).Add, vs2)
+}
+
+
+func (vs VectorRefs) SubtractAllRefs(vs2 VectorRefs) {
+	vs.ForAllRefs((*Vector).Subtract, vs2)
+}
+
+func (vs VectorRefs) ProjectAllRefs(vs2 VectorRefs) {
+	vs.ForAllRefs((*Vector).Project, vs2)
+}
+
+func (vs VectorRefs) ForAllRefs(fn func(*Vector, Vector), vs2 VectorRefs) {
+	if !Parallel {
+		vectorRefsApplyAllRefs(vs, fn, vs2)
+	} else {
+		if Hints.ChunkSizeFixed {
+			vectorRefsApplyAllChunkedRefs(vs, fn, vs2, Hints.DefaultChunkSize)
+		} else {
+			cs := uint(len(vs)) / (Hints.Threads + 1)
+			if cs < Hints.DefaultChunkSize {
+				cs = Hints.DefaultChunkSize
+			}
+			vectorRefsApplyAllChunkedRefs(vs, fn, vs2, cs)
+		}
+	}
+}
+
+func vectorRefsApplyAllRefs(vs VectorRefs, fn func(*Vector, Vector), vs2 VectorRefs) {
+	for i := range vs {
+		fn(vs[i], *vs2[i])
+	}
+}
+
+func vectorRefsApplyAllChunkedRefs(vs VectorRefs, fn func(*Vector, Vector), vs2 VectorRefs, chunkSize uint) {
+	done := make(chan struct{}, 1)
+	var running uint
+	chunks2:=vectorRefsInChunks(vs2, chunkSize)
+	for chunk := range vectorRefsInChunks(vs, chunkSize) {
+		running++
+		go func(c VectorRefs) {
+			vectorRefsApplyAllRefs(c, fn, <-chunks2)
+			done <- struct{}{}
+		}(chunk)
+	}
+	for ; running > 0; running-- {
+		<-done
+	}
+}
+
+
+func (vs VectorRefs) CrossAll(vs2 Vectors) {
+	vs.ForAll((*Vector).Cross, vs2)
+}
+
+
+func (vs VectorRefs) AddAll(vs2 Vectors) {
+	vs.ForAll((*Vector).Add, vs2)
+}
+
+
+func (vs VectorRefs) SubtractAll(vs2 Vectors) {
+	vs.ForAll((*Vector).Subtract, vs2)
+}
+
+func (vs VectorRefs) ProjectAll(vs2 Vectors) {
+	vs.ForAll((*Vector).Project, vs2)
+}
+
+func (vs VectorRefs) ForAll(fn func(*Vector, Vector), vs2 Vectors) {
+	if !Parallel {
+		vectorRefsApplyAll(vs, fn, vs2)
+	} else {
+		if Hints.ChunkSizeFixed {
+			vectorRefsApplyAllChunked(vs, fn, vs2, Hints.DefaultChunkSize)
+		} else {
+			cs := uint(len(vs)) / (Hints.Threads + 1)
+			if cs < Hints.DefaultChunkSize {
+				cs = Hints.DefaultChunkSize
+			}
+			vectorRefsApplyAllChunked(vs, fn, vs2, cs)
+		}
+	}
+}
+
+func vectorRefsApplyAll(vs VectorRefs, fn func(*Vector, Vector), vs2 Vectors) {
+	for i := range vs {
+		fn(vs[i], vs2[i])
+	}
+}
+
+func vectorRefsApplyAllChunked(vs VectorRefs, fn func(*Vector, Vector), vs2 Vectors, chunkSize uint) {
+	done := make(chan struct{}, 1)
+	var running uint
+	chunks2:=vectorsInChunks(vs2, chunkSize)
+	for chunk := range vectorRefsInChunks(vs, chunkSize) {
+		running++
+		go func(c VectorRefs) {
+			vectorRefsApplyAll(c, fn, <-chunks2)
+			done <- struct{}{}
+		}(chunk)
+	}
+	for ; running > 0; running-- {
+		<-done
+	}
+}
+
 

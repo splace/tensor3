@@ -63,6 +63,77 @@ func TestVecRefsSum(t *testing.T) {
 	}
 }
 
+func TestVecRefsAddRefs(t *testing.T) {
+	vs := VectorRefs{&Vector{1,2, 3}, &Vector{4, 5, 6}, &Vector{7, 8, 9}}
+	vs2 := VectorRefs{&Vector{9, 8, 7}, &Vector{6, 5, 4}, &Vector{3, 2, 1}}
+	vs.AddAllRefs(vs2)
+	if fmt.Sprint(*vs[0],*vs[1],*vs[2]) != "{10 10 10} {10 10 10} {10 10 10}"{
+		t.Error(fmt.Sprint(*vs[0],*vs[1],*vs[2]))
+	}
+}
+
+func TestVecRefsCrossRefs(t *testing.T) {
+	vs := VectorRefs{&Vector{1,2, 3}, &Vector{4, 5, 6}, &Vector{7, 8, 9}}
+	vs2 := VectorRefs{&Vector{9, 8, 7}, &Vector{6, 5, 4}, &Vector{3, 2, 1}}
+	vs.CrossAllRefs(vs2)
+	if fmt.Sprint(*vs[0],*vs[1],*vs[2]) != "{-10 20 -10} {-10 20 -10} {-10 20 -10}"{
+		t.Error(fmt.Sprint(*vs[0],*vs[1],*vs[2]))
+	}
+}
+
+
+func TestVecsAddVecRefs(t *testing.T) {
+	vs := Vectors{Vector{1,2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}
+	vs2 := VectorRefs{&Vector{9, 8, 7}, &Vector{6, 5, 4}, &Vector{3, 2, 1}}
+	vs.AddAllRefs(vs2)
+	if fmt.Sprint(vs[0],vs[1],vs[2]) != "{10 10 10} {10 10 10} {10 10 10}"{
+		t.Error(fmt.Sprint(vs[0],vs[1],vs[2]))
+	}
+}
+
+func TestVecsCrossVecRefs(t *testing.T) {
+	vs := Vectors{Vector{1,2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}
+	vs2 := VectorRefs{&Vector{9, 8, 7}, &Vector{6, 5, 4}, &Vector{3, 2, 1}}
+	vs.CrossAllRefs(vs2)
+	if fmt.Sprint(vs[0],vs[1],vs[2]) != "{-10 20 -10} {-10 20 -10} {-10 20 -10}"{
+		t.Error(fmt.Sprint(vs[0],vs[1],vs[2]))
+	}
+}
+func TestVecsRefsAddVecs(t *testing.T) {
+	vs := VectorRefs{&Vector{1,2, 3}, &Vector{4, 5, 6}, &Vector{7, 8, 9}}
+	vs2 := Vectors{Vector{9, 8, 7}, Vector{6, 5, 4}, Vector{3, 2, 1}}
+	vs.AddAll(vs2)
+	if fmt.Sprint(*vs[0],*vs[1],*vs[2]) != "{10 10 10} {10 10 10} {10 10 10}"{
+		t.Error(fmt.Sprint(*vs[0],*vs[1],*vs[2]))
+	}
+}
+
+func TestVecRefsCrossVecs(t *testing.T) {
+	vs := VectorRefs{&Vector{1,2, 3}, &Vector{4, 5, 6}, &Vector{7, 8, 9}}
+	vs2 := Vectors{Vector{9, 8, 7}, Vector{6, 5, 4}, Vector{3, 2, 1}}
+	vs.CrossAll(vs2)
+	if fmt.Sprint(*vs[0],*vs[1],*vs[2]) != "{-10 20 -10} {-10 20 -10} {-10 20 -10}"{
+		t.Error(fmt.Sprint(*vs[0],*vs[1],*vs[2]))
+	}
+}
+
+func TestVecsRefsAddVecRefs(t *testing.T) {
+	vs := VectorRefs{&Vector{1,2, 3}, &Vector{4, 5, 6}, &Vector{7, 8, 9}}
+	vs2 := VectorRefs{&Vector{9, 8, 7}, &Vector{6, 5, 4}, &Vector{3, 2, 1}}
+	vs.AddAllRefs(vs2)
+	if fmt.Sprint(*vs[0],*vs[1],*vs[2]) != "{10 10 10} {10 10 10} {10 10 10}"{
+		t.Error(fmt.Sprint(*vs[0],*vs[1],*vs[2]))
+	}
+}
+
+func TestVecRefsCrossVecRefs(t *testing.T) {
+	vs := VectorRefs{&Vector{1,2, 3}, &Vector{4, 5, 6}, &Vector{7, 8, 9}}
+	vs2 := VectorRefs{&Vector{9, 8, 7}, &Vector{6, 5, 4}, &Vector{3, 2, 1}}
+	vs.CrossAllRefs(vs2)
+	if fmt.Sprint(*vs[0],*vs[1],*vs[2]) != "{-10 20 -10} {-10 20 -10} {-10 20 -10}"{
+		t.Error(fmt.Sprint(*vs[0],*vs[1],*vs[2]))
+	}
+}
 
 
 

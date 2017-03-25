@@ -169,3 +169,60 @@ func (vs Vectors) ForEachNoParameter(fn func(*Vector)) {
 	vs.ForEach(inner, Vector{})
 }
 
+func (vs Vectors) CrossAll(vs2 Vectors) {
+	vs.ForAll((*Vector).Cross, vs2)
+}
+
+
+func (vs Vectors) AddAll(vs2 Vectors) {
+	vs.ForAll((*Vector).Add, vs2)
+}
+
+
+func (vs Vectors) SubtractAll(vs2 Vectors) {
+	vs.ForAll((*Vector).Subtract, vs2)
+}
+
+func (vs Vectors) ProjectAll(vs2 Vectors) {
+	vs.ForAll((*Vector).Project, vs2)
+}
+
+
+func (vs Vectors) ForAll(fn func(*Vector, Vector), vs2 Vectors) {
+	if !Parallel {
+		vectorsApplyAll(vs, fn, vs2)
+	} else {
+		if Hints.ChunkSizeFixed {
+			vectorsApplyAllChunked(vs, fn, vs2, Hints.DefaultChunkSize)
+		} else {
+			cs := uint(len(vs)) / (Hints.Threads + 1)
+			if cs < Hints.DefaultChunkSize {
+				cs = Hints.DefaultChunkSize
+			}
+			vectorsApplyAllChunked(vs, fn, vs2, cs)
+		}
+	}
+}
+
+func vectorsApplyAll(vs Vectors, fn func(*Vector, Vector), vs2 Vectors) {
+	for i := range vs {
+		fn(&vs[i], vs2[i])
+	}
+}
+
+func vectorsApplyAllChunked(vs Vectors, fn func(*Vector, Vector), vs2 Vectors, chunkSize uint) {
+	done := make(chan struct{}, 1)
+	var running uint
+	chunks2:=vectorsInChunks(vs2, chunkSize)
+	for chunk := range vectorsInChunks(vs, chunkSize) {
+		running++
+		go func(c Vectors) {
+			vectorsApplyAll(c, fn, <-chunks2)
+			done <- struct{}{}
+		}(chunk)
+	}
+	for ; running > 0; running-- {
+		<-done
+	}
+}
+

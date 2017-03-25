@@ -137,6 +137,24 @@ func TestVecsCrossChunked3(t *testing.T) {
 	Parallel = false
 }
 
+func TestVecsAddVecs(t *testing.T) {
+	vs := Vectors{Vector{1,2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}
+	vs2 := Vectors{Vector{9, 8, 7}, Vector{6, 5, 4}, Vector{3, 2, 1}}
+	vs.AddAll(vs2)
+	if fmt.Sprint(vs[0],vs[1],vs[2]) != "{10 10 10} {10 10 10} {10 10 10}"{
+		t.Error(fmt.Sprint(vs[0],vs[1],vs[2]))
+	}
+}
+
+func TestVecsCrossVecs(t *testing.T) {
+	vs := Vectors{Vector{1,2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}
+	vs2 := Vectors{Vector{9, 8, 7}, Vector{6, 5, 4}, Vector{3, 2, 1}}
+	vs.CrossAll(vs2)
+	if fmt.Sprint(vs[0],vs[1],vs[2]) != "{-10 20 -10} {-10 20 -10} {-10 20 -10}"{
+		t.Error(fmt.Sprint(vs[0],vs[1],vs[2]))
+	}
+}
+
 func BenchmarkVecsCross(b *testing.B) {
 	b.StopTimer()
 	vs := make(Vectors, 1000000)
