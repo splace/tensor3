@@ -12,9 +12,16 @@ func NewVectorRefs(cs ...BaseType)(vs VectorRefs){
 }
 
 func NewVectorRefsFromIndexes(cs Vectors,indexes ...uint)(vs VectorRefs){
-	vs=make(VectorRefs,len(indexes))
-	for i:=range(vs){
-		vs[i]=&cs[indexes[i]-1]
+	if len(indexes)==0{
+		vs=make(VectorRefs,len(cs))
+		for i:=range(cs){
+			vs[i]=&cs[i]
+		}
+	}else{
+		vs=make(VectorRefs,len(indexes))
+		for i:=range(vs){
+			vs[i]=&cs[indexes[i]-1]
+		}
 	}
 	return
 }
