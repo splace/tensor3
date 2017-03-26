@@ -10,10 +10,19 @@ func TestVecRefsNewFromIndexes(t *testing.T) {
 	}
 }
 
-func TestVecRefsDereference(t *testing.T) {
+func TestVecRefsDereferenceNew(t *testing.T) {
 	vr:=NewVectorRefsFromIndexes(NewVectors(1, 2, 3, 4, 5, 6,7),1,3,2)
 	if fmt.Sprint(vr.Dereference()) != "[{1 2 3} {7 0 0} {4 5 6}]" {
 		t.Error(fmt.Sprint(vr.Dereference()))
+	}
+}
+
+func TestVecRefsDereference(t *testing.T) {
+	vr:=NewVectorRefsFromIndexes(NewVectors(1, 2, 3, 4, 5, 6,7),1,3,2)
+	v:=make(Vectors,2)
+	v.Dereference(vr)
+	if fmt.Sprint(v) != "[{1 2 3} {7 0 0}]" {
+		t.Error(fmt.Sprint(v))
 	}
 }
 

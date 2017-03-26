@@ -63,6 +63,20 @@ func (vsr VectorRefs) Dereference() (vs Vectors) {
 	return
 }
 
+func (vs Vectors) Dereference(vsr VectorRefs) {
+	if len(vs)>len(vsr){
+		for i:=range(vsr){
+			vs[i]=*vsr[i]
+		}
+	}else{
+		for i:=range(vs){
+			vs[i]=*vsr[i]
+		}
+	}
+	return
+}
+
+
 func (vs VectorRefs) Cross(v Vector) {
 	vs.ForEach((*Vector).Cross, v)
 }
