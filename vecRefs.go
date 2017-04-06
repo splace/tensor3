@@ -32,7 +32,7 @@ func NewVectorsFromVectorRefs(vss ...VectorRefs) Vectors {
 	m:=make(map[*Vector]uint)
 	for _,vs :=range(vss){
 		for _,v:=range(vs) {
-			if _,ok:=m[v];!ok{
+			if _,ok:=m[v];!ok{  
 				m[v]=uint(len(m))
 			}
 		}
