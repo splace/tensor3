@@ -17,13 +17,13 @@ func main(){
 	for i := 0; i < 10; i++ {
 		ms.Product(m)
 	}
-	fmt.Println(time.Since(start))	
+	fmt.Printf("64bit.\t%v\n",time.Since(start)/1000000)	
 	Parallel=true
 	start=time.Now()
 	for i := 0; i < 10; i++ {
 		ms.Product(m)
 	}
-	fmt.Println(time.Since(start))	
+	fmt.Printf("64bit parallel(2 core).\t%v\n",time.Since(start)/1000000)	
 
 	ms32 := make(ttbt.Matrices, 100000)
 	for i := range ms {
@@ -35,7 +35,7 @@ func main(){
 	for i := 0; i < 10; i++ {
 		ms32.Product(m32)
 	}
-	fmt.Println(time.Since(start))	
+	fmt.Printf("32bit.\t %v.\n",time.Since(start)/1000000)	
 	ms32p := make(ttbtp.Matrices, 100000)
 	for i := range ms {
 		ms32[i] = ttbtp.NewMatrix(1, 2, 3,4, 5, 6,7, 8, 9)
@@ -46,17 +46,22 @@ func main(){
 	for i := 0; i < 10; i++ {
 		ms32p.Product(m32p)
 	}
-	fmt.Println(time.Since(start))	
+	fmt.Printf("Parallel 32bit(2 core)\t %v\n",time.Since(start)/1000000)	
 }
 
-/*  Hal3 Fri 10 Mar 16:27:07 GMT 2017 go version go1.6.2 linux/amd64
-Fri 10 Mar 16:27:07 GMT 2017
+/*  Hal3 Sun 9 Apr 18:26:35 BST 2017 go version go1.6.2 linux/amd64
+64bit.	41ns
+64bit parallel(2 core).	42ns
+32bit.	 37ns.
+Parallel 32bit(2 core)	 33ns
+Sun 9 Apr 18:26:37 BST 2017
 */
-/*  Hal3 Fri 10 Mar 16:27:30 GMT 2017 go version go1.6.2 linux/amd64
-41.722678ms
-43.37056ms
-27.509332ms
-28.380486ms
-Fri 10 Mar 16:27:31 GMT 2017
+/*  Hal3 Sun 9 Apr 18:27:13 BST 2017  go version go1.8 linux/amd64
+
+64bit.	40ns
+64bit parallel(2 core).	43ns
+32bit.	 28ns.
+Parallel 32bit(2 core)	 21ns
+Sun 9 Apr 18:27:14 BST 2017
 */
 
