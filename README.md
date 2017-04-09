@@ -1,10 +1,12 @@
 /*
 
-Vector, (3-component), and Matrix, (3-Vector).
+Vector, (3-component), and Matrix, (3-Vector) Types.
 
 useful methods on same, operating in-place, not returning reference. (so no single line chained functions.)
 
 arrays of both, called Vectors and Matrices, with their useful methods.
+
+VectorRefs, array of pointers to Vector, with methods to convert to/from Vectors.
 
 64 or 32bit
 
