@@ -10,7 +10,7 @@ arrays of both, called Vectors and Matrices, with their useful methods.
 
 operations can be switched, with a global var, between single and parallel thread solutions.
 
-(import package multiple times to enable simultaneous use of both modes.)
+(import package multiple times, with different aliases, to enable simultaneous use of both modes.)
 
 arrays selectively broken into chunks for optimised parallelization.
 
