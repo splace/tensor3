@@ -1,6 +1,6 @@
 package main
 
-import . "github.com/splace/tensor3"
+import . "github.com/splace/tensor3/32bit"
 import "time"
 import "fmt"
 
@@ -27,4 +27,20 @@ func main(){
 	fmt.Println(time.Since(start))	
 }
 
+/*  Hal3 Sun 9 Apr 18:53:12 BST 2017 go version go1.6.2 linux/amd64
+4.275177412s
+4.027586475s
+Sun 9 Apr 18:53:21 BST 2017
+*/
+/*  Hal3 Sun 9 Apr 18:53:36 BST 2017 go version go1.6.2 linux/amd64
+2.803393529s
+2.065988983s
+Sun 9 Apr 18:53:42 BST 2017
+*/
+/*  Hal3 Sun 9 Apr 18:53:49 BST 2017  go version go1.8 linux/amd64
+
+2.833770341s
+2.041434037s
+Sun 9 Apr 18:53:55 BST 2017
+*/
 

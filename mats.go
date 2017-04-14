@@ -104,29 +104,29 @@ func (ms Matrices) ApplyComponentWiseVariac(v Vector, fns ...interface{}) {
 
 func (ms Matrices) ForEach(fn func(*Matrix, Matrix), v Matrix) {
 	if !Parallel {
-		MatricesApply(ms, fn, v)
+		matricesApply(ms, fn, v)
 	} else {
 		if Hints.ChunkSizeFixed {
-			MatricesApplyChunked(ms, fn, v, Hints.DefaultChunkSize)
+			matricesApplyChunked(ms, fn, v, Hints.DefaultChunkSize)
 		} else {
-			MatricesApplyChunked(ms, fn, v, Hints.DefaultChunkSize+uint(len(ms))/(Hints.Threads+1))
+			matricesApplyChunked(ms, fn, v, Hints.DefaultChunkSize+uint(len(ms))/(Hints.Threads+1))
 		}
 	}
 }
 
-func MatricesApply(ms Matrices, fn func(*Matrix, Matrix), v Matrix) {
+func matricesApply(ms Matrices, fn func(*Matrix, Matrix), v Matrix) {
 	for i := range ms {
 		fn(&ms[i], v)
 	}
 }
 
-func MatricesApplyChunked(ms Matrices, fn func(*Matrix, Matrix), v Matrix, chunkSize uint) {
+func matricesApplyChunked(ms Matrices, fn func(*Matrix, Matrix), v Matrix, chunkSize uint) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range MatricesInChunks(ms, chunkSize) {
+	for chunk := range matricesInChunks(ms, chunkSize) {
 		running++
 		go func(c Matrices) {
-			MatricesApply(c, fn, v)
+			matricesApply(c, fn, v)
 			done <- struct{}{}
 		}(chunk)
 	}
@@ -135,7 +135,7 @@ func MatricesApplyChunked(ms Matrices, fn func(*Matrix, Matrix), v Matrix, chunk
 	}
 }
 
-func MatricesInChunks(ms Matrices, chunkSize uint) chan Matrices {
+func matricesInChunks(ms Matrices, chunkSize uint) chan Matrices {
 	c := make(chan Matrices)
 	length := uint(len(ms))
 	go func() {
@@ -175,7 +175,7 @@ func vectorApply(ms Matrices, mfn func(*Matrix, func(*Vector, Vector), Vector), 
 func vectorApplyChunked(ms Matrices, mfn func(*Matrix, func(*Vector, Vector), Vector), fn func(*Vector, Vector), v Vector, chunkSize uint) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range MatricesInChunks(ms, chunkSize) {
+	for chunk := range matricesInChunks(ms, chunkSize) {
 		running++
 		go func(c Matrices) {
 			vectorApply(c, mfn, fn, v)
@@ -193,5 +193,8 @@ func (ms Matrices) ForEachNoParameter(fn func(*Matrix)) {
 	inner = func(m1 *Matrix, _ Matrix) {
 		fn(m1)
 	}
-	ms.ForEach(inner, Matrix{})   //TODO make new each time?
+	dummy:=Matrix{}
+	ms.ForEach(inner, dummy)   //TODO make new each time?
 }
+
+
