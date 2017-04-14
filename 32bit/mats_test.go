@@ -27,7 +27,7 @@ func TestMatsSum(t *testing.T) {
 
 func TestMatsApplyComponents(t *testing.T) {
 	ms := Matrices{Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}}
-	ms.ReduceComponentWise(Vector{1, 2, 3}, (*Vector).Add)
+	ms.AggregateComponentWise(Vector{1, 2, 3}, (*Vector).Add)
 	if fmt.Sprint(ms) != "[{{2 4 6} {5 7 9} {8 10 12}}]" {
 		t.Error(fmt.Sprint(ms))
 	}
@@ -71,6 +71,9 @@ func BenchmarkMatsProductParallel(b *testing.B) {
 	}
 	m := Matrix{Vector{9, 8, 7}, Vector{6, 5, 4}, Vector{3, 2, 1}}
 	Parallel = true
+	defer func() {
+		Parallel=false
+	}()
 	Hints.ChunkSizeFixed = true
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
@@ -94,3 +97,4 @@ PASS
 ok  	3.110s
 Thu 9 Mar 16:56:11 GMT 2017
 */
+

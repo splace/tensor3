@@ -43,7 +43,7 @@ func (ms Matrices) Sum() (m Matrix) {
 	return
 }
 
-func (ms Matrices) ReduceComponentWise(v Vector, fn func(*Vector, Vector)) {
+func (ms Matrices) AggregateComponentWise(v Vector, fn func(*Vector, Vector)) {
 	ms.ApplyComponentWiseVariac(v, fn, fn, fn)
 }
 
