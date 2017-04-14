@@ -148,33 +148,33 @@ func (vs VectorRefs) Interpolate(v Vector, f BaseType) {
 
 func (vs VectorRefs) ForEach(fn func(*Vector, Vector), v Vector) {
 	if !Parallel {
-		VectorRefsApply(vs, fn, v)
+		vectorRefsApply(vs, fn, v)
 	} else {
 		if Hints.ChunkSizeFixed {
-			VectorRefsApplyChunked(vs, fn, v, Hints.DefaultChunkSize)
+			vectorRefsApplyChunked(vs, fn, v, Hints.DefaultChunkSize)
 		} else {
 			cs := uint(len(vs)) / (Hints.Threads + 1)
 			if cs < Hints.DefaultChunkSize {
 				cs = Hints.DefaultChunkSize
 			}
-			VectorRefsApplyChunked(vs, fn, v, cs)
+			vectorRefsApplyChunked(vs, fn, v, cs)
 		}
 	}
 }
 
-func VectorRefsApply(vs VectorRefs, fn func(*Vector, Vector), v Vector) {
+func vectorRefsApply(vs VectorRefs, fn func(*Vector, Vector), v Vector) {
 	for i := range vs {
 		fn(vs[i], v)
 	}
 }
 
-func VectorRefsApplyChunked(vs VectorRefs, fn func(*Vector, Vector), v Vector, chunkSize uint) {
+func vectorRefsApplyChunked(vs VectorRefs, fn func(*Vector, Vector), v Vector, chunkSize uint) {
 	done := make(chan struct{}, 1)
 	var running uint
 	for chunk := range vectorRefsInChunks(vs, chunkSize) {
 		running++
 		go func(c VectorRefs) {
-			VectorRefsApply(c, fn, v)
+			vectorRefsApply(c, fn, v)
 			done <- struct{}{}
 		}(chunk)
 	}
