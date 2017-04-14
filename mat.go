@@ -129,7 +129,7 @@ func (m *Matrix) Min(m2 Matrix) {
 	m.ApplyToComponents((*Vector).Min, m2)
 }
 
-func (m *Matrix) Reduce(ms Matrices, fn func(*Matrix, Matrix)) {
+func (m *Matrix) Aggregate(ms Matrices, fn func(*Matrix, Matrix)) {
 	for _, m2 := range ms {
 		fn(m, m2)
 	}

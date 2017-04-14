@@ -8,6 +8,7 @@ func TestMatrixIdentityPrint(t *testing.T) {
 		t.Error("identity")
 	}
 }
+
 func TestMatrixNew(t *testing.T) {
 	v := new(Matrix)
 	if fmt.Sprint(v) != "&{{0 0 0} {0 0 0} {0 0 0}}" {
@@ -107,9 +108,9 @@ func TestMatrixMultiply(t *testing.T) {
 	}
 }
 
-func TestMatrixReduce(t *testing.T) {
+func TestMatrixAggregate(t *testing.T) {
 	m := Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}
-	m.Reduce(Matrices{Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}, Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}}, (*Matrix).Add)
+	m.Aggregate(Matrices{Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}, Matrix{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}}, (*Matrix).Add)
 	if fmt.Sprint(m) != "{{3 6 9} {12 15 18} {21 24 27}}" {
 		t.Error(m)
 	}

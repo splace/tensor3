@@ -39,7 +39,7 @@ func (ms Matrices) Invert() {
 }
 
 func (ms Matrices) Sum() (m Matrix) {
-	m.Reduce(ms, (*Matrix).Add)
+	m.Aggregate(ms, (*Matrix).Add)
 	return
 }
 

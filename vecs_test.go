@@ -100,6 +100,9 @@ func TestVecsProductT(t *testing.T) {
 
 func TestVecsCrossChunked1(t *testing.T) {
 	Parallel = true
+	defer func() {
+		Parallel=false
+	}()
 	Hints.ChunkSizeFixed = true
 	Hints.DefaultChunkSize = 1
 	v := Vectors{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}, Vector{10, 11, 12}}
@@ -108,11 +111,13 @@ func TestVecsCrossChunked1(t *testing.T) {
 	if fmt.Sprint(v) != "[{2 3 4} {5 6 7} {8 9 10} {11 12 13}]" {
 		t.Error(fmt.Sprint(v))
 	}
-	Parallel = false
 }
 
 func TestVecsCrossChunked2(t *testing.T) {
 	Parallel = true
+	defer func() {
+		Parallel=false
+	}()
 	Hints.ChunkSizeFixed = true
 	Hints.DefaultChunkSize = 2
 	v := Vectors{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}, Vector{10, 11, 12}}
@@ -121,11 +126,13 @@ func TestVecsCrossChunked2(t *testing.T) {
 	if fmt.Sprint(v) != "[{2 3 4} {5 6 7} {8 9 10} {11 12 13}]" {
 		t.Error(fmt.Sprint(v))
 	}
-	Parallel = false
 }
 
 func TestVecsCrossChunked3(t *testing.T) {
 	Parallel = true
+	defer func() {
+		Parallel=false
+	}()
 	Hints.ChunkSizeFixed = true
 	Hints.DefaultChunkSize = 2
 	v := Vectors{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}, Vector{10, 11, 12}, Vector{13, 14, 15}, Vector{16, 17, 18}}
@@ -134,7 +141,6 @@ func TestVecsCrossChunked3(t *testing.T) {
 	if fmt.Sprint(v) != "[{2 3 4} {5 6 7} {8 9 10} {11 12 13} {14 15 16} {17 18 19}]" {
 		t.Error(fmt.Sprint(v))
 	}
-	Parallel = false
 }
 
 func TestVecsAddVecs(t *testing.T) {
@@ -155,6 +161,38 @@ func TestVecsCrossVecs(t *testing.T) {
 	}
 }
 
+
+
+func BenchmarkVecsSum(b *testing.B) {
+	b.StopTimer()
+	vs := make(Vectors, 1000000)
+	for i := range vs {
+		vs[i] = Vector{1, 2, 3}
+	}
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		vs.Sum()
+	}
+}
+
+
+func BenchmarkVecsSumParallel(b *testing.B) {
+	b.StopTimer()
+	vs := make(Vectors, 1000000)
+	for i := range vs {
+		vs[i] = Vector{1, 2, 3}
+	}
+	Parallel = true
+	defer func() {
+		Parallel=false
+	}()
+	Hints.ChunkSizeFixed = true
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		vs.Sum()
+	}
+}
+
 func BenchmarkVecsCross(b *testing.B) {
 	b.StopTimer()
 	vs := make(Vectors, 1000000)
@@ -162,7 +200,6 @@ func BenchmarkVecsCross(b *testing.B) {
 		vs[i] = Vector{1, 2, 3}
 	}
 	v := Vector{9, 8, 7}
-	Parallel = false
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		vs.Cross(v)
@@ -178,6 +215,9 @@ func BenchmarkVecsCrossParallel(b *testing.B) {
 	}
 	v := Vector{9, 8, 7}
 	Parallel = true
+	defer func() {
+		Parallel=false
+	}()
 	Hints.ChunkSizeFixed = true
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
@@ -208,6 +248,9 @@ func BenchmarkVecsProductParallel(b *testing.B) {
 	}
 	m := Matrix{}
 	Parallel = true
+	defer func() {
+		Parallel=false
+	}()
 	Hints.ChunkSizeFixed = true
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
@@ -258,4 +301,27 @@ BenchmarkVecsProductParallel-2   	     100	  13137967 ns/op
 PASS
 ok  	_/home/simon/Dropbox/github/working/tensor3	5.553s
 Tue 7 Mar 00:52:07 GMT 2017
+*//*  Hal3 Sat 15 Apr 00:28:58 BST 2017 go version go1.6.2 linux/amd64
+PASS
+BenchmarkVecsSum-2            	     100	  10705533 ns/op
+BenchmarkVecsSumParallel-2    	     100	  10577862 ns/op
+BenchmarkVecsCross-2          	     100	  13915981 ns/op
+BenchmarkVecsCrossParallel-2  	     100	  13618217 ns/op
+BenchmarkVecsProduct-2        	     100	  21823835 ns/op
+BenchmarkVecsProductParallel-2	     100	  13131134 ns/op
+ok  	_/home/simon/Dropbox/github/working/tensor3	8.850s
+Sat 15 Apr 00:29:08 BST 2017
 */
+/*  Hal3 Sat 15 Apr 00:31:18 BST 2017  go version go1.8 linux/amd64
+
+BenchmarkVecsSum-2               	     200	   8384060 ns/op
+BenchmarkVecsSumParallel-2       	     200	   8307832 ns/op
+BenchmarkVecsCross-2             	     100	  14350239 ns/op
+BenchmarkVecsCrossParallel-2     	     100	  13895992 ns/op
+BenchmarkVecsProduct-2           	     100	  19148612 ns/op
+BenchmarkVecsProductParallel-2   	     100	  14231442 ns/op
+PASS
+ok  	_/home/simon/Dropbox/github/working/tensor3	11.329s
+Sat 15 Apr 00:31:30 BST 2017
+*/
+
