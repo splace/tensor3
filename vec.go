@@ -120,6 +120,46 @@ func (v *Vector) Aggregate(vs Vectors, fn func(*Vector, Vector)) {
 	}
 }
 
+// apply a function repeatedly to the vector, parameterised by the current value of the vector and each vector in the supplied vectors. 
+func (v *Vector) ForAll(vs Vectors, fn func(*Vector, Vector)) {
+	if !Parallel {
+		vectorApplyAll(v, fn, vs)
+	} else {
+		if Hints.ChunkSizeFixed {
+			vectorApplyAllChunked(v, fn, vs, Hints.DefaultChunkSize)
+		} else {
+			cs := uint(len(vs)) / (Hints.Threads + 1)
+			if cs < Hints.DefaultChunkSize {
+				cs = Hints.DefaultChunkSize
+			}
+			vectorApplyAllChunked(v, fn, vs, cs)
+		}
+	}
+}
+
+func vectorApplyAll(v *Vector, fn func(*Vector, Vector), vs Vectors) {
+	for i := range vs {
+		fn(v, vs[i])
+	}
+}
+
+func vectorApplyAllChunked(v *Vector, fn func(*Vector, Vector), vs Vectors, chunkSize uint) {
+	done := make(chan *Vector, 1)
+	var running uint
+	for chunk := range vectorsInChunks(vs, chunkSize) {
+		running++
+		go func(cvs Vectors) {
+			var nv *Vector
+			vectorApplyAll(nv, fn, cvs)
+			done <- nv
+		}(chunk)
+	}
+	for ; running > 0; running-- {
+		fn(v,*(<-done))
+	}
+}
+
+
 func (v *Vector) AggregateRefs(vs VectorRefs, fn func(*Vector, Vector)) {
 	for _, v2 := range vs {
 		fn(v, *v2)

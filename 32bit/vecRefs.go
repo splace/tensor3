@@ -246,36 +246,36 @@ func (vs VectorRefs) ForEachNoParameter(fn func(*Vector)) {
 }
 
 
-func (vs Vectors) CrossAllRefs(vs2 VectorRefs) {
-	vs.ForAllRefs((*Vector).Cross, vs2)
+func (vs Vectors) CrossAllRefs(vrs VectorRefs) {
+	vs.ForAllRefs(vrs,(*Vector).Cross)
 }
 
 
-func (vs Vectors) AddAllRefs(vs2 VectorRefs) {
-	vs.ForAllRefs((*Vector).Add, vs2)
+func (vs Vectors) AddAllRefs(vrs VectorRefs) {
+	vs.ForAllRefs(vrs,(*Vector).Add)
 }
 
 
-func (vs Vectors) SubtractAllRefs(vs2 VectorRefs) {
-	vs.ForAllRefs((*Vector).Subtract, vs2)
+func (vs Vectors) SubtractAllRefs(vrs VectorRefs) {
+	vs.ForAllRefs(vrs,(*Vector).Subtract)
 }
 
-func (vs Vectors) ProjectAllRefs(vs2 VectorRefs) {
-	vs.ForAllRefs((*Vector).Project, vs2)
+func (vs Vectors) ProjectAllRefs(vrs VectorRefs) {
+	vs.ForAllRefs(vrs,(*Vector).Project)
 }
 
-func (vs Vectors) ForAllRefs(fn func(*Vector, Vector), vs2 VectorRefs) {
+func (vs Vectors) ForAllRefs(vrs VectorRefs,fn func(*Vector, Vector)) {
 	if !Parallel {
-		vectorsApplyAllRefs(vs, fn, vs2)
+		vectorsApplyAllRefs(vs, fn, vrs)
 	} else {
 		if Hints.ChunkSizeFixed {
-			vectorsApplyAllRefsChunked(vs, fn, vs2, Hints.DefaultChunkSize)
+			vectorsApplyAllRefsChunked(vs, fn, vrs, Hints.DefaultChunkSize)
 		} else {
 			cs := uint(len(vs)) / (Hints.Threads + 1)
 			if cs < Hints.DefaultChunkSize {
 				cs = Hints.DefaultChunkSize
 			}
-			vectorsApplyAllRefsChunked(vs, fn, vs2, cs)
+			vectorsApplyAllRefsChunked(vs, fn, vrs, cs)
 		}
 	}
 }
@@ -286,10 +286,10 @@ func vectorsApplyAllRefs(vs Vectors, fn func(*Vector, Vector), vs2 VectorRefs) {
 	}
 }
 
-func vectorsApplyAllRefsChunked(vs Vectors, fn func(*Vector, Vector), vs2 VectorRefs, chunkSize uint) {
+func vectorsApplyAllRefsChunked(vs Vectors, fn func(*Vector, Vector), vrs VectorRefs, chunkSize uint) {
 	done := make(chan struct{}, 1)
 	var running uint
-	chunks2:=vectorRefsInChunks(vs2, chunkSize)
+	chunks2:=vectorRefsInChunks(vrs, chunkSize)
 	for chunk := range vectorsInChunks(vs, chunkSize) {
 		running++
 		go func(c Vectors) {
@@ -303,51 +303,51 @@ func vectorsApplyAllRefsChunked(vs Vectors, fn func(*Vector, Vector), vs2 Vector
 }
 
 
-func (vs VectorRefs) CrossAllRefs(vs2 VectorRefs) {
-	vs.ForAllRefs((*Vector).Cross, vs2)
+func (vrs VectorRefs) CrossAllRefs(vrs2 VectorRefs) {
+	vrs.ForAllRefs(vrs2,(*Vector).Cross)
 }
 
 
-func (vs VectorRefs) AddAllRefs(vs2 VectorRefs) {
-	vs.ForAllRefs((*Vector).Add, vs2)
+func (vrs VectorRefs) AddAllRefs(vrs2 VectorRefs) {
+	vrs.ForAllRefs(vrs2,(*Vector).Add)
 }
 
 
-func (vs VectorRefs) SubtractAllRefs(vs2 VectorRefs) {
-	vs.ForAllRefs((*Vector).Subtract, vs2)
+func (vrs VectorRefs) SubtractAllRefs(vrs2 VectorRefs) {
+	vrs.ForAllRefs(vrs2,(*Vector).Subtract)
 }
 
-func (vs VectorRefs) ProjectAllRefs(vs2 VectorRefs) {
-	vs.ForAllRefs((*Vector).Project, vs2)
+func (vrs VectorRefs) ProjectAllRefs(vrs2 VectorRefs) {
+	vrs.ForAllRefs(vrs2,(*Vector).Project)
 }
 
-func (vs VectorRefs) ForAllRefs(fn func(*Vector, Vector), vs2 VectorRefs) {
+func (vrs VectorRefs) ForAllRefs(vrs2 VectorRefs, fn func(*Vector, Vector)) {
 	if !Parallel {
-		vectorRefsApplyAllRefs(vs, fn, vs2)
+		vectorRefsApplyAllRefs(vrs, fn, vrs2)
 	} else {
 		if Hints.ChunkSizeFixed {
-			vectorRefsApplyAllChunkedRefs(vs, fn, vs2, Hints.DefaultChunkSize)
+			vectorRefsApplyAllChunkedRefs(vrs, fn, vrs2, Hints.DefaultChunkSize)
 		} else {
-			cs := uint(len(vs)) / (Hints.Threads + 1)
+			cs := uint(len(vrs)) / (Hints.Threads + 1)
 			if cs < Hints.DefaultChunkSize {
 				cs = Hints.DefaultChunkSize
 			}
-			vectorRefsApplyAllChunkedRefs(vs, fn, vs2, cs)
+			vectorRefsApplyAllChunkedRefs(vrs, fn, vrs2, cs)
 		}
 	}
 }
 
-func vectorRefsApplyAllRefs(vs VectorRefs, fn func(*Vector, Vector), vs2 VectorRefs) {
-	for i := range vs {
-		fn(vs[i], *vs2[i])
+func vectorRefsApplyAllRefs(vrs VectorRefs, fn func(*Vector, Vector), vrs2 VectorRefs) {
+	for i := range vrs {
+		fn(vrs[i], *vrs2[i])
 	}
 }
 
-func vectorRefsApplyAllChunkedRefs(vs VectorRefs, fn func(*Vector, Vector), vs2 VectorRefs, chunkSize uint) {
+func vectorRefsApplyAllChunkedRefs(vrs VectorRefs, fn func(*Vector, Vector), vrs2 VectorRefs, chunkSize uint) {
 	done := make(chan struct{}, 1)
 	var running uint
-	chunks2:=vectorRefsInChunks(vs2, chunkSize)
-	for chunk := range vectorRefsInChunks(vs, chunkSize) {
+	chunks2:=vectorRefsInChunks(vrs2, chunkSize)
+	for chunk := range vectorRefsInChunks(vrs, chunkSize) {
 		running++
 		go func(c VectorRefs) {
 			vectorRefsApplyAllRefs(c, fn, <-chunks2)
@@ -360,36 +360,36 @@ func vectorRefsApplyAllChunkedRefs(vs VectorRefs, fn func(*Vector, Vector), vs2 
 }
 
 
-func (vs VectorRefs) CrossAll(vs2 Vectors) {
-	vs.ForAll((*Vector).Cross, vs2)
+func (vrs VectorRefs) CrossAll(vs Vectors) {
+	vrs.ForAll(vs,(*Vector).Cross)
 }
 
 
-func (vs VectorRefs) AddAll(vs2 Vectors) {
-	vs.ForAll((*Vector).Add, vs2)
+func (vrs VectorRefs) AddAll(vs Vectors) {
+	vrs.ForAll(vs,(*Vector).Add)
 }
 
 
-func (vs VectorRefs) SubtractAll(vs2 Vectors) {
-	vs.ForAll((*Vector).Subtract, vs2)
+func (vrs VectorRefs) SubtractAll(vs Vectors) {
+	vrs.ForAll(vs,(*Vector).Subtract)
 }
 
-func (vs VectorRefs) ProjectAll(vs2 Vectors) {
-	vs.ForAll((*Vector).Project, vs2)
+func (vrs VectorRefs) ProjectAll(vs Vectors) {
+	vrs.ForAll(vs,(*Vector).Project)
 }
 
-func (vs VectorRefs) ForAll(fn func(*Vector, Vector), vs2 Vectors) {
+func (vrs VectorRefs) ForAll(vs Vectors,fn func(*Vector, Vector)) {
 	if !Parallel {
-		vectorRefsApplyAll(vs, fn, vs2)
+		vectorRefsApplyAll(vrs, fn, vs)
 	} else {
 		if Hints.ChunkSizeFixed {
-			vectorRefsApplyAllChunked(vs, fn, vs2, Hints.DefaultChunkSize)
+			vectorRefsApplyAllChunked(vrs, fn, vs, Hints.DefaultChunkSize)
 		} else {
 			cs := uint(len(vs)) / (Hints.Threads + 1)
 			if cs < Hints.DefaultChunkSize {
 				cs = Hints.DefaultChunkSize
 			}
-			vectorRefsApplyAllChunked(vs, fn, vs2, cs)
+			vectorRefsApplyAllChunked(vrs, fn, vs, cs)
 		}
 	}
 }
@@ -416,4 +416,165 @@ func vectorRefsApplyAllChunked(vs VectorRefs, fn func(*Vector, Vector), vs2 Vect
 	}
 }
 
+
+/*  Hal3 Sat 15 Apr 00:12:56 BST 2017 go version go1.6.2 linux/amd64
+=== RUN   TestMatrixProductT
+--- PASS: TestMatrixProductT (0.00s)
+=== RUN   TestMatrixTProductT
+--- PASS: TestMatrixTProductT (0.00s)
+=== RUN   TestMatrixIdentityPrint
+--- PASS: TestMatrixIdentityPrint (0.00s)
+=== RUN   TestMatrixNew
+--- PASS: TestMatrixNew (0.00s)
+=== RUN   TestMatrixPrint
+--- PASS: TestMatrixPrint (0.00s)
+=== RUN   TestMatrixAdd
+--- PASS: TestMatrixAdd (0.00s)
+=== RUN   TestMatrixDeterminant
+--- PASS: TestMatrixDeterminant (0.00s)
+=== RUN   TestMatrixInvert
+--- PASS: TestMatrixInvert (0.00s)
+=== RUN   TestMatrixProduct
+--- PASS: TestMatrixProduct (0.00s)
+=== RUN   TestMatrixProductDet
+--- PASS: TestMatrixProductDet (0.00s)
+=== RUN   TestMatrixInvertDet
+--- PASS: TestMatrixInvertDet (0.00s)
+=== RUN   TestMatrixTProduct
+--- PASS: TestMatrixTProduct (0.00s)
+=== RUN   TestMatrixProductIndentity
+--- PASS: TestMatrixProductIndentity (0.00s)
+=== RUN   TestMatrixMultiply
+--- PASS: TestMatrixMultiply (0.00s)
+=== RUN   TestMatrixReduce
+--- PASS: TestMatrixReduce (0.00s)
+=== RUN   TestMatrixApplyXAdd
+--- PASS: TestMatrixApplyXAdd (0.00s)
+=== RUN   TestMatrixApplyZAdd
+--- PASS: TestMatrixApplyZAdd (0.00s)
+=== RUN   TestMatrixApplyComponentWiseAxesAdd
+--- PASS: TestMatrixApplyComponentWiseAxesAdd (0.00s)
+=== RUN   TestMatrixApplyComponentWiseAxesCross
+--- PASS: TestMatrixApplyComponentWiseAxesCross (0.00s)
+=== RUN   TestMatsPrint
+--- PASS: TestMatsPrint (0.00s)
+=== RUN   TestMatsProduct1
+--- PASS: TestMatsProduct1 (0.00s)
+=== RUN   TestMatsSum
+--- PASS: TestMatsSum (0.00s)
+=== RUN   TestMatsApplyComponents
+--- PASS: TestMatsApplyComponents (0.00s)
+=== RUN   TestMatsApplyComponentY
+--- PASS: TestMatsApplyComponentY (0.00s)
+=== RUN   TestMatsApplyComponentsXY
+--- PASS: TestMatsApplyComponentsXY (0.00s)
+=== RUN   TestVecRefsNewFromIndexes
+--- PASS: TestVecRefsNewFromIndexes (0.00s)
+=== RUN   TestVecRefsNewFromEmplyIndexes
+--- PASS: TestVecRefsNewFromEmplyIndexes (0.00s)
+=== RUN   TestVecRefsDereferenceNew
+--- PASS: TestVecRefsDereferenceNew (0.00s)
+=== RUN   TestVecRefsDereference
+--- PASS: TestVecRefsDereference (0.00s)
+=== RUN   TestVecsFromVectorRefs
+--- PASS: TestVecsFromVectorRefs (0.00s)
+=== RUN   TestVecsIndexesFromVectorRefs
+--- PASS: TestVecsIndexesFromVectorRefs (0.00s)
+=== RUN   TestVecRefsPrint
+--- PASS: TestVecRefsPrint (0.00s)
+=== RUN   TestVecRefsSum
+--- PASS: TestVecRefsSum (0.00s)
+=== RUN   TestVecRefsAddRefs
+--- PASS: TestVecRefsAddRefs (0.00s)
+=== RUN   TestVecRefsCrossRefs
+--- PASS: TestVecRefsCrossRefs (0.00s)
+=== RUN   TestVecsAddVecRefs
+--- PASS: TestVecsAddVecRefs (0.00s)
+=== RUN   TestVecsCrossVecRefs
+--- PASS: TestVecsCrossVecRefs (0.00s)
+=== RUN   TestVecsRefsAddVecs
+--- PASS: TestVecsRefsAddVecs (0.00s)
+=== RUN   TestVecRefsCrossVecs
+--- PASS: TestVecRefsCrossVecs (0.00s)
+=== RUN   TestVecsRefsAddVecRefs
+--- PASS: TestVecsRefsAddVecRefs (0.00s)
+=== RUN   TestVecRefsCrossVecRefs
+--- PASS: TestVecRefsCrossVecRefs (0.00s)
+=== RUN   TestVecPrint
+--- PASS: TestVecPrint (0.00s)
+=== RUN   TestNewVector
+--- PASS: TestNewVector (0.00s)
+=== RUN   TestNewVectorPrint
+--- PASS: TestNewVectorPrint (0.00s)
+=== RUN   TestVecDot
+--- PASS: TestVecDot (0.00s)
+=== RUN   TestVecAdd
+--- PASS: TestVecAdd (0.00s)
+=== RUN   TestVecSubtract
+--- PASS: TestVecSubtract (0.00s)
+=== RUN   TestVecCross
+--- PASS: TestVecCross (0.00s)
+=== RUN   TestVecLengthLength
+--- PASS: TestVecLengthLength (0.00s)
+=== RUN   TestVecProduct
+--- PASS: TestVecProduct (0.00s)
+=== RUN   TestVecProductT
+--- PASS: TestVecProductT (0.00s)
+=== RUN   TestVecProject
+--- PASS: TestVecProject (0.00s)
+=== RUN   TestVecLongestAxis
+--- PASS: TestVecLongestAxis (0.00s)
+=== RUN   TestVecShortestAxis
+--- PASS: TestVecShortestAxis (0.00s)
+=== RUN   TestVecMax
+--- PASS: TestVecMax (0.00s)
+=== RUN   TestVecMin
+--- PASS: TestVecMin (0.00s)
+=== RUN   TestVecMid
+--- PASS: TestVecMid (0.00s)
+=== RUN   TestVecInterpolate
+--- PASS: TestVecInterpolate (0.00s)
+=== RUN   TestVecApplyRunning
+--- PASS: TestVecApplyRunning (0.00s)
+=== RUN   TestVecApplyForAll
+--- PASS: TestVecApplyForAll (0.00s)
+=== RUN   TestVecsPrint
+--- PASS: TestVecsPrint (0.00s)
+=== RUN   TestVecsNew
+--- PASS: TestVecsNew (0.00s)
+=== RUN   TestVecsCrossLen1
+--- PASS: TestVecsCrossLen1 (0.00s)
+=== RUN   TestVecsCross
+--- PASS: TestVecsCross (0.00s)
+=== RUN   TestVecsProduct
+--- PASS: TestVecsProduct (0.00s)
+=== RUN   TestVecsSum
+--- PASS: TestVecsSum (0.00s)
+=== RUN   TestVecsMax
+--- PASS: TestVecsMax (0.00s)
+=== RUN   TestVecsMaxOne
+--- PASS: TestVecsMaxOne (0.00s)
+=== RUN   TestVecsMaxNone
+As expected: runtime error: index out of range
+--- PASS: TestVecsMaxNone (0.00s)
+=== RUN   TestVecsMin
+--- PASS: TestVecsMin (0.00s)
+=== RUN   TestVecsInterpolate
+--- PASS: TestVecsInterpolate (0.00s)
+=== RUN   TestVecsProductT
+--- PASS: TestVecsProductT (0.00s)
+=== RUN   TestVecsCrossChunked1
+--- PASS: TestVecsCrossChunked1 (0.00s)
+=== RUN   TestVecsCrossChunked2
+--- PASS: TestVecsCrossChunked2 (0.00s)
+=== RUN   TestVecsCrossChunked3
+--- PASS: TestVecsCrossChunked3 (0.00s)
+=== RUN   TestVecsAddVecs
+--- PASS: TestVecsAddVecs (0.00s)
+=== RUN   TestVecsCrossVecs
+--- PASS: TestVecsCrossVecs (0.00s)
+PASS
+ok  	_/home/simon/Dropbox/github/working/tensor3	0.006s
+Sat 15 Apr 00:12:58 BST 2017
+*/
 
