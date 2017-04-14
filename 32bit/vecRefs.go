@@ -111,7 +111,7 @@ func (vs VectorRefs) ProductT(m Matrix) {
 }
 
 func (vs VectorRefs) Sum() (v Vector) {
-	v.ReduceRefs(vs, (*Vector).Add)
+	v.AggregateRefs(vs, (*Vector).Add)
 	return
 }
 
@@ -125,13 +125,13 @@ func (vs VectorRefs) Multiply(s BaseType) {
 
 func (vs VectorRefs) Max() (v Vector) {
 	v.Set(*vs[0])
-	v.ReduceRefs(vs[1:], (*Vector).Max)
+	v.AggregateRefs(vs[1:], (*Vector).Max)
 	return
 }
 
 func (vs VectorRefs) Min() (v Vector) {
 	v.Set(*vs[0])
-	v.ReduceRefs(vs[1:], (*Vector).Min)
+	v.AggregateRefs(vs[1:], (*Vector).Min)
 	return
 }
 

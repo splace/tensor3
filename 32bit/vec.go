@@ -113,13 +113,14 @@ func (v *Vector) Interpolate(v2 Vector, f BaseType) {
 	v.Add(v2)
 }
 
-func (v *Vector) Reduce(vs Vectors, fn func(*Vector, Vector)) {
+// apply a function repeatedly to the vector, parameterised by the current value of the vector and each vector in the supplied vectors in order. 
+func (v *Vector) Aggregate(vs Vectors, fn func(*Vector, Vector)) {
 	for _, v2 := range vs {
 		fn(v, v2)
 	}
 }
 
-func (v *Vector) ReduceRefs(vs VectorRefs, fn func(*Vector, Vector)) {
+func (v *Vector) AggregateRefs(vs VectorRefs, fn func(*Vector, Vector)) {
 	for _, v2 := range vs {
 		fn(v, *v2)
 	}
@@ -171,3 +172,5 @@ func (v *Vector) Product(m Matrix) {
 func (v *Vector) ProductT(m Matrix) {
 	v.x, v.y, v.z = v.x*m.x.x+v.y*m.x.y+v.z*m.x.z, v.x*m.y.x+v.y*m.y.y+v.z*m.y.z, v.x*m.z.x+v.y*m.z.y+v.z*m.z.z
 }
+
+

@@ -150,7 +150,7 @@ func TestVecInterpolate(t *testing.T) {
 
 func TestVecApplyRunning(t *testing.T) {
 	v := Vector{1, 2, 3}
-	v.Reduce(Vectors{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}, (*Vector).Add)
+	v.Aggregate(Vectors{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}, (*Vector).Add)
 	if fmt.Sprint(v) != "{13 17 21}" {
 		t.Error(v)
 	}

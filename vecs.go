@@ -35,7 +35,7 @@ func (vs Vectors) ProductT(m Matrix) {
 }
 
 func (vs Vectors) Sum() (v Vector) {
-	v.Reduce(vs, (*Vector).Add)
+	v.Aggregate(vs, (*Vector).Add)
 	return
 }
 
@@ -49,13 +49,13 @@ func (vs Vectors) Multiply(s BaseType) {
 
 func (vs Vectors) Max() (v Vector) {
 	v.Set(vs[0])
-	v.Reduce(vs[1:], (*Vector).Max)
+	v.Aggregate(vs[1:], (*Vector).Max)
 	return
 }
 
 func (vs Vectors) Min() (v Vector) {
 	v.Set(vs[0])
-	v.Reduce(vs[1:], (*Vector).Min)
+	v.Aggregate(vs[1:], (*Vector).Min)
 	return
 }
 
