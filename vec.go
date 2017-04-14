@@ -144,18 +144,18 @@ func vectorApplyAll(v *Vector, fn func(*Vector, Vector), vs Vectors) {
 }
 
 func vectorApplyAllChunked(v *Vector, fn func(*Vector, Vector), vs Vectors, chunkSize uint) {
-	done := make(chan *Vector, 1)
+	done := make(chan Vector, 1)
 	var running uint
 	for chunk := range vectorsInChunks(vs, chunkSize) {
 		running++
 		go func(cvs Vectors) {
-			var nv *Vector
-			vectorApplyAll(nv, fn, cvs)
+			var nv Vector
+			vectorApplyAll(&nv, fn, cvs)
 			done <- nv
 		}(chunk)
 	}
 	for ; running > 0; running-- {
-		fn(v,*(<-done))
+		fn(v,<-done)
 	}
 }
 

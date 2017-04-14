@@ -156,11 +156,20 @@ func TestVecApplyRunning(t *testing.T) {
 	}
 }
 
+
 func TestVecApplyForAll(t *testing.T) {
+	Parallel = true
+	defer func() {
+		Parallel=false
+	}()
+	Hints.ChunkSizeFixed = true
+	Hints.DefaultChunkSize = 2
 	v := Vector{1, 2, 3}
 	v.ForAll(Vectors{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}, (*Vector).Add)
 	if fmt.Sprint(v) != "{13 17 21}" {
 		t.Error(v)
 	}
 }
+
+
 
