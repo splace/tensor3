@@ -8,7 +8,7 @@ func (m Matrix) Components() (Vector, Vector, Vector) {
 	return m.x, m.y, m.z
 }
 
-// missing components default to zero, more than 9 are ignored
+// missing parameters default to zero, more than 9 are ignored
 func NewMatrix(cs ...BaseType) (m Matrix) {
 	switch len(cs) {
 	case 9:
@@ -132,6 +132,53 @@ func (m *Matrix) Min(m2 Matrix) {
 func (m *Matrix) Aggregate(ms Matrices, fn func(*Matrix, Matrix)) {
 	for _, m2 := range ms {
 		fn(m, m2)
+	}
+}
+
+
+func (vs Vectors) Product(m Matrix) {
+	m.ForEach((*Vector).Product, vs)
+}
+
+func (vs Vectors) ProductT(m Matrix) {
+	m.ForEach((*Vector).ProductT, vs)
+}
+
+
+func (m Matrix) ForEach(fn func(*Vector, Matrix), vs Vectors) {
+	if !Parallel {
+		matrixApply(vs, fn, m)
+	} else {
+		if Hints.ChunkSizeFixed {
+			matrixApplyChunked(vs, fn, m, Hints.DefaultChunkSize)
+		} else {
+			cs := uint(len(vs)) / (Hints.Threads + 1)
+			if cs < Hints.DefaultChunkSize {
+				cs = Hints.DefaultChunkSize
+			}
+			matrixApplyChunked(vs, fn, m, cs)
+		}
+	}
+}
+
+func matrixApply(vs Vectors, fn func(*Vector, Matrix), m Matrix) {
+	for i := range vs {
+		fn(&vs[i], m)
+	}
+}
+
+func matrixApplyChunked(vs Vectors, fn func(*Vector, Matrix), m Matrix, chunkSize uint) {
+	done := make(chan struct{}, 1)
+	var running uint
+	for chunk := range vectorsInChunks(vs, chunkSize) {
+		running++
+		go func(c Vectors) {
+			matrixApply(c, fn, m)
+			done <- struct{}{}
+		}(chunk)
+	}
+	for ; running > 0; running-- {
+		<-done
 	}
 }
 

@@ -26,14 +26,6 @@ func (vs Vectors) Project(v Vector) {
 	vs.ForEach((*Vector).Project, v)
 }
 
-func (vs Vectors) Product(m Matrix) {
-	m.ForEach((*Vector).Product, vs)
-}
-
-func (vs Vectors) ProductT(m Matrix) {
-	m.ForEach((*Vector).ProductT, vs)
-}
-
 func (vs Vectors) Sum() (v Vector) {
 	v.Aggregate(vs, (*Vector).Add)
 	return
@@ -122,45 +114,8 @@ func vectorsInChunks(vs Vectors, chunkSize uint) chan Vectors {
 	return c
 }
 
-func (m Matrix) ForEach(fn func(*Vector, Matrix), vs Vectors) {
-	if !Parallel {
-		matrixApply(vs, fn, m)
-	} else {
-		if Hints.ChunkSizeFixed {
-			matrixApplyChunked(vs, fn, m, Hints.DefaultChunkSize)
-		} else {
-			cs := uint(len(vs)) / (Hints.Threads + 1)
-			if cs < Hints.DefaultChunkSize {
-				cs = Hints.DefaultChunkSize
-			}
-			matrixApplyChunked(vs, fn, m, cs)
-		}
-	}
-}
 
-func matrixApply(vs Vectors, fn func(*Vector, Matrix), m Matrix) {
-	for i := range vs {
-		fn(&vs[i], m)
-	}
-}
-
-func matrixApplyChunked(vs Vectors, fn func(*Vector, Matrix), m Matrix, chunkSize uint) {
-	done := make(chan struct{}, 1)
-	var running uint
-	for chunk := range vectorsInChunks(vs, chunkSize) {
-		running++
-		go func(c Vectors) {
-			matrixApply(c, fn, m)
-			done <- struct{}{}
-		}(chunk)
-	}
-	for ; running > 0; running-- {
-		<-done
-	}
-}
-
-
-// apply a function without a vector parameter using a dummy
+// apply a function without a vector parameter by using a dummy
 func (vs Vectors) ForEachNoParameter(fn func(*Vector)) {
 	var inner func(*Vector, Vector)
 	inner = func(v *Vector, _ Vector) {

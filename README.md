@@ -8,7 +8,7 @@ arrays of both, called Vectors and Matrices, with their useful methods.
 
 VectorRefs, array of pointers to Vector, with methods to convert to/from Vectors.
 
-64 or 32bit
+64 or 32bit, no use of "math" package, 32bit general twice the speed.
 
 operations can be switched, with a global var, between single and parallel thread solutions.
 
