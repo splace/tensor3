@@ -63,7 +63,7 @@ func TestMatrixProductDet(t *testing.T) {
 	d2:=m2.Determinant()
 	m1.Product(m2)
 	dp:=m1.Determinant()
-	if d1*d2 - dp >1e-8{
+	if d1*d2 !=  dp{
 		t.Error("The determinant of a matrix product of square matrices did NOT equal the product of their determinants:")
 	}
 }
@@ -73,9 +73,9 @@ func TestMatrixInvertDet(t *testing.T) {
 	d:=m.Determinant()
 	m.Invert()
 	di:=m.Determinant()
-	if d - 1/di>1e-5{
-		fmt.Println(d,1/di)
-		t.Error("The determinant of a matrix product of square matrices did NOT equal the product of their determinants:")
+	if float32(d * di) != 1 {
+		fmt.Println(d*di)
+		t.Error("The determinant of the inverse of an invertible matrix should be the inverse of the determinant.")
 	}
 }
 
@@ -158,3 +158,6 @@ func BenchmarkMatrixProduct(b *testing.B) {
 		m.Product(m2)
 	}
 }
+
+
+

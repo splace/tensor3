@@ -57,7 +57,7 @@ func (m *Matrix) Cross(v Vector) {
 }
 
 // component-vector-wise length squared
-func (m *Matrix) LengthLength() (v Vector) {
+func (m Matrix) LengthLength() (v Vector) {
 	v.x = m.x.LengthLength()
 	v.y = m.y.LengthLength()
 	v.z = m.z.LengthLength()

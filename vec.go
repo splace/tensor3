@@ -102,9 +102,9 @@ func (v *Vector) Min(v2 Vector) {
 }
 
 func (v *Vector) Mid(v2 Vector) {
-	v.x = (v2.x + v.x) * 0.5
-	v.y = (v2.y + v.y) * 0.5
-	v.z = (v2.z + v.z) * 0.5
+	v.x = (v2.x + v.x) /2
+	v.y = (v2.y + v.y) /2
+	v.z = (v2.z + v.z) /2
 }
 
 func (v *Vector) Interpolate(v2 Vector, f BaseType) {

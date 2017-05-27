@@ -27,7 +27,7 @@ func NewVectorRefsFromIndexes(cs Vectors,indexes ...uint)(vs VectorRefs){
 }
 
 
-// rebases a number of vectorrefs to point into a new returned vectors.
+// rebases, maintaining values, a number of vectorrefs to point into a new returned vectors.
 func NewVectorsFromVectorRefs(vss ...VectorRefs) Vectors {
 	m:=make(map[*Vector]uint)
 	for _,vs :=range(vss){

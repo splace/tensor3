@@ -84,8 +84,10 @@ func TestVecsMin(t *testing.T) {
 
 func TestVecsInterpolate(t *testing.T) {
 	vs := Vectors{Vector{7, 8, 9}, Vector{7, 8, 9}, Vector{7, 8, 9}}
-	vs.Interpolate(Vector{-2, 1, -1}, 0.5)
-	if fmt.Sprint(vs) != "[{2.5 4.5 4} {2.5 4.5 4} {2.5 4.5 4}]" {
+//	vs.Interpolate(Vector{-2, 1, -1}, 0.5)
+//	if fmt.Sprint(vs) != "[{2.5 4.5 4} {2.5 4.5 4} {2.5 4.5 4}]" {
+	vs.Interpolate(Vector{-2, 1, -1}, 2)
+	if fmt.Sprint(vs) != "[{16 15 19} {16 15 19} {16 15 19}]" {
 		t.Error(vs)
 	}
 }

@@ -133,17 +133,17 @@ func TestVecMin(t *testing.T) {
 }
 
 func TestVecMid(t *testing.T) {
-	v := Vector{1, 2, 3}
+	v := Vector{0, 5, 3}
 	v.Mid(Vector{-2, 1, -1})
-	if v != (Vector{-0.5, 1.5, 1}) {
+	if v != (Vector{-1, 3, 1}) {
 		t.Error(v)
 	}
 }
 
 func TestVecInterpolate(t *testing.T) {
 	v := Vector{1, 2, 3}
-	v.Interpolate(Vector{-2, 1, -1}, 0.5)
-	if v != (Vector{-0.5, 1.5, 1}) {
+	v.Interpolate(Vector{-2, 1, -1}, 2)
+	if v != (Vector{4, 3, 7}) {
 		t.Error(v)
 	}
 }
