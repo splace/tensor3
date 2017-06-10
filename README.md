@@ -23,7 +23,6 @@ installation:
 
 	get github.com/splace/tensor3    
 
-
 Example:  100 x 1 million matrix multiplications, single threaded then parallel.
 
 	package main
@@ -41,7 +40,7 @@ Example:  100 x 1 million matrix multiplications, single threaded then parallel.
 		m := NewMatrix(9, 8, 7,6, 5, 4,3, 2, 1)
 		start:=time.Now()
 
-		// multiply every matrix by m, do it 100 times (to make time resolution better.)
+		// multiply every matrix by m, do it 100 times (to make benchmark time resolution better.)
 		for i := 0; i < 100; i++ {
 			ms.Product(m)
 		}
