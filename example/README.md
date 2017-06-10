@@ -1,4 +1,3 @@
-Uses relative path location, so to compile requires directory structure of repository, not just package get. 
 
 example timing per matrix-matrix multiple; CPU: core 2 duo 
 
