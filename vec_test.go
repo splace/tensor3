@@ -26,7 +26,7 @@ func TestNewVectorPrint(t *testing.T) {
 
 func TestVecDot(t *testing.T) {
 	v := NewVector(1, 2, 3)
-	if v.Dot(NewVector(4, 5, 6)) != BaseScale(32) {
+	if v.Dot(NewVector(4, 5, 6)) != baseScale(32) {
 		t.Error(v)
 	}
 }
@@ -57,7 +57,7 @@ func TestVecCross(t *testing.T) {
 
 func TestVecLengthLength(t *testing.T) {
 	v := NewVector(1, 2, 3)
-	if v.LengthLength() != BaseScale(14) {
+	if v.LengthLength() != baseScale(14) {
 		t.Error(v.LengthLength())
 	}
 }
@@ -91,11 +91,11 @@ func TestVecLongestAxis(t *testing.T) {
 	if v.LongestAxis() != ZAxisIndex {
 		t.Error(v.LongestAxis())
 	}
-	v.Subtract( NewVector(0, 0, 3))
+	v.Subtract(NewVector(0, 0, 3))
 	if v.LongestAxis() != YAxisIndex {
 		t.Error(v.LongestAxis())
 	}
-	v.Subtract( NewVector(0, 2, 0))
+	v.Subtract(NewVector(0, 2, 0))
 	if v.LongestAxis() != XAxisIndex {
 		t.Error(v.LongestAxis())
 	}
@@ -106,11 +106,11 @@ func TestVecShortestAxis(t *testing.T) {
 	if v.ShortestAxis() != XAxisIndex {
 		t.Error(v.ShortestAxis())
 	}
-	v.Subtract( NewVector(-1, 0, 3))
+	v.Subtract(NewVector(-1, 0, 3))
 	if v.ShortestAxis() != ZAxisIndex {
 		t.Error(v.ShortestAxis())
 	}
-	v.Subtract( NewVector(-1, 0, -3))
+	v.Subtract(NewVector(-1, 0, -3))
 	if v.ShortestAxis() != YAxisIndex {
 		t.Error(v.ShortestAxis())
 	}
@@ -156,11 +156,10 @@ func TestVecApplyRunning(t *testing.T) {
 	}
 }
 
-
 func TestVecApplyForAll(t *testing.T) {
 	Parallel = true
 	defer func() {
-		Parallel=false
+		Parallel = false
 	}()
 	Hints.ChunkSizeFixed = true
 	Hints.DefaultChunkSize = 2
@@ -170,6 +169,3 @@ func TestVecApplyForAll(t *testing.T) {
 		t.Error(v)
 	}
 }
-
-
-

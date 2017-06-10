@@ -3,21 +3,20 @@ package tensor3
 // component type
 type BaseType float64
 
-const scale=1
+const scale = 1
 
-func BaseScale(v BaseType) BaseType{
+func baseScale(v BaseType) BaseType {
 	return v
 }
 
-func BaseUnscale(v BaseType) BaseType{
+func baseUnscale(v BaseType) BaseType {
 	return v
 }
 
-func VectorScale(v *Vector){
+func vectorScale(v *Vector) {
 	return
 }
 
-func VectorUnscale(v *Vector){
+func vectorUnscale(v *Vector) {
 	return
 }
-

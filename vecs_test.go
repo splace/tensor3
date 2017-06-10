@@ -11,7 +11,7 @@ func TestVecsPrint(t *testing.T) {
 }
 
 func TestVecsNew(t *testing.T) {
-	v := NewVectors(1, 2, 3, 4, 5, 6,7)
+	v := NewVectors(1, 2, 3, 4, 5, 6, 7)
 	if fmt.Sprint(v) != "[{1 2 3} {4 5 6} {7 0 0}]" {
 		t.Error(fmt.Sprint(v))
 	}
@@ -84,8 +84,8 @@ func TestVecsMin(t *testing.T) {
 
 func TestVecsInterpolate(t *testing.T) {
 	vs := Vectors{NewVector(7, 8, 9), NewVector(7, 8, 9), NewVector(7, 8, 9)}
-//	vs.Interpolate(Vector{-2, 1, -1}, 0.5)
-//	if fmt.Sprint(vs) != "[{2.5 4.5 4} {2.5 4.5 4} {2.5 4.5 4}]" {
+	//	vs.Interpolate(Vector{-2, 1, -1}, 0.5)
+	//	if fmt.Sprint(vs) != "[{2.5 4.5 4} {2.5 4.5 4} {2.5 4.5 4}]" {
 	vs.Interpolate(NewVector(-2, 1, -1), 2)
 	if fmt.Sprint(vs) != "[{16 15 19} {16 15 19} {16 15 19}]" {
 		t.Error(vs)
@@ -103,7 +103,7 @@ func TestVecsProductT(t *testing.T) {
 func TestVecsCrossChunked1(t *testing.T) {
 	Parallel = true
 	defer func() {
-		Parallel=false
+		Parallel = false
 	}()
 	Hints.ChunkSizeFixed = true
 	Hints.DefaultChunkSize = 1
@@ -118,7 +118,7 @@ func TestVecsCrossChunked1(t *testing.T) {
 func TestVecsCrossChunked2(t *testing.T) {
 	Parallel = true
 	defer func() {
-		Parallel=false
+		Parallel = false
 	}()
 	Hints.ChunkSizeFixed = true
 	Hints.DefaultChunkSize = 2
@@ -133,11 +133,11 @@ func TestVecsCrossChunked2(t *testing.T) {
 func TestVecsCrossChunked3(t *testing.T) {
 	Parallel = true
 	defer func() {
-		Parallel=false
+		Parallel = false
 	}()
 	Hints.ChunkSizeFixed = true
 	Hints.DefaultChunkSize = 2
-	v := Vectors{NewVector(1, 2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9), NewVector(10, 11, 12), NewVector(13, 14, 15),NewVector(16, 17, 18)}
+	v := Vectors{NewVector(1, 2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9), NewVector(10, 11, 12), NewVector(13, 14, 15), NewVector(16, 17, 18)}
 	//	v=append(v,Vector{1, 2, 3})
 	v.Add(NewVector(1, 1, 1))
 	if fmt.Sprint(v) != "[{2 3 4} {5 6 7} {8 9 10} {11 12 13} {14 15 16} {17 18 19}]" {
@@ -146,24 +146,22 @@ func TestVecsCrossChunked3(t *testing.T) {
 }
 
 func TestVecsAddVecs(t *testing.T) {
-	vs := Vectors{NewVector(1,2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9)}
+	vs := Vectors{NewVector(1, 2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9)}
 	vs2 := Vectors{NewVector(9, 8, 7), NewVector(6, 5, 4), NewVector(3, 2, 1)}
 	vs.AddAll(vs2)
-	if fmt.Sprint(vs[0],vs[1],vs[2]) != "{10 10 10} {10 10 10} {10 10 10}"{
-		t.Error(fmt.Sprint(vs[0],vs[1],vs[2]))
+	if fmt.Sprint(vs[0], vs[1], vs[2]) != "{10 10 10} {10 10 10} {10 10 10}" {
+		t.Error(fmt.Sprint(vs[0], vs[1], vs[2]))
 	}
 }
 
 func TestVecsCrossVecs(t *testing.T) {
-	vs := Vectors{NewVector(1,2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9)}
+	vs := Vectors{NewVector(1, 2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9)}
 	vs2 := Vectors{NewVector(9, 8, 7), NewVector(6, 5, 4), NewVector(3, 2, 1)}
 	vs.CrossAll(vs2)
-	if fmt.Sprint(vs[0],vs[1],vs[2]) != "{-10 20 -10} {-10 20 -10} {-10 20 -10}"{
-		t.Error(fmt.Sprint(vs[0],vs[1],vs[2]))
+	if fmt.Sprint(vs[0], vs[1], vs[2]) != "{-10 20 -10} {-10 20 -10} {-10 20 -10}" {
+		t.Error(fmt.Sprint(vs[0], vs[1], vs[2]))
 	}
 }
-
-
 
 func BenchmarkVecsSum(b *testing.B) {
 	b.StopTimer()
@@ -177,7 +175,6 @@ func BenchmarkVecsSum(b *testing.B) {
 	}
 }
 
-
 func BenchmarkVecsSumParallel(b *testing.B) {
 	b.StopTimer()
 	vs := make(Vectors, 1000000)
@@ -186,7 +183,7 @@ func BenchmarkVecsSumParallel(b *testing.B) {
 	}
 	Parallel = true
 	defer func() {
-		Parallel=false
+		Parallel = false
 	}()
 	Hints.ChunkSizeFixed = true
 	b.StartTimer()
@@ -218,7 +215,7 @@ func BenchmarkVecsCrossParallel(b *testing.B) {
 	v := NewVector(9, 8, 7)
 	Parallel = true
 	defer func() {
-		Parallel=false
+		Parallel = false
 	}()
 	Hints.ChunkSizeFixed = true
 	b.StartTimer()
@@ -251,7 +248,7 @@ func BenchmarkVecsProductParallel(b *testing.B) {
 	m := Matrix{}
 	Parallel = true
 	defer func() {
-		Parallel=false
+		Parallel = false
 	}()
 	Hints.ChunkSizeFixed = true
 	b.StartTimer()
@@ -303,7 +300,7 @@ BenchmarkVecsProductParallel-2   	     100	  13137967 ns/op
 PASS
 ok  	_/home/simon/Dropbox/github/working/tensor3	5.553s
 Tue 7 Mar 00:52:07 GMT 2017
-*//*  Hal3 Sat 15 Apr 00:28:58 BST 2017 go version go1.6.2 linux/amd64
+*/ /*  Hal3 Sat 15 Apr 00:28:58 BST 2017 go version go1.6.2 linux/amd64
 PASS
 BenchmarkVecsSum-2            	     100	  10705533 ns/op
 BenchmarkVecsSumParallel-2    	     100	  10577862 ns/op
@@ -337,4 +334,3 @@ BenchmarkVecsProductParallel-2	     100	  14118452 ns/op
 ok  	_/home/simon/Dropbox/github/working/tensor3	12.933s
 Tue 30 May 14:20:23 BST 2017
 */
-

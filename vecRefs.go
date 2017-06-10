@@ -2,97 +2,94 @@ package tensor3
 
 type VectorRefs []*Vector
 
-func NewVectorRefs(cs ...BaseType)(vs VectorRefs){
-	vs=make(VectorRefs,(len(cs)+2)/3)
-	for i:=range(vs){
-		v:=NewVector(cs[i*3:]...)
-		vs[i]=&v
+func NewVectorRefs(cs ...BaseType) (vs VectorRefs) {
+	vs = make(VectorRefs, (len(cs)+2)/3)
+	for i := range vs {
+		v := NewVector(cs[i*3:]...)
+		vs[i] = &v
 	}
 	return
 }
 
-func NewVectorRefsFromIndexes(cs Vectors,indexes ...uint)(vs VectorRefs){
-	if len(indexes)==0{
-		vs=make(VectorRefs,len(cs))
-		for i:=range(cs){
-			vs[i]=&cs[i]
+func NewVectorRefsFromIndexes(cs Vectors, indexes ...uint) (vs VectorRefs) {
+	if len(indexes) == 0 {
+		vs = make(VectorRefs, len(cs))
+		for i := range cs {
+			vs[i] = &cs[i]
 		}
-	}else{
-		vs=make(VectorRefs,len(indexes))
-		for i:=range(vs){
-			vs[i]=&cs[indexes[i]-1]
+	} else {
+		vs = make(VectorRefs, len(indexes))
+		for i := range vs {
+			vs[i] = &cs[indexes[i]-1]
 		}
 	}
 	return
 }
-
 
 // rebases, maintaining values, a number of vectorrefs to point into a new returned vectors.
 func NewVectorsFromVectorRefs(vss ...VectorRefs) Vectors {
-	m:=make(map[*Vector]uint)
-	for _,vs :=range(vss){
-		for _,v:=range(vs) {
-			if _,ok:=m[v];!ok{  
-				m[v]=uint(len(m))
+	m := make(map[*Vector]uint)
+	for _, vs := range vss {
+		for _, v := range vs {
+			if _, ok := m[v]; !ok {
+				m[v] = uint(len(m))
 			}
 		}
 	}
-	nv:=make(Vectors,len(m))
-	for vr,index:=range(m){
-		nv[index]=*vr
+	nv := make(Vectors, len(m))
+	for vr, index := range m {
+		nv[index] = *vr
 	}
-	for _,vs :=range(vss){
-		for i,vr:=range(vs) {
-			vs[i]=&nv[m[vr]]
+	for _, vs := range vss {
+		for i, vr := range vs {
+			vs[i] = &nv[m[vr]]
 		}
-	}	
+	}
 	return nv
 }
 
-
 // TODO find index from pointer, use unsafe? or read text?
 func (vsr VectorRefs) Indexes(vs Vectors) (is []uint) {
-	is=make([]uint,len(vsr))
-	for ir,r:=range(vsr) {
-		for i:=range(vs) {
-			if &vs[i]==r {is[ir]=uint(i+1);break}
+	is = make([]uint, len(vsr))
+	for ir, r := range vsr {
+		for i := range vs {
+			if &vs[i] == r {
+				is[ir] = uint(i + 1)
+				break
+			}
 		}
 	}
 	return is
 }
 
-
 func (vsr VectorRefs) Dereference() (vs Vectors) {
-	vs=make(Vectors,len(vsr))
-	for i:=range(vs){
-		vs[i]=*vsr[i]
+	vs = make(Vectors, len(vsr))
+	for i := range vs {
+		vs[i] = *vsr[i]
 	}
 	return
 }
 
 func (vs Vectors) Dereference(vsr VectorRefs) {
-	if len(vs)>len(vsr){
-		for i:=range(vsr){
-			vs[i]=*vsr[i]
+	if len(vs) > len(vsr) {
+		for i := range vsr {
+			vs[i] = *vsr[i]
 		}
-	}else{
-		for i:=range(vs){
-			vs[i]=*vsr[i]
+	} else {
+		for i := range vs {
+			vs[i] = *vsr[i]
 		}
 	}
 	return
 }
 
-
 func (vs VectorRefs) Cross(v Vector) {
 	vs.ForEach((*Vector).Cross, v)
 }
 
-
 func (vs VectorRefs) Add(v Vector) {
 	vs.ForEach((*Vector).Add, v)
 }
-
 
 func (vs VectorRefs) Subtract(v Vector) {
 	vs.ForEach((*Vector).Subtract, v)
@@ -235,7 +232,6 @@ func matrixApplyRefChunked(vs VectorRefs, fn func(*Vector, Matrix), m Matrix, ch
 	}
 }
 
-
 // apply a function without a vector parameter using a dummy
 func (vs VectorRefs) ForEachNoParameter(fn func(*Vector)) {
 	var inner func(*Vector, Vector)
@@ -245,26 +241,23 @@ func (vs VectorRefs) ForEachNoParameter(fn func(*Vector)) {
 	vs.ForEach(inner, Vector{})
 }
 
-
 func (vs Vectors) CrossAllRefs(vrs VectorRefs) {
-	vs.ForAllRefs(vrs,(*Vector).Cross)
+	vs.ForAllRefs(vrs, (*Vector).Cross)
 }
-
 
 func (vs Vectors) AddAllRefs(vrs VectorRefs) {
-	vs.ForAllRefs(vrs,(*Vector).Add)
+	vs.ForAllRefs(vrs, (*Vector).Add)
 }
 
-
 func (vs Vectors) SubtractAllRefs(vrs VectorRefs) {
-	vs.ForAllRefs(vrs,(*Vector).Subtract)
+	vs.ForAllRefs(vrs, (*Vector).Subtract)
 }
 
 func (vs Vectors) ProjectAllRefs(vrs VectorRefs) {
-	vs.ForAllRefs(vrs,(*Vector).Project)
+	vs.ForAllRefs(vrs, (*Vector).Project)
 }
 
-func (vs Vectors) ForAllRefs(vrs VectorRefs,fn func(*Vector, Vector)) {
+func (vs Vectors) ForAllRefs(vrs VectorRefs, fn func(*Vector, Vector)) {
 	if !Parallel {
 		vectorsApplyAllRefs(vs, fn, vrs)
 	} else {
@@ -289,7 +282,7 @@ func vectorsApplyAllRefs(vs Vectors, fn func(*Vector, Vector), vs2 VectorRefs) {
 func vectorsApplyAllRefsChunked(vs Vectors, fn func(*Vector, Vector), vrs VectorRefs, chunkSize uint) {
 	done := make(chan struct{}, 1)
 	var running uint
-	chunks2:=vectorRefsInChunks(vrs, chunkSize)
+	chunks2 := vectorRefsInChunks(vrs, chunkSize)
 	for chunk := range vectorsInChunks(vs, chunkSize) {
 		running++
 		go func(c Vectors) {
@@ -302,23 +295,20 @@ func vectorsApplyAllRefsChunked(vs Vectors, fn func(*Vector, Vector), vrs Vector
 	}
 }
 
-
 func (vrs VectorRefs) CrossAllRefs(vrs2 VectorRefs) {
-	vrs.ForAllRefs(vrs2,(*Vector).Cross)
+	vrs.ForAllRefs(vrs2, (*Vector).Cross)
 }
-
 
 func (vrs VectorRefs) AddAllRefs(vrs2 VectorRefs) {
-	vrs.ForAllRefs(vrs2,(*Vector).Add)
+	vrs.ForAllRefs(vrs2, (*Vector).Add)
 }
 
-
 func (vrs VectorRefs) SubtractAllRefs(vrs2 VectorRefs) {
-	vrs.ForAllRefs(vrs2,(*Vector).Subtract)
+	vrs.ForAllRefs(vrs2, (*Vector).Subtract)
 }
 
 func (vrs VectorRefs) ProjectAllRefs(vrs2 VectorRefs) {
-	vrs.ForAllRefs(vrs2,(*Vector).Project)
+	vrs.ForAllRefs(vrs2, (*Vector).Project)
 }
 
 func (vrs VectorRefs) ForAllRefs(vrs2 VectorRefs, fn func(*Vector, Vector)) {
@@ -346,7 +336,7 @@ func vectorRefsApplyAllRefs(vrs VectorRefs, fn func(*Vector, Vector), vrs2 Vecto
 func vectorRefsApplyAllChunkedRefs(vrs VectorRefs, fn func(*Vector, Vector), vrs2 VectorRefs, chunkSize uint) {
 	done := make(chan struct{}, 1)
 	var running uint
-	chunks2:=vectorRefsInChunks(vrs2, chunkSize)
+	chunks2 := vectorRefsInChunks(vrs2, chunkSize)
 	for chunk := range vectorRefsInChunks(vrs, chunkSize) {
 		running++
 		go func(c VectorRefs) {
@@ -359,26 +349,23 @@ func vectorRefsApplyAllChunkedRefs(vrs VectorRefs, fn func(*Vector, Vector), vrs
 	}
 }
 
-
 func (vrs VectorRefs) CrossAll(vs Vectors) {
-	vrs.ForAll(vs,(*Vector).Cross)
+	vrs.ForAll(vs, (*Vector).Cross)
 }
-
 
 func (vrs VectorRefs) AddAll(vs Vectors) {
-	vrs.ForAll(vs,(*Vector).Add)
+	vrs.ForAll(vs, (*Vector).Add)
 }
 
-
 func (vrs VectorRefs) SubtractAll(vs Vectors) {
-	vrs.ForAll(vs,(*Vector).Subtract)
+	vrs.ForAll(vs, (*Vector).Subtract)
 }
 
 func (vrs VectorRefs) ProjectAll(vs Vectors) {
-	vrs.ForAll(vs,(*Vector).Project)
+	vrs.ForAll(vs, (*Vector).Project)
 }
 
-func (vrs VectorRefs) ForAll(vs Vectors,fn func(*Vector, Vector)) {
+func (vrs VectorRefs) ForAll(vs Vectors, fn func(*Vector, Vector)) {
 	if !Parallel {
 		vectorRefsApplyAll(vrs, fn, vs)
 	} else {
@@ -403,7 +390,7 @@ func vectorRefsApplyAll(vs VectorRefs, fn func(*Vector, Vector), vs2 Vectors) {
 func vectorRefsApplyAllChunked(vs VectorRefs, fn func(*Vector, Vector), vs2 Vectors, chunkSize uint) {
 	done := make(chan struct{}, 1)
 	var running uint
-	chunks2:=vectorsInChunks(vs2, chunkSize)
+	chunks2 := vectorsInChunks(vs2, chunkSize)
 	for chunk := range vectorRefsInChunks(vs, chunkSize) {
 		running++
 		go func(c VectorRefs) {
@@ -415,7 +402,6 @@ func vectorRefsApplyAllChunked(vs VectorRefs, fn func(*Vector, Vector), vs2 Vect
 		<-done
 	}
 }
-
 
 /*  Hal3 Sat 15 Apr 00:12:56 BST 2017 go version go1.6.2 linux/amd64
 === RUN   TestMatrixProductT
@@ -577,4 +563,3 @@ PASS
 ok  	_/home/simon/Dropbox/github/working/tensor3	0.006s
 Sat 15 Apr 00:12:58 BST 2017
 */
-

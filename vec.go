@@ -13,8 +13,8 @@ var yzPlane, xzPlane, zxPlane = Vector{0, scale, scale}, Vector{scale, 0, scale}
 
 type Axis uint
 
-const ( 
-	XAxisIndex Axis = iota 
+const (
+	XAxisIndex Axis = iota
 	YAxisIndex
 	ZAxisIndex
 )
@@ -26,13 +26,13 @@ var AxisPlanes = [3]Vector{yzPlane, xzPlane, zxPlane}
 func NewVector(cs ...BaseType) (v Vector) {
 	switch len(cs) {
 	default:
-		v.z = BaseScale(cs[2])
+		v.z = baseScale(cs[2])
 		fallthrough
 	case 2:
-		v.y = BaseScale(cs[1])
+		v.y = baseScale(cs[1])
 		fallthrough
 	case 1:
-		v.x = BaseScale(cs[0])
+		v.x = baseScale(cs[0])
 	case 0:
 		return
 	}
@@ -66,12 +66,12 @@ func (v *Vector) Divide(s BaseType) {
 }
 
 func (v Vector) Dot(v2 Vector) BaseType {
-	return BaseUnscale(v.x*v2.x + v.y*v2.y + v.z*v2.z)
+	return baseUnscale(v.x*v2.x + v.y*v2.y + v.z*v2.z)
 }
 
 func (v *Vector) Cross(v2 Vector) {
 	v.x, v.y, v.z = v.y*v2.z-v.z*v2.y, v.z*v2.x-v.x*v2.z, v.x*v2.y-v.y*v2.x
-	VectorUnscale(v)
+	vectorUnscale(v)
 }
 
 // length squared. (returning squared means this package is not dependent on math package.)
@@ -110,9 +110,9 @@ func (v *Vector) Min(v2 Vector) {
 }
 
 func (v *Vector) Mid(v2 Vector) {
-	v.x = (v2.x + v.x) /2
-	v.y = (v2.y + v.y) /2
-	v.z = (v2.z + v.z) /2
+	v.x = (v2.x + v.x) / 2
+	v.y = (v2.y + v.y) / 2
+	v.z = (v2.z + v.z) / 2
 }
 
 func (v *Vector) Interpolate(v2 Vector, f BaseType) {
@@ -121,14 +121,14 @@ func (v *Vector) Interpolate(v2 Vector, f BaseType) {
 	v.Add(v2)
 }
 
-// apply a function repeatedly to the vector, parameterised by the current value of the vector and each vector in the supplied vectors in order. 
+// apply a function repeatedly to the vector, parameterised by the current value of the vector and each vector in the supplied vectors in order.
 func (v *Vector) Aggregate(vs Vectors, fn func(*Vector, Vector)) {
 	for _, v2 := range vs {
 		fn(v, v2)
 	}
 }
 
-// apply a function repeatedly to the vector, parameterised by the current value of the vector and each vector in the supplied vectors. 
+// apply a function repeatedly to the vector, parameterised by the current value of the vector and each vector in the supplied vectors.
 func (v *Vector) ForAll(vs Vectors, fn func(*Vector, Vector)) {
 	if !Parallel {
 		vectorApplyAll(v, fn, vs)
@@ -163,10 +163,9 @@ func vectorApplyAllChunked(v *Vector, fn func(*Vector, Vector), vs Vectors, chun
 		}(chunk)
 	}
 	for ; running > 0; running-- {
-		fn(v,<-done)
+		fn(v, <-done)
 	}
 }
-
 
 func (v *Vector) AggregateRefs(vs VectorRefs, fn func(*Vector, Vector)) {
 	for _, v2 := range vs {
@@ -179,34 +178,34 @@ func (v *Vector) Project(axis Vector) {
 	v.x *= axis.x
 	v.y *= axis.y
 	v.z *= axis.z
-	VectorUnscale(v)
+	vectorUnscale(v)
 }
 
-// axis which vector is most aligned with. 
+// axis which vector is most aligned with.
 func (v Vector) LongestAxis() Axis {
 	v.Project(v)
-	if v.z >v.y {
-		if v.z>v.x {
+	if v.z > v.y {
+		if v.z > v.x {
 			return ZAxisIndex
-			}
-		return XAxisIndex
 		}
-	if v.x >v.y {
+		return XAxisIndex
+	}
+	if v.x > v.y {
 		return XAxisIndex
 	}
 	return YAxisIndex
 }
 
-// axis which vector is least aligned with. 
+// axis which vector is least aligned with.
 func (v Vector) ShortestAxis() Axis {
 	v.Project(v)
-	if v.z <v.y {
-		if v.x<v.z {
+	if v.z < v.y {
+		if v.x < v.z {
 			return XAxisIndex
-			}
-		return ZAxisIndex
 		}
-	if v.x >v.y {
+		return ZAxisIndex
+	}
+	if v.x > v.y {
 		return YAxisIndex
 	}
 	return XAxisIndex
@@ -215,13 +214,11 @@ func (v Vector) ShortestAxis() Axis {
 // vector - matrix multiplication
 func (v *Vector) Product(m Matrix) {
 	v.x, v.y, v.z = v.x*m.x.x+v.y*m.y.x+v.z*m.z.x, v.x*m.x.y+v.y*m.y.y+v.z*m.z.y, v.x*m.x.z+v.y*m.y.z+v.z*m.z.z
-	VectorUnscale(v)
+	vectorUnscale(v)
 }
 
 // vector - transposed matrix multiplication
 func (v *Vector) ProductT(m Matrix) {
 	v.x, v.y, v.z = v.x*m.x.x+v.y*m.x.y+v.z*m.x.z, v.x*m.y.x+v.y*m.y.y+v.z*m.y.z, v.x*m.z.x+v.y*m.z.y+v.z*m.z.z
-	VectorUnscale(v)
+	vectorUnscale(v)
 }
-
-

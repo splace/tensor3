@@ -12,31 +12,31 @@ func (m Matrix) Components() (Vector, Vector, Vector) {
 func NewMatrix(cs ...BaseType) (m Matrix) {
 	switch len(cs) {
 	case 9:
-		m.z.z = BaseScale(cs[8])
+		m.z.z = baseScale(cs[8])
 		fallthrough
 	case 8:
-		m.z.y = BaseScale(cs[7])
+		m.z.y = baseScale(cs[7])
 		fallthrough
 	case 7:
-		m.z.x = BaseScale(cs[6])
+		m.z.x = baseScale(cs[6])
 		fallthrough
 	case 6:
-		m.y.z = BaseScale(cs[5])
+		m.y.z = baseScale(cs[5])
 		fallthrough
 	case 5:
-		m.y.y = BaseScale(cs[4])
+		m.y.y = baseScale(cs[4])
 		fallthrough
 	case 4:
-		m.y.x = BaseScale(cs[3])
+		m.y.x = baseScale(cs[3])
 		fallthrough
 	case 3:
-		m.x.z = BaseScale(cs[2])
+		m.x.z = baseScale(cs[2])
 		fallthrough
 	case 2:
-		m.x.y = BaseScale(cs[1])
+		m.x.y = baseScale(cs[1])
 		fallthrough
 	case 1:
-		m.x.x = BaseScale(cs[0])
+		m.x.x = baseScale(cs[0])
 	}
 	return
 }
@@ -73,7 +73,7 @@ func (m Matrix) Dot(v2 Vector) (v Vector) {
 }
 
 func (m Matrix) Determinant() BaseType {
-	return BaseUnscale(BaseUnscale(m.x.x*m.y.y*m.z.z - m.x.x*m.y.z*m.z.y + m.x.y*m.y.z*m.z.x - m.x.y*m.y.x*m.z.z + m.x.z*m.y.x*m.z.y - m.x.z*m.y.y*m.z.x))
+	return baseUnscale(baseUnscale(m.x.x*m.y.y*m.z.z - m.x.x*m.y.z*m.z.y + m.x.y*m.y.z*m.z.x - m.x.y*m.y.x*m.z.z + m.x.z*m.y.x*m.z.y - m.x.z*m.y.y*m.z.x))
 }
 
 func (m *Matrix) Invert() {
@@ -106,9 +106,9 @@ func (m *Matrix) Product(m2 Matrix) {
 		m.x.x*m2.x.x+m.x.y*m2.y.x+m.x.z*m2.z.x, m.x.x*m2.x.y+m.x.y*m2.y.y+m.x.z*m2.z.y, m.x.x*m2.x.z+m.x.y*m2.y.z+m.x.z*m2.z.z,
 		m.y.x*m2.x.x+m.y.y*m2.y.x+m.y.z*m2.z.x, m.y.x*m2.x.y+m.y.y*m2.y.y+m.y.z*m2.z.y, m.y.x*m2.x.z+m.y.y*m2.y.z+m.y.z*m2.z.z,
 		m.z.x*m2.x.x+m.z.y*m2.y.x+m.z.z*m2.z.x, m.z.x*m2.x.y+m.z.y*m2.y.y+m.z.z*m2.z.y, m.z.x*m2.x.z+m.z.y*m2.y.z+m.z.z*m2.z.z
-	VectorUnscale(&m.x)
-	VectorUnscale(&m.y)
-	VectorUnscale(&m.z)
+	vectorUnscale(&m.x)
+	vectorUnscale(&m.y)
+	vectorUnscale(&m.z)
 }
 
 func (m *Matrix) ProductRight(m2 Matrix) {
@@ -116,9 +116,9 @@ func (m *Matrix) ProductRight(m2 Matrix) {
 		m2.x.x*m.x.x+m2.x.y*m.y.x+m2.x.z*m.z.x, m2.x.x*m.x.y+m2.x.y*m.y.y+m2.x.z*m.z.y, m2.x.x*m.x.z+m2.x.y*m.y.z+m2.x.z*m.z.z,
 		m2.y.x*m.x.x+m2.y.y*m.y.x+m2.y.z*m.z.x, m2.y.x*m.x.y+m2.y.y*m.y.y+m2.y.z*m.z.y, m2.y.x*m.x.z+m2.y.y*m.y.z+m2.y.z*m.z.z,
 		m2.z.x*m.x.x+m2.z.y*m.y.x+m2.z.z*m.z.x, m2.z.x*m.x.y+m2.z.y*m.y.y+m2.z.z*m.z.y, m2.z.x*m.x.z+m2.z.y*m.y.z+m2.z.z*m.z.z
-	VectorUnscale(&m.x)
-	VectorUnscale(&m.y)
-	VectorUnscale(&m.z)
+	vectorUnscale(&m.x)
+	vectorUnscale(&m.y)
+	vectorUnscale(&m.z)
 }
 
 func (m *Matrix) Transpose() {
@@ -147,7 +147,6 @@ func (m *Matrix) Aggregate(ms Matrices, fn func(*Matrix, Matrix)) {
 	}
 }
 
-
 func (vs Vectors) Product(m Matrix) {
 	m.ForEach((*Vector).Product, vs)
 }
@@ -155,7 +154,6 @@ func (vs Vectors) Product(m Matrix) {
 func (vs Vectors) ProductT(m Matrix) {
 	m.ForEach((*Vector).ProductT, vs)
 }
-
 
 func (m Matrix) ForEach(fn func(*Vector, Matrix), vs Vectors) {
 	if !Parallel {
@@ -194,7 +192,7 @@ func matrixApplyChunked(vs Vectors, fn func(*Vector, Matrix), m Matrix, chunkSiz
 	}
 }
 
-// apply a function to each of the matrices 3 vector components, parameterised by the existing component and the corresponding component of the passed matrix. 
+// apply a function to each of the matrices 3 vector components, parameterised by the existing component and the corresponding component of the passed matrix.
 func (m *Matrix) ApplyToComponents(fn func(*Vector, Vector), m2 Matrix) {
 	if !ParallelComponents {
 		fn(&m.x, m2.x)
@@ -220,12 +218,12 @@ func (m *Matrix) ApplyToComponents(fn func(*Vector, Vector), m2 Matrix) {
 	}
 }
 
-// apply a function to each of the matrices 3 vector components, parameterised by the existing component and the corresponding component of the identity matrix, (aligned axis vectors). 
+// apply a function to each of the matrices 3 vector components, parameterised by the existing component and the corresponding component of the identity matrix, (aligned axis vectors).
 func (m *Matrix) ApplyToComponentsByAxes(fn func(*Vector, Vector)) {
 	m.ApplyToComponents(fn, Matrix{xAxis, yAxis, zAxis})
 }
 
-// apply a function to each of the matrices 3 vector components, parameterised by the existing component and the passed vector. 
+// apply a function to each of the matrices 3 vector components, parameterised by the existing component and the passed vector.
 func (m *Matrix) ApplyToComponentsBySameVector(fn func(*Vector, Vector), v Vector) {
 	if !ParallelComponents {
 		fn(&m.x, v)
@@ -251,17 +249,17 @@ func (m *Matrix) ApplyToComponentsBySameVector(fn func(*Vector, Vector), v Vecto
 	}
 }
 
-// apply a function to a matrices first vector component, parameterised by the existing component and the passed vector. 
+// apply a function to a matrices first vector component, parameterised by the existing component and the passed vector.
 func (m *Matrix) applyX(fn func(*Vector, Vector), v Vector) {
 	fn(&m.x, v)
 }
 
-// apply a function to a matrices second vector component, parameterised by the existing component and the passed vector. 
+// apply a function to a matrices second vector component, parameterised by the existing component and the passed vector.
 func (m *Matrix) applyY(fn func(*Vector, Vector), v Vector) {
 	fn(&m.y, v)
 }
 
-// apply a function to a matrices third vector component, parameterised by the existing component and the passed vector. 
+// apply a function to a matrices third vector component, parameterised by the existing component and the passed vector.
 func (m *Matrix) applyZ(fn func(*Vector, Vector), v Vector) {
 	fn(&m.z, v)
 }

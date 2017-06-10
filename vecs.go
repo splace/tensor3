@@ -2,10 +2,10 @@ package tensor3
 
 type Vectors []Vector
 
-func NewVectors(cs ...BaseType)(vs Vectors){
-	vs=make(Vectors,(len(cs)+2)/3)
-	for i:=range(vs){
-		vs[i]=NewVector(cs[i*3:]...)
+func NewVectors(cs ...BaseType) (vs Vectors) {
+	vs = make(Vectors, (len(cs)+2)/3)
+	for i := range vs {
+		vs[i] = NewVector(cs[i*3:]...)
 	}
 	return
 }
@@ -114,7 +114,6 @@ func vectorsInChunks(vs Vectors, chunkSize uint) chan Vectors {
 	return c
 }
 
-
 // apply a function without a vector parameter by using a dummy
 func (vs Vectors) ForEachNoParameter(fn func(*Vector)) {
 	var inner func(*Vector, Vector)
@@ -128,11 +127,9 @@ func (vs Vectors) CrossAll(vs2 Vectors) {
 	vs.ForAll((*Vector).Cross, vs2)
 }
 
-
 func (vs Vectors) AddAll(vs2 Vectors) {
 	vs.ForAll((*Vector).Add, vs2)
 }
-
 
 func (vs Vectors) SubtractAll(vs2 Vectors) {
 	vs.ForAll((*Vector).Subtract, vs2)
@@ -141,7 +138,6 @@ func (vs Vectors) SubtractAll(vs2 Vectors) {
 func (vs Vectors) ProjectAll(vs2 Vectors) {
 	vs.ForAll((*Vector).Project, vs2)
 }
-
 
 func (vs Vectors) ForAll(fn func(*Vector, Vector), vs2 Vectors) {
 	if !Parallel {
@@ -168,7 +164,7 @@ func vectorsApplyAll(vs Vectors, fn func(*Vector, Vector), vs2 Vectors) {
 func vectorsApplyAllChunked(vs Vectors, fn func(*Vector, Vector), vs2 Vectors, chunkSize uint) {
 	done := make(chan struct{}, 1)
 	var running uint
-	chunks2:=vectorsInChunks(vs2, chunkSize)
+	chunks2 := vectorsInChunks(vs2, chunkSize)
 	for chunk := range vectorsInChunks(vs, chunkSize) {
 		running++
 		go func(c Vectors) {
@@ -180,4 +176,3 @@ func vectorsApplyAllChunked(vs Vectors, fn func(*Vector, Vector), vs2 Vectors, c
 		<-done
 	}
 }
-

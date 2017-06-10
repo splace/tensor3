@@ -72,7 +72,7 @@ func BenchmarkMatsProductParallel(b *testing.B) {
 	m := Matrix{NewVector(9, 8, 7), NewVector(6, 5, 4), NewVector(3, 2, 1)}
 	Parallel = true
 	defer func() {
-		Parallel=false
+		Parallel = false
 	}()
 	Hints.ChunkSizeFixed = true
 	b.StartTimer()
@@ -97,4 +97,3 @@ PASS
 ok  	3.110s
 Thu 9 Mar 16:56:11 GMT 2017
 */
-
