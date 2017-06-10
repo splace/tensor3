@@ -22,8 +22,8 @@ with array types selectively broken into chunks for better parallel performance.
 installation:
 
 	get github.com/splace/tensor3   // 64bit
-//	get github.com/splace/tensor3/32bit
-//	get github.com/splace/tensor3/scaledint
+	//	get github.com/splace/tensor3/32bit
+	//	get github.com/splace/tensor3/scaledint
    
 
 Example:  100 x 1 million matrix multiplications, single threaded then parallel.
