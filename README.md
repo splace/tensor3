@@ -8,7 +8,7 @@ Arrays, called Vectors and Matrices, with their useful methods (parallel).
 
 VectorRefs, array of pointers to Vector, with methods to convert to/from Vectors.
 
-64bit float, 32bit float, or fixed scale int component value types (separate packages).
+64bit float, 32bit float, or fixed precision (int scaled for 3dp) component value types (separate packages).
 
 (import package multiple times, with different aliases, to enable simultaneous use.)
 
