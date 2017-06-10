@@ -21,13 +21,18 @@ with array types selectively broken into chunks for better parallel performance.
 
 installation:
 
-	get github.com/splace/tensor3    
+	get github.com/splace/tensor3   // 64bit
+//	get github.com/splace/tensor3/32bit
+//	get github.com/splace/tensor3/scaledint
+   
 
 Example:  100 x 1 million matrix multiplications, single threaded then parallel.
 
 	package main
 
-	import . "github.com/splace/tensor3"
+	import . "github.com/splace/tensor3"  // 64 bit
+	//import . "github.com/splace/tensor3/32bit"
+	//import . "github.com/splace/tensor3/scaledint"
 	import "time"
 	import "fmt"
 
@@ -35,9 +40,9 @@ Example:  100 x 1 million matrix multiplications, single threaded then parallel.
 		ms := make(Matrices, 1000000)
 		// fill in array of matrices
 		for i := range ms {
-			ms[i] = NewMatrix(1, 2, 3,4, 5, 6, 7, 8, 9)
+			ms[i] = NewMatrix(1, 2, 3, 4, 5, 6, 7, 8, 9)
 		}
-		m := NewMatrix(9, 8, 7,6, 5, 4,3, 2, 1)
+		m := NewMatrix(9, 8, 7, 6, 5, 4, 3, 2, 1)
 		start:=time.Now()
 
 		// multiply every matrix by m, do it 100 times (to make benchmark time resolution better.)
