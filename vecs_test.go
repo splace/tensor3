@@ -4,7 +4,7 @@ import "testing"
 import "fmt"
 
 func TestVecsPrint(t *testing.T) {
-	v := Vectors{Vector{1, 2, 3}}
+	v := Vectors{NewVector(1, 2, 3)}
 	if fmt.Sprint(v) != "[{1 2 3}]" {
 		t.Error(fmt.Sprint(v))
 	}
@@ -18,23 +18,23 @@ func TestVecsNew(t *testing.T) {
 }
 
 func TestVecsCrossLen1(t *testing.T) {
-	v := Vectors{Vector{1, 2, 3}}
-	v.Cross(Vector{4, 5, 6})
+	v := Vectors{NewVector(1, 2, 3)}
+	v.Cross(NewVector(4, 5, 6))
 	if fmt.Sprint(v) != "[{-3 6 -3}]" {
 		t.Error(fmt.Sprint(v))
 	}
 }
 
 func TestVecsCross(t *testing.T) {
-	v := Vectors{Vector{1, 2, 3}, Vector{1, 2, 3}}
-	v.Cross(Vector{4, 5, 6})
+	v := Vectors{NewVector(1, 2, 3), NewVector(1, 2, 3)}
+	v.Cross(NewVector(4, 5, 6))
 	if fmt.Sprint(v) != "[{-3 6 -3} {-3 6 -3}]" {
 		t.Error(fmt.Sprint(v))
 	}
 }
 
 func TestVecsProduct(t *testing.T) {
-	v := Vectors{Vector{1, 2, 3}, Vector{1, 2, 3}}
+	v := Vectors{NewVector(1, 2, 3), NewVector(1, 2, 3)}
 	v.Product(Identity)
 	if fmt.Sprint(v) != "[{1 2 3} {1 2 3}]" {
 		t.Error(fmt.Sprint(v))
@@ -42,21 +42,21 @@ func TestVecsProduct(t *testing.T) {
 }
 
 func TestVecsSum(t *testing.T) {
-	vs := Vectors{Vector{7, 8, 9}, Vector{7, 8, 9}, Vector{7, 8, 9}}
+	vs := Vectors{NewVector(7, 8, 9), NewVector(7, 8, 9), NewVector(7, 8, 9)}
 	if fmt.Sprint(vs.Sum()) != "{21 24 27}" {
 		t.Error(vs.Sum())
 	}
 }
 
 func TestVecsMax(t *testing.T) {
-	vs := Vectors{Vector{4, -1, 11}, Vector{7, 2, 9}, Vector{7, 8, 9}}
+	vs := Vectors{NewVector(4, -1, 11), NewVector(7, 2, 9), NewVector(7, 8, 9)}
 	if fmt.Sprint(vs.Max()) != "{7 8 11}" {
 		t.Error(vs.Max())
 	}
 }
 
 func TestVecsMaxOne(t *testing.T) {
-	vs := Vectors{Vector{1, -1, 1}}
+	vs := Vectors{NewVector(1, -1, 1)}
 	if fmt.Sprint(vs.Max()) != "{1 -1 1}" {
 		t.Error(vs.Max())
 	}
@@ -76,24 +76,24 @@ func TestVecsMaxNone(t *testing.T) {
 }
 
 func TestVecsMin(t *testing.T) {
-	vs := Vectors{Vector{4, -1, 11}, Vector{7, 2, 9}, Vector{7, 8, 9}}
+	vs := Vectors{NewVector(4, -1, 11), NewVector(7, 2, 9), NewVector(7, 8, 9)}
 	if fmt.Sprint(vs.Min()) != "{4 -1 9}" {
 		t.Error(vs.Min())
 	}
 }
 
 func TestVecsInterpolate(t *testing.T) {
-	vs := Vectors{Vector{7, 8, 9}, Vector{7, 8, 9}, Vector{7, 8, 9}}
+	vs := Vectors{NewVector(7, 8, 9), NewVector(7, 8, 9), NewVector(7, 8, 9)}
 //	vs.Interpolate(Vector{-2, 1, -1}, 0.5)
 //	if fmt.Sprint(vs) != "[{2.5 4.5 4} {2.5 4.5 4} {2.5 4.5 4}]" {
-	vs.Interpolate(Vector{-2, 1, -1}, 2)
+	vs.Interpolate(NewVector(-2, 1, -1), 2)
 	if fmt.Sprint(vs) != "[{16 15 19} {16 15 19} {16 15 19}]" {
 		t.Error(vs)
 	}
 }
 
 func TestVecsProductT(t *testing.T) {
-	v := Vectors{Vector{1, 2, 3}, Vector{1, 2, 3}}
+	v := Vectors{NewVector(1, 2, 3), NewVector(1, 2, 3)}
 	v.ProductT(Identity)
 	if fmt.Sprint(v) != "[{1 2 3} {1 2 3}]" {
 		t.Error(fmt.Sprint(v))
@@ -107,9 +107,9 @@ func TestVecsCrossChunked1(t *testing.T) {
 	}()
 	Hints.ChunkSizeFixed = true
 	Hints.DefaultChunkSize = 1
-	v := Vectors{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}, Vector{10, 11, 12}}
+	v := Vectors{NewVector(1, 2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9), NewVector(10, 11, 12)}
 	//	v=append(v,Vector{1, 2, 3})
-	v.Add(Vector{1, 1, 1})
+	v.Add(NewVector(1, 1, 1))
 	if fmt.Sprint(v) != "[{2 3 4} {5 6 7} {8 9 10} {11 12 13}]" {
 		t.Error(fmt.Sprint(v))
 	}
@@ -122,9 +122,9 @@ func TestVecsCrossChunked2(t *testing.T) {
 	}()
 	Hints.ChunkSizeFixed = true
 	Hints.DefaultChunkSize = 2
-	v := Vectors{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}, Vector{10, 11, 12}}
+	v := Vectors{NewVector(1, 2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9), NewVector(10, 11, 12)}
 	//	v=append(v,Vector{1, 2, 3})
-	v.Add(Vector{1, 1, 1})
+	v.Add(NewVector(1, 1, 1))
 	if fmt.Sprint(v) != "[{2 3 4} {5 6 7} {8 9 10} {11 12 13}]" {
 		t.Error(fmt.Sprint(v))
 	}
@@ -137,17 +137,17 @@ func TestVecsCrossChunked3(t *testing.T) {
 	}()
 	Hints.ChunkSizeFixed = true
 	Hints.DefaultChunkSize = 2
-	v := Vectors{Vector{1, 2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}, Vector{10, 11, 12}, Vector{13, 14, 15}, Vector{16, 17, 18}}
+	v := Vectors{NewVector(1, 2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9), NewVector(10, 11, 12), NewVector(13, 14, 15),NewVector(16, 17, 18)}
 	//	v=append(v,Vector{1, 2, 3})
-	v.Add(Vector{1, 1, 1})
+	v.Add(NewVector(1, 1, 1))
 	if fmt.Sprint(v) != "[{2 3 4} {5 6 7} {8 9 10} {11 12 13} {14 15 16} {17 18 19}]" {
 		t.Error(fmt.Sprint(v))
 	}
 }
 
 func TestVecsAddVecs(t *testing.T) {
-	vs := Vectors{Vector{1,2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}
-	vs2 := Vectors{Vector{9, 8, 7}, Vector{6, 5, 4}, Vector{3, 2, 1}}
+	vs := Vectors{NewVector(1,2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9)}
+	vs2 := Vectors{NewVector(9, 8, 7), NewVector(6, 5, 4), NewVector(3, 2, 1)}
 	vs.AddAll(vs2)
 	if fmt.Sprint(vs[0],vs[1],vs[2]) != "{10 10 10} {10 10 10} {10 10 10}"{
 		t.Error(fmt.Sprint(vs[0],vs[1],vs[2]))
@@ -155,8 +155,8 @@ func TestVecsAddVecs(t *testing.T) {
 }
 
 func TestVecsCrossVecs(t *testing.T) {
-	vs := Vectors{Vector{1,2, 3}, Vector{4, 5, 6}, Vector{7, 8, 9}}
-	vs2 := Vectors{Vector{9, 8, 7}, Vector{6, 5, 4}, Vector{3, 2, 1}}
+	vs := Vectors{NewVector(1,2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9)}
+	vs2 := Vectors{NewVector(9, 8, 7), NewVector(6, 5, 4), NewVector(3, 2, 1)}
 	vs.CrossAll(vs2)
 	if fmt.Sprint(vs[0],vs[1],vs[2]) != "{-10 20 -10} {-10 20 -10} {-10 20 -10}"{
 		t.Error(fmt.Sprint(vs[0],vs[1],vs[2]))
@@ -169,7 +169,7 @@ func BenchmarkVecsSum(b *testing.B) {
 	b.StopTimer()
 	vs := make(Vectors, 1000000)
 	for i := range vs {
-		vs[i] = Vector{1, 2, 3}
+		vs[i] = NewVector(1, 2, 3)
 	}
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
@@ -182,7 +182,7 @@ func BenchmarkVecsSumParallel(b *testing.B) {
 	b.StopTimer()
 	vs := make(Vectors, 1000000)
 	for i := range vs {
-		vs[i] = Vector{1, 2, 3}
+		vs[i] = NewVector(1, 2, 3)
 	}
 	Parallel = true
 	defer func() {
@@ -199,7 +199,7 @@ func BenchmarkVecsCross(b *testing.B) {
 	b.StopTimer()
 	vs := make(Vectors, 1000000)
 	for i := range vs {
-		vs[i] = Vector{1, 2, 3}
+		vs[i] = NewVector(1, 2, 3)
 	}
 	v := Vector{9, 8, 7}
 	b.StartTimer()
@@ -213,9 +213,9 @@ func BenchmarkVecsCrossParallel(b *testing.B) {
 	b.StopTimer()
 	vs := make(Vectors, 1000000)
 	for i := range vs {
-		vs[i] = Vector{1, 2, 3}
+		vs[i] = NewVector(1, 2, 3)
 	}
-	v := Vector{9, 8, 7}
+	v := NewVector(9, 8, 7)
 	Parallel = true
 	defer func() {
 		Parallel=false
@@ -232,7 +232,7 @@ func BenchmarkVecsProduct(b *testing.B) {
 	b.StopTimer()
 	vs := make(Vectors, 1000000)
 	for i := range vs {
-		vs[i] = Vector{1, 2, 3}
+		vs[i] = NewVector(1, 2, 3)
 	}
 	m := Matrix{}
 	b.StartTimer()
@@ -246,7 +246,7 @@ func BenchmarkVecsProductParallel(b *testing.B) {
 	b.StopTimer()
 	vs := make(Vectors, 1000000)
 	for i := range vs {
-		vs[i] = Vector{1, 2, 3}
+		vs[i] = NewVector(1, 2, 3)
 	}
 	m := Matrix{}
 	Parallel = true
@@ -325,5 +325,16 @@ BenchmarkVecsProductParallel-2   	     100	  14231442 ns/op
 PASS
 ok  	_/home/simon/Dropbox/github/working/tensor3	11.329s
 Sat 15 Apr 00:31:30 BST 2017
+*/
+/*  Hal3 Tue 30 May 14:20:08 BST 2017 go version go1.6.2 linux/amd64
+PASS
+BenchmarkVecsSum-2            	     200	   9785954 ns/op
+BenchmarkVecsSumParallel-2    	     200	   9807838 ns/op
+BenchmarkVecsCross-2          	     100	  14532405 ns/op
+BenchmarkVecsCrossParallel-2  	     100	  14020157 ns/op
+BenchmarkVecsProduct-2        	     100	  22024967 ns/op
+BenchmarkVecsProductParallel-2	     100	  14118452 ns/op
+ok  	_/home/simon/Dropbox/github/working/tensor3	12.933s
+Tue 30 May 14:20:23 BST 2017
 */
 

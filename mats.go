@@ -30,6 +30,14 @@ func (ms Matrices) TProductRight(m Matrix) {
 	ms.ForEach((*Matrix).TProductRight, m)
 }
 
+func (ms Matrices) TProductT(m Matrix) {
+	ms.ForEach((*Matrix).TProduct, m)
+}
+
+func (ms Matrices) TProductRightT(m Matrix) {
+	ms.ForEach((*Matrix).TProductRight, m)
+}
+
 func (ms Matrices) Transpose() {
 	ms.ForEachNoParameter((*Matrix).Transpose)
 }

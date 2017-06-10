@@ -12,31 +12,31 @@ func (m Matrix) Components() (Vector, Vector, Vector) {
 func NewMatrix(cs ...BaseType) (m Matrix) {
 	switch len(cs) {
 	case 9:
-		m.z.z = cs[8]
+		m.z.z = BaseScale(cs[8])
 		fallthrough
 	case 8:
-		m.z.y = cs[7]
+		m.z.y = BaseScale(cs[7])
 		fallthrough
 	case 7:
-		m.z.x = cs[6]
+		m.z.x = BaseScale(cs[6])
 		fallthrough
 	case 6:
-		m.y.z = cs[5]
+		m.y.z = BaseScale(cs[5])
 		fallthrough
 	case 5:
-		m.y.y = cs[4]
+		m.y.y = BaseScale(cs[4])
 		fallthrough
 	case 4:
-		m.y.x = cs[3]
+		m.y.x = BaseScale(cs[3])
 		fallthrough
 	case 3:
-		m.x.z = cs[2]
+		m.x.z = BaseScale(cs[2])
 		fallthrough
 	case 2:
-		m.x.y = cs[1]
+		m.x.y = BaseScale(cs[1])
 		fallthrough
 	case 1:
-		m.x.x = cs[0]
+		m.x.x = BaseScale(cs[0])
 	}
 	return
 }
@@ -73,7 +73,7 @@ func (m Matrix) Dot(v2 Vector) (v Vector) {
 }
 
 func (m Matrix) Determinant() BaseType {
-	return m.x.x*m.y.y*m.z.z - m.x.x*m.y.z*m.z.y + m.x.y*m.y.z*m.z.x - m.x.y*m.y.x*m.z.z + m.x.z*m.y.x*m.z.y - m.x.z*m.y.y*m.z.x
+	return BaseUnscale(BaseUnscale(m.x.x*m.y.y*m.z.z - m.x.x*m.y.z*m.z.y + m.x.y*m.y.z*m.z.x - m.x.y*m.y.x*m.z.z + m.x.z*m.y.x*m.z.y - m.x.z*m.y.y*m.z.x))
 }
 
 func (m *Matrix) Invert() {
@@ -86,7 +86,7 @@ func (m *Matrix) Invert() {
 		det2x2(m.y.y, m.y.z, m.z.y, m.z.z), det2x2(m.x.z, m.x.y, m.z.z, m.z.y), det2x2(m.x.y, m.x.z, m.y.y, m.y.z),
 		det2x2(m.y.z, m.y.x, m.z.z, m.z.x), det2x2(m.x.x, m.x.z, m.z.x, m.z.z), det2x2(m.x.z, m.x.x, m.y.z, m.y.x),
 		det2x2(m.y.x, m.y.y, m.z.x, m.z.y), det2x2(m.x.y, m.x.x, m.z.y, m.z.x), det2x2(m.x.x, m.x.y, m.y.x, m.y.y)
-	m.Multiply(1 / det)
+	m.Divide(det)
 }
 
 func (m *Matrix) Multiply(s BaseType) {
@@ -95,11 +95,20 @@ func (m *Matrix) Multiply(s BaseType) {
 	m.z.Multiply(s)
 }
 
+func (m *Matrix) Divide(s BaseType) {
+	m.x.Divide(s)
+	m.y.Divide(s)
+	m.z.Divide(s)
+}
+
 func (m *Matrix) Product(m2 Matrix) {
 	m.x.x, m.x.y, m.x.z, m.y.x, m.y.y, m.y.z, m.z.x, m.z.y, m.z.z =
 		m.x.x*m2.x.x+m.x.y*m2.y.x+m.x.z*m2.z.x, m.x.x*m2.x.y+m.x.y*m2.y.y+m.x.z*m2.z.y, m.x.x*m2.x.z+m.x.y*m2.y.z+m.x.z*m2.z.z,
 		m.y.x*m2.x.x+m.y.y*m2.y.x+m.y.z*m2.z.x, m.y.x*m2.x.y+m.y.y*m2.y.y+m.y.z*m2.z.y, m.y.x*m2.x.z+m.y.y*m2.y.z+m.y.z*m2.z.z,
 		m.z.x*m2.x.x+m.z.y*m2.y.x+m.z.z*m2.z.x, m.z.x*m2.x.y+m.z.y*m2.y.y+m.z.z*m2.z.y, m.z.x*m2.x.z+m.z.y*m2.y.z+m.z.z*m2.z.z
+	VectorUnscale(&m.x)
+	VectorUnscale(&m.y)
+	VectorUnscale(&m.z)
 }
 
 func (m *Matrix) ProductRight(m2 Matrix) {
@@ -107,6 +116,9 @@ func (m *Matrix) ProductRight(m2 Matrix) {
 		m2.x.x*m.x.x+m2.x.y*m.y.x+m2.x.z*m.z.x, m2.x.x*m.x.y+m2.x.y*m.y.y+m2.x.z*m.z.y, m2.x.x*m.x.z+m2.x.y*m.y.z+m2.x.z*m.z.z,
 		m2.y.x*m.x.x+m2.y.y*m.y.x+m2.y.z*m.z.x, m2.y.x*m.x.y+m2.y.y*m.y.y+m2.y.z*m.z.y, m2.y.x*m.x.z+m2.y.y*m.y.z+m2.y.z*m.z.z,
 		m2.z.x*m.x.x+m2.z.y*m.y.x+m2.z.z*m.z.x, m2.z.x*m.x.y+m2.z.y*m.y.y+m2.z.z*m.z.y, m2.z.x*m.x.z+m2.z.y*m.y.z+m2.z.z*m.z.z
+	VectorUnscale(&m.x)
+	VectorUnscale(&m.y)
+	VectorUnscale(&m.z)
 }
 
 func (m *Matrix) Transpose() {

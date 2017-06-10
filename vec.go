@@ -8,8 +8,8 @@ func (v Vector) Components() (BaseType, BaseType, BaseType) {
 	return v.x, v.y, v.z
 }
 
-var xAxis, yAxis, zAxis = Vector{1, 0, 0}, Vector{0, 1, 0}, Vector{0, 0, 1}
-var yzPlane, xzPlane, zxPlane = Vector{0, 1, 1}, Vector{1, 0, 1}, Vector{1, 1, 0}
+var xAxis, yAxis, zAxis = Vector{scale, 0, 0}, Vector{0, scale, 0}, Vector{0, 0, scale}
+var yzPlane, xzPlane, zxPlane = Vector{0, scale, scale}, Vector{scale, 0, scale}, Vector{scale, scale, 0}
 
 type Axis uint
 
@@ -26,13 +26,13 @@ var AxisPlanes = [3]Vector{yzPlane, xzPlane, zxPlane}
 func NewVector(cs ...BaseType) (v Vector) {
 	switch len(cs) {
 	default:
-		v.z = cs[2]
+		v.z = BaseScale(cs[2])
 		fallthrough
 	case 2:
-		v.y = cs[1]
+		v.y = BaseScale(cs[1])
 		fallthrough
 	case 1:
-		v.x = cs[0]
+		v.x = BaseScale(cs[0])
 	case 0:
 		return
 	}
@@ -58,12 +58,20 @@ func (v *Vector) Multiply(s BaseType) {
 	v.z *= s
 }
 
+// components independently divided
+func (v *Vector) Divide(s BaseType) {
+	v.x /= s
+	v.y /= s
+	v.z /= s
+}
+
 func (v Vector) Dot(v2 Vector) BaseType {
-	return v.x*v2.x + v.y*v2.y + v.z*v2.z
+	return BaseUnscale(v.x*v2.x + v.y*v2.y + v.z*v2.z)
 }
 
 func (v *Vector) Cross(v2 Vector) {
 	v.x, v.y, v.z = v.y*v2.z-v.z*v2.y, v.z*v2.x-v.x*v2.z, v.x*v2.y-v.y*v2.x
+	VectorUnscale(v)
 }
 
 // length squared. (returning squared means this package is not dependent on math package.)
@@ -171,6 +179,7 @@ func (v *Vector) Project(axis Vector) {
 	v.x *= axis.x
 	v.y *= axis.y
 	v.z *= axis.z
+	VectorUnscale(v)
 }
 
 // axis which vector is most aligned with. 
@@ -206,11 +215,13 @@ func (v Vector) ShortestAxis() Axis {
 // vector - matrix multiplication
 func (v *Vector) Product(m Matrix) {
 	v.x, v.y, v.z = v.x*m.x.x+v.y*m.y.x+v.z*m.z.x, v.x*m.x.y+v.y*m.y.y+v.z*m.z.y, v.x*m.x.z+v.y*m.y.z+v.z*m.z.z
+	VectorUnscale(v)
 }
 
 // vector - transposed matrix multiplication
 func (v *Vector) ProductT(m Matrix) {
 	v.x, v.y, v.z = v.x*m.x.x+v.y*m.x.y+v.z*m.x.z, v.x*m.y.x+v.y*m.y.y+v.z*m.y.z, v.x*m.z.x+v.y*m.z.y+v.z*m.z.z
+	VectorUnscale(v)
 }
 
 
