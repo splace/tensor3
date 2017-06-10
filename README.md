@@ -12,7 +12,7 @@ VectorRefs, array of pointers to Vector, with methods to convert to/from Vectors
 
 (import package multiple times, with different aliases, to enable simultaneous use.)
 
-doesn't use "math" package, left to importers if necessesery. (callbacks to use parallel functionality).
+doesn't use "math" package, left to importers, if necessary. (callbacks to use parallel functionality).
 
 single and parallel thread solutions, can be switched, with a global var.
 
