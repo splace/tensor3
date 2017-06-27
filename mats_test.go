@@ -89,11 +89,4 @@ BenchmarkMatsProductParallel-2	      30	  40866053 ns/op
 ok  	2.989s
 Thu 9 Mar 16:55:10 GMT 2017
 */
-/*  Hal3 Thu 9 Mar 16:56:07 GMT 2017  go version go1.8 linux/amd64
 
-BenchmarkMatsProduct-2           	      30	  43786364 ns/op
-BenchmarkMatsProductParallel-2   	      30	  43681382 ns/op
-PASS
-ok  	3.110s
-Thu 9 Mar 16:56:11 GMT 2017
-*/

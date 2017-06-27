@@ -11,6 +11,8 @@ func NewVectorRefs(cs ...BaseType) (vs VectorRefs) {
 	return
 }
 
+
+// indexes are counting numbers, and in that the first vector has index 1.  
 func NewVectorRefsFromIndexes(cs Vectors, indexes ...uint) (vs VectorRefs) {
 	if len(indexes) == 0 {
 		vs = make(VectorRefs, len(cs))
