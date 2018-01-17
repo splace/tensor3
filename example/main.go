@@ -125,4 +125,23 @@ int(2 core)	 55ns
 Parallel int(2 core)	 46ns
 Sun 11 Jun 19:22:05 BST 2017
 */
+/*  Hal3 Fri 29 Sep 23:36:11 BST 2017 go version go1.6.2 linux/amd64
+64bit.	41ns
+64bit parallel(2 core).	38ns
+32bit.	 27ns.
+Parallel 32bit(2 core)	 19ns
+int(2 core)	 57ns
+Parallel int(2 core)	 39ns
+Fri 29 Sep 23:36:44 BST 2017
+*/
+/*  Hal3 Fri 29 Sep 23:37:12 BST 2017  go version go1.9 linux/amd64
+
+64bit.	41ns
+64bit parallel(2 core).	39ns
+32bit.	 29ns.
+Parallel 32bit(2 core)	 20ns
+int(2 core)	 51ns
+Parallel int(2 core)	 40ns
+Fri 29 Sep 23:37:43 BST 2017
+*/
 

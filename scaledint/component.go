@@ -4,27 +4,30 @@ import "fmt"
 // component type
 type BaseType int
 
-const scale=1000
+const scaleShift=10
+const scale = 1<<scaleShift
+
+// TODO could use base two scale
 
 func baseScale(v BaseType) BaseType{
-	return v*scale
+	return v<<scaleShift
 }
 
 func baseUnscale(v BaseType) BaseType{
-	return v/scale
+	return v>>scaleShift
 }
 
 func vectorScale(v *Vector){
-	v.x*=scale
-	v.y*=scale
-	v.z*=scale
+	v.x<<=scaleShift
+	v.y<<=scaleShift
+	v.z<<=scaleShift
 	return
 }
 
 func vectorUnscale(v *Vector){
-	v.x/=scale
-	v.y/=scale
-	v.z/=scale
+	v.x>>=scaleShift
+	v.y>>=scaleShift
+	v.z>>=scaleShift
 	return
 }
 
