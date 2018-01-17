@@ -63,7 +63,7 @@ func TestVecsIndexesFromVectorRefs(t *testing.T) {
 }
 
 func TestVecRefsPrint(t *testing.T) {
-	vr := VectorRefs{&Vector{1 * 1<<scaleShift, 2 * 1<<scaleShift, 3 * 1<<scaleShift}}
+	vr := VectorRefs{&Vector{1 * scale, 2 * scale, 3 * scale}}
 	if fmt.Sprint(*vr[0]) != "{1 2 3}" {
 		t.Error(fmt.Sprint(*vr[0]))
 	}
