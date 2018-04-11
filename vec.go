@@ -51,7 +51,7 @@ func (v *Vector) Subtract(v2 Vector) {
 	v.z -= v2.z
 }
 
-// components independently multipled, see Product for matrix multiplication
+// components independently multiplied, see Product for matrix multiplication
 func (v *Vector) Multiply(s BaseType) {
 	v.x *= s
 	v.y *= s
