@@ -146,20 +146,4 @@ func BenchmarkMatrixProduct(b *testing.B) {
 	}
 }
 
-/*  Hal3 Sun 28 May 20:13:58 BST 2017 go version go1.6.2 linux/amd64
-PASS
-BenchmarkMatrixProduct-2      	50000000	        31.5 ns/op
-BenchmarkMatsProduct-2        	      30	  41442969 ns/op
-BenchmarkMatsProductParallel-2	      30	  41318688 ns/op
-ok  	_/home/simon/Dropbox/github/working/tensor3	4.641s
-Sun 28 May 20:14:04 BST 2017
-*/
-/*  Hal3 Sun 28 May 20:14:18 BST 2017  go version go1.8.3 linux/amd64
 
-BenchmarkMatrixProduct-2         	50000000	        27.4 ns/op
-BenchmarkMatsProduct-2           	      30	  44000097 ns/op
-BenchmarkMatsProductParallel-2   	      30	  41316237 ns/op
-PASS
-ok  	_/home/simon/Dropbox/github/working/tensor3	4.383s
-Sun 28 May 20:14:29 BST 2017
-*/

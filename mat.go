@@ -263,3 +263,4 @@ func (m *Matrix) applyY(fn func(*Vector, Vector), v Vector) {
 func (m *Matrix) applyZ(fn func(*Vector, Vector), v Vector) {
 	fn(&m.z, v)
 }
+

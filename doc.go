@@ -58,3 +58,21 @@ package tensor3
 // Overview/docs: [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3)
 
 // Overview/docs:(32bit) [![GoDoc](https://godoc.org/github.com/splace/tensor3/32bit?status.svg)](https://godoc.org/github.com/splace/tensor3/32bit)
+
+
+/*
+tensor3.test -test.bench .
+As expected: runtime error: index out of range
+goos: linux
+goarch: arm
+BenchmarkMatrixProduct-4         	10000000	       199 ns/op
+BenchmarkMatsProduct-4           	  100000	     18915 ns/op
+BenchmarkMatsProductParallel-4   	   50000	     33742 ns/op
+BenchmarkVecsSum-4               	     100	  12240145 ns/op
+BenchmarkVecsSumParallel-4       	     100	  11940562 ns/op
+BenchmarkVecsCross-4             	     200	   7850206 ns/op
+BenchmarkVecsCrossParallel-4     	     500	   2793741 ns/op
+BenchmarkVecsProduct-4           	     100	  11736753 ns/op
+BenchmarkVecsProductParallel-4   	     500	   3939572 ns/op
+PASS
+*/

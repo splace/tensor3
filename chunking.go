@@ -21,3 +21,5 @@ var Parallel bool
 // selects parallel application of functions to Matrix components,(its Vector fields).
 // only improves performance if using costly functions, non of the built-ins are likely to benefit. YRMV.
 var ParallelComponents bool
+
+

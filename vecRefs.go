@@ -50,7 +50,8 @@ func NewVectorsFromVectorRefs(vss ...VectorRefs) Vectors {
 	return nv
 }
 
-// TODO find index from pointer, use unsafe? or read text?
+// convert memory Refs to array indexes, to retain information outside this execution context. 
+// TODO find index from pointer, use unsafe? or read text, coule be much faster?
 func (vsr VectorRefs) Indexes(vs Vectors) (is []uint) {
 	is = make([]uint, len(vsr))
 	for ir, r := range vsr {
@@ -64,6 +65,7 @@ func (vsr VectorRefs) Indexes(vs Vectors) (is []uint) {
 	return is
 }
 
+// make a slice of Vectors from a slice of Vector references. 
 func (vsr VectorRefs) Dereference() (vs Vectors) {
 	vs = make(Vectors, len(vsr))
 	for i := range vs {
@@ -72,7 +74,8 @@ func (vsr VectorRefs) Dereference() (vs Vectors) {
 	return
 }
 
-func (vs Vectors) Dereference(vsr VectorRefs) {
+// make a slice of VectorRefs from a slice of Vectors. 
+func (vs Vectors) Reference(vsr VectorRefs) {
 	if len(vs) > len(vsr) {
 		for i := range vsr {
 			vs[i] = *vsr[i]
@@ -404,4 +407,6 @@ func vectorRefsApplyAllChunked(vs VectorRefs, fn func(*Vector, Vector), vs2 Vect
 		<-done
 	}
 }
+
+
 

@@ -27,7 +27,7 @@ func TestVecRefsDereferenceNew(t *testing.T) {
 func TestVecRefsDereference(t *testing.T) {
 	vr := NewVectorRefsFromIndexes(NewVectors(1, 2, 3, 4, 5, 6, 7), 1, 3, 2)
 	v := make(Vectors, 2)
-	v.Dereference(vr)
+	v.Reference(vr)
 	if fmt.Sprint(v) != "[{1 2 3} {7 0 0}]" {
 		t.Error(fmt.Sprint(v))
 	}
@@ -146,3 +146,5 @@ func TestVecRefsCrossVecRefs(t *testing.T) {
 		t.Error(fmt.Sprint(*vs[0], *vs[1], *vs[2]))
 	}
 }
+
+

@@ -158,9 +158,10 @@ func TestVecApplyRunning(t *testing.T) {
 
 func TestVecApplyForAll(t *testing.T) {
 	Parallel = true
-	defer func() {
+	defer func(d uint) {
 		Parallel = false
-	}()
+		Hints.DefaultChunkSize = d
+	}(Hints.DefaultChunkSize)
 	Hints.ChunkSizeFixed = true
 	Hints.DefaultChunkSize = 2
 	v := NewVector(1, 2, 3)

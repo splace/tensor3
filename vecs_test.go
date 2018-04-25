@@ -67,9 +67,9 @@ func TestVecsMaxNone(t *testing.T) {
 	defer func() {
 		r := recover()
 		if r != nil {
-			fmt.Println("As expected:", r)
+			t.Log("As expected:", r)
 		} else {
-			t.Error("Error expected.")
+			t.Error("Expected error not present.")
 		}
 	}()
 	_ = vs.Max()
@@ -102,9 +102,10 @@ func TestVecsProductT(t *testing.T) {
 
 func TestVecsCrossChunked1(t *testing.T) {
 	Parallel = true
-	defer func() {
+	defer func(d uint) {
 		Parallel = false
-	}()
+		Hints.DefaultChunkSize = d
+	}(Hints.DefaultChunkSize)
 	Hints.ChunkSizeFixed = true
 	Hints.DefaultChunkSize = 1
 	v := Vectors{NewVector(1, 2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9), NewVector(10, 11, 12)}
@@ -117,9 +118,10 @@ func TestVecsCrossChunked1(t *testing.T) {
 
 func TestVecsCrossChunked2(t *testing.T) {
 	Parallel = true
-	defer func() {
+	defer func(d uint) {
 		Parallel = false
-	}()
+		Hints.DefaultChunkSize = d
+	}(Hints.DefaultChunkSize)
 	Hints.ChunkSizeFixed = true
 	Hints.DefaultChunkSize = 2
 	v := Vectors{NewVector(1, 2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9), NewVector(10, 11, 12)}
@@ -132,9 +134,10 @@ func TestVecsCrossChunked2(t *testing.T) {
 
 func TestVecsCrossChunked3(t *testing.T) {
 	Parallel = true
-	defer func() {
+	defer func(d uint) {
 		Parallel = false
-	}()
+		Hints.DefaultChunkSize = d
+	}(Hints.DefaultChunkSize)
 	Hints.ChunkSizeFixed = true
 	Hints.DefaultChunkSize = 2
 	v := Vectors{NewVector(1, 2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9), NewVector(10, 11, 12), NewVector(13, 14, 15), NewVector(16, 17, 18)}
@@ -165,7 +168,7 @@ func TestVecsCrossVecs(t *testing.T) {
 
 func BenchmarkVecsSum(b *testing.B) {
 	b.StopTimer()
-	vs := make(Vectors, 1000000)
+	vs := make(Vectors, 100000)
 	for i := range vs {
 		vs[i] = NewVector(1, 2, 3)
 	}
@@ -177,7 +180,7 @@ func BenchmarkVecsSum(b *testing.B) {
 
 func BenchmarkVecsSumParallel(b *testing.B) {
 	b.StopTimer()
-	vs := make(Vectors, 1000000)
+	vs := make(Vectors, 100000)
 	for i := range vs {
 		vs[i] = NewVector(1, 2, 3)
 	}
@@ -194,7 +197,7 @@ func BenchmarkVecsSumParallel(b *testing.B) {
 
 func BenchmarkVecsCross(b *testing.B) {
 	b.StopTimer()
-	vs := make(Vectors, 1000000)
+	vs := make(Vectors, 100000)
 	for i := range vs {
 		vs[i] = NewVector(1, 2, 3)
 	}
@@ -208,7 +211,7 @@ func BenchmarkVecsCross(b *testing.B) {
 
 func BenchmarkVecsCrossParallel(b *testing.B) {
 	b.StopTimer()
-	vs := make(Vectors, 1000000)
+	vs := make(Vectors, 100000)
 	for i := range vs {
 		vs[i] = NewVector(1, 2, 3)
 	}
@@ -227,7 +230,7 @@ func BenchmarkVecsCrossParallel(b *testing.B) {
 
 func BenchmarkVecsProduct(b *testing.B) {
 	b.StopTimer()
-	vs := make(Vectors, 1000000)
+	vs := make(Vectors, 100000)
 	for i := range vs {
 		vs[i] = NewVector(1, 2, 3)
 	}
@@ -241,7 +244,7 @@ func BenchmarkVecsProduct(b *testing.B) {
 
 func BenchmarkVecsProductParallel(b *testing.B) {
 	b.StopTimer()
-	vs := make(Vectors, 1000000)
+	vs := make(Vectors, 100000)
 	for i := range vs {
 		vs[i] = NewVector(1, 2, 3)
 	}
@@ -258,79 +261,17 @@ func BenchmarkVecsProductParallel(b *testing.B) {
 
 }
 
-/*  Hal3 Mon 6 Mar 23:51:24 GMT 2017 go version go1.6.2 linux/amd64
+/*
+tensor3.test -test.bench Vecs
+As expected: runtime error: index out of range
+goos: linux
+goarch: arm
+BenchmarkVecsSum-4               	     100	  12240145 ns/op
+BenchmarkVecsSumParallel-4       	     100	  11940562 ns/op
+BenchmarkVecsCross-4             	     200	   7850206 ns/op
+BenchmarkVecsCrossParallel-4     	     500	   2793741 ns/op
+BenchmarkVecsProduct-4           	     100	  11736753 ns/op
+BenchmarkVecsProductParallel-4   	     500	   3939572 ns/op
 PASS
-BenchmarkVecsCross-2        	     100	  14147401 ns/op
-BenchmarkVecsCrossParallel-2	     100	  13179012 ns/op
-ok  	_/home/simon/Dropbox/github/working/tensor3	2.905s
-Mon 6 Mar 23:51:28 GMT 2017
 */
 
-/*  Hal3 Tue 7 Mar 00:09:28 GMT 2017 go version go1.6.2 linux/amd64
-PASS
-BenchmarkVecsCross-2        	     100	  13722238 ns/op
-BenchmarkVecsCrossParallel-2	     100	  13090129 ns/op
-ok  	_/home/simon/Dropbox/github/working/tensor3	2.837s
-Tue 7 Mar 00:09:32 GMT 2017
-*/
-
-/*  Hal3 Tue 7 Mar 00:39:43 GMT 2017 go version go1.6.2 linux/amd64
-PASS
-BenchmarkVecsCross-2          	     100	  14792161 ns/op
-BenchmarkVecsCrossParallel-2  	     100	  14016910 ns/op
-BenchmarkVecsProductParallel-2	     100	  14267832 ns/op
-ok  	_/home/simon/Dropbox/github/working/tensor3	4.561s
-Tue 7 Mar 00:39:49 GMT 2017
-*/
-/*  Hal3 Tue 7 Mar 00:42:46 GMT 2017 go version go1.6.2 linux/amd64
-PASS
-BenchmarkVecsCross-2          	     100	  14772536 ns/op
-BenchmarkVecsCrossParallel-2  	     100	  13781806 ns/op
-BenchmarkVecsProduct-2        	     100	  14155553 ns/op
-BenchmarkVecsProductParallel-2	     100	  14211055 ns/op
-ok  	_/home/simon/Dropbox/github/working/tensor3	6.073s
-Tue 7 Mar 00:42:53 GMT 2017
-*/
-/*  Hal3 Tue 7 Mar 00:52:00 GMT 2017  go version go1.8 linux/amd64
-
-BenchmarkVecsCross-2             	     100	  13334312 ns/op
-BenchmarkVecsCrossParallel-2     	     100	  12970468 ns/op
-BenchmarkVecsProduct-2           	     100	  13046767 ns/op
-BenchmarkVecsProductParallel-2   	     100	  13137967 ns/op
-PASS
-ok  	_/home/simon/Dropbox/github/working/tensor3	5.553s
-Tue 7 Mar 00:52:07 GMT 2017
-*/ /*  Hal3 Sat 15 Apr 00:28:58 BST 2017 go version go1.6.2 linux/amd64
-PASS
-BenchmarkVecsSum-2            	     100	  10705533 ns/op
-BenchmarkVecsSumParallel-2    	     100	  10577862 ns/op
-BenchmarkVecsCross-2          	     100	  13915981 ns/op
-BenchmarkVecsCrossParallel-2  	     100	  13618217 ns/op
-BenchmarkVecsProduct-2        	     100	  21823835 ns/op
-BenchmarkVecsProductParallel-2	     100	  13131134 ns/op
-ok  	_/home/simon/Dropbox/github/working/tensor3	8.850s
-Sat 15 Apr 00:29:08 BST 2017
-*/
-/*  Hal3 Sat 15 Apr 00:31:18 BST 2017  go version go1.8 linux/amd64
-
-BenchmarkVecsSum-2               	     200	   8384060 ns/op
-BenchmarkVecsSumParallel-2       	     200	   8307832 ns/op
-BenchmarkVecsCross-2             	     100	  14350239 ns/op
-BenchmarkVecsCrossParallel-2     	     100	  13895992 ns/op
-BenchmarkVecsProduct-2           	     100	  19148612 ns/op
-BenchmarkVecsProductParallel-2   	     100	  14231442 ns/op
-PASS
-ok  	_/home/simon/Dropbox/github/working/tensor3	11.329s
-Sat 15 Apr 00:31:30 BST 2017
-*/
-/*  Hal3 Tue 30 May 14:20:08 BST 2017 go version go1.6.2 linux/amd64
-PASS
-BenchmarkVecsSum-2            	     200	   9785954 ns/op
-BenchmarkVecsSumParallel-2    	     200	   9807838 ns/op
-BenchmarkVecsCross-2          	     100	  14532405 ns/op
-BenchmarkVecsCrossParallel-2  	     100	  14020157 ns/op
-BenchmarkVecsProduct-2        	     100	  22024967 ns/op
-BenchmarkVecsProductParallel-2	     100	  14118452 ns/op
-ok  	_/home/simon/Dropbox/github/working/tensor3	12.933s
-Tue 30 May 14:20:23 BST 2017
-*/

@@ -52,7 +52,7 @@ func TestMatsApplyComponentsXY(t *testing.T) {
 func BenchmarkMatsProduct(b *testing.B) {
 	Parallel = false
 	b.StopTimer()
-	ms := make(Matrices, 1000000)
+	ms := make(Matrices, 100000)
 	for i := range ms {
 		ms[i] = Matrix{NewVector(1, 2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9)}
 	}
@@ -65,16 +65,18 @@ func BenchmarkMatsProduct(b *testing.B) {
 
 func BenchmarkMatsProductParallel(b *testing.B) {
 	b.StopTimer()
-	ms := make(Matrices, 1000000)
+	ms := make(Matrices, 100000)
 	for i := range ms {
 		ms[i] = Matrix{NewVector(1, 2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9)}
 	}
 	m := Matrix{NewVector(9, 8, 7), NewVector(6, 5, 4), NewVector(3, 2, 1)}
 	Parallel = true
-	defer func() {
+	defer func(d uint) {
 		Parallel = false
-	}()
+		Hints.DefaultChunkSize = d
+	}(Hints.DefaultChunkSize)
 	Hints.ChunkSizeFixed = true
+	Hints.DefaultChunkSize = 20000
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		ms.Product(m)
@@ -82,11 +84,4 @@ func BenchmarkMatsProductParallel(b *testing.B) {
 
 }
 
-/*  Hal3 Thu 9 Mar 16:55:05 GMT 2017 go version go1.6.2 linux/amd64
-PASS
-BenchmarkMatsProduct-2        	      30	  44015188 ns/op
-BenchmarkMatsProductParallel-2	      30	  40866053 ns/op
-ok  	2.989s
-Thu 9 Mar 16:55:10 GMT 2017
-*/
 
