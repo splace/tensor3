@@ -6,7 +6,7 @@ useful methods on same, operating in-place, not returning reference. (so no sing
 
 arrays of both, called Vectors and Matrices, with their useful methods.
 
-64 or 32bit
+available in packages for either 64bit or 32bit
 
 operations can be switched, with a global var, between single and parallel thread solutions.
 
@@ -76,3 +76,5 @@ BenchmarkVecsProduct-4           	     100	  11736753 ns/op
 BenchmarkVecsProductParallel-4   	     500	   3939572 ns/op
 PASS
 */
+
+

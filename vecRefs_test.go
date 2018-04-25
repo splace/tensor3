@@ -148,3 +148,47 @@ func TestVecRefsCrossVecRefs(t *testing.T) {
 }
 
 
+func BenchmarkVecRefsProduct(b *testing.B) {
+	b.StopTimer()
+	vrs := make(VectorRefs, 100000)
+	for i := range vrs {
+		vrs[i] = &Vector{1 * scale, 2 * scale, 3 * scale}
+	}
+	m := Matrix{}
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		vrs.Product(m)
+	}
+
+}
+
+func BenchmarkVecRefsProductParallel(b *testing.B) {
+	b.StopTimer()
+	vrs := make(VectorRefs, 100000)
+	for i := range vrs {
+		vrs[i] = &Vector{1 * scale, 2 * scale, 3 * scale}
+	}
+	m := Matrix{}
+	Parallel = true
+	defer func() {
+		Parallel = false
+	}()
+	Hints.ChunkSizeFixed = true
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		vrs.Product(m)
+	}
+}
+
+
+/*  Hal3 Wed 25 Apr 22:19:09 BST 2018  go version go1.10 linux/amd64
+
+goos: linux
+goarch: amd64
+BenchmarkVecRefsProduct-2           	    1000	   2123885 ns/op
+BenchmarkVecRefsProductParallel-2   	    1000	   1940512 ns/op
+PASS
+ok  	_/home/simon/Dropbox/github/working/tensor3	4.556s
+Wed 25 Apr 22:19:15 BST 2018
+*/
+

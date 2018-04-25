@@ -66,9 +66,7 @@ func TestVecsMaxNone(t *testing.T) {
 	vs := Vectors{}
 	defer func() {
 		r := recover()
-		if r != nil {
-			t.Log("As expected:", r)
-		} else {
+		if r == nil{
 			t.Error("Expected error not present.")
 		}
 	}()
@@ -273,5 +271,19 @@ BenchmarkVecsCrossParallel-4     	     500	   2793741 ns/op
 BenchmarkVecsProduct-4           	     100	  11736753 ns/op
 BenchmarkVecsProductParallel-4   	     500	   3939572 ns/op
 PASS
+*/
+/*  Hal3 Wed 25 Apr 21:44:55 BST 2018  go version go1.10 linux/amd64
+
+goos: linux
+goarch: amd64
+BenchmarkVecsSum-2               	    2000	    838379 ns/op
+BenchmarkVecsSumParallel-2       	    2000	    843700 ns/op
+BenchmarkVecsCross-2             	    1000	   1224486 ns/op
+BenchmarkVecsCrossParallel-2     	    1000	   1160309 ns/op
+BenchmarkVecsProduct-2           	    1000	   1882070 ns/op
+BenchmarkVecsProductParallel-2   	    1000	   1418380 ns/op
+PASS
+ok  	_/home/simon/Dropbox/github/working/tensor3	9.931s
+Wed 25 Apr 21:45:05 BST 2018
 */
 
