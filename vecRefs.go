@@ -185,20 +185,6 @@ func vectorRefsApplyChunked(vs VectorRefs, fn func(*Vector, Vector), v Vector, c
 	}
 }
 
-func vectorRefsInChunks(vs VectorRefs, chunkSize uint) chan VectorRefs {
-	c := make(chan VectorRefs, 1)
-	length := uint(len(vs))
-	go func() {
-		var bottom uint
-		for top := chunkSize; top < length; top += chunkSize {
-			c <- vs[bottom:top]
-			bottom = top
-		}
-		c <- vs[bottom:]
-		close(c)
-	}()
-	return c
-}
 
 func (m Matrix) ForEachRef(fn func(*Vector, Matrix), vs VectorRefs) {
 	if !Parallel {

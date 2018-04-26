@@ -143,20 +143,6 @@ func matricesApplyChunked(ms Matrices, fn func(*Matrix, Matrix), v Matrix, chunk
 	}
 }
 
-func matricesInChunks(ms Matrices, chunkSize uint) chan Matrices {
-	c := make(chan Matrices)
-	length := uint(len(ms))
-	go func() {
-		var bottom uint
-		for top := chunkSize; top < length; top += chunkSize {
-			c <- ms[bottom:top]
-			bottom = top
-		}
-		c <- ms[bottom:]
-		close(c)
-	}()
-	return c
-}
 
 func (ms Matrices) vectorApply(mfn func(*Matrix, func(*Vector, Vector), Vector), fn func(*Vector, Vector), v Vector) {
 	if !Parallel {

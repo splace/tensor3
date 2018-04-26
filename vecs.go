@@ -99,21 +99,6 @@ func vectorsApplyChunked(vs Vectors, fn func(*Vector, Vector), v Vector, chunkSi
 	}
 }
 
-func vectorsInChunks(vs Vectors, chunkSize uint) chan Vectors {
-	c := make(chan Vectors, 1)
-	length := uint(len(vs))
-	go func() {
-		var bottom uint
-		for top := chunkSize; top < length; top += chunkSize {
-			c <- vs[bottom:top]
-			bottom = top
-		}
-		c <- vs[bottom:]
-		close(c)
-	}()
-	return c
-}
-
 // apply a function without a vector parameter by using a dummy
 func (vs Vectors) ForEachNoParameter(fn func(*Vector)) {
 	var inner func(*Vector, Vector)
