@@ -258,32 +258,17 @@ func BenchmarkVecsProductParallel(b *testing.B) {
 	}
 
 }
-
-/*
-tensor3.test -test.bench Vecs
-As expected: runtime error: index out of range
-goos: linux
-goarch: arm
-BenchmarkVecsSum-4               	     100	  12240145 ns/op
-BenchmarkVecsSumParallel-4       	     100	  11940562 ns/op
-BenchmarkVecsCross-4             	     200	   7850206 ns/op
-BenchmarkVecsCrossParallel-4     	     500	   2793741 ns/op
-BenchmarkVecsProduct-4           	     100	  11736753 ns/op
-BenchmarkVecsProductParallel-4   	     500	   3939572 ns/op
-PASS
-*/
-/*  Hal3 Wed 25 Apr 21:44:55 BST 2018  go version go1.10 linux/amd64
-
+/* benchmark: "Vecs" hal3 Wed 16 May 23:29:56 BST 2018 go version go1.10 linux/amd64
 goos: linux
 goarch: amd64
-BenchmarkVecsSum-2               	    2000	    838379 ns/op
-BenchmarkVecsSumParallel-2       	    2000	    843700 ns/op
-BenchmarkVecsCross-2             	    1000	   1224486 ns/op
-BenchmarkVecsCrossParallel-2     	    1000	   1160309 ns/op
-BenchmarkVecsProduct-2           	    1000	   1882070 ns/op
-BenchmarkVecsProductParallel-2   	    1000	   1418380 ns/op
+BenchmarkVecsSum-2               	    1000	   1511522 ns/op
+BenchmarkVecsSumParallel-2       	    1000	   1094181 ns/op
+BenchmarkVecsCross-2             	     500	   2372967 ns/op
+BenchmarkVecsCrossParallel-2     	    1000	   1639160 ns/op
+BenchmarkVecsProduct-2           	     500	   2421282 ns/op
+BenchmarkVecsProductParallel-2   	     500	   2247074 ns/op
 PASS
-ok  	_/home/simon/Dropbox/github/working/tensor3	9.931s
-Wed 25 Apr 21:45:05 BST 2018
+ok  	_/run/media/simon/6a5530c2-1442-4e9b-b35f-3db0c9a6984c/home/simon/Dropbox/github/working/tensor3	9.206s
+Wed 16 May 23:30:06 BST 2018
 */
 

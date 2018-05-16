@@ -1,63 +1,26 @@
 /*
 
-Vector, (3-component), and Matrix, (3-Vector).
+Vector, (3-component), and Matrix, (3-Vector) Types.
 
-useful methods on same, operating in-place, not returning reference. (so no single line chained functions.)
+Useful methods on same, operating in-place ( not returning reference, meaning no single line chained functions.)
 
-arrays of both, called Vectors and Matrices, with their useful methods.
+Arrays of both, (called Vectors and Matrices), with their useful methods.
 
-available in packages for either 64bit or 32bit
+single and parallel threaded, can be selected with a global var.
 
-operations can be switched, with a global var, between single and parallel thread solutions.
+VectorRefs; array of Vector pointers, with methods to convert to/from Vectors.
 
-(import package multiple times, with different aliases, to enable simultaneous use of both modes.)
+64bit float, 32bit float, or fixed precision (int scaled for 3dp) component value types (separate packages).
 
-arrays selectively broken into chunks for optimised parallelization.
+doesn't use "math" package, left to importers, if necessary.
 
+methods that accept a function and apply in to all etc. (in parallel).
 
-installation:
-
-	get github.com/splace/tensor3
-	get github.com/splace/tensor3/32bit
-
-
-
-Example:  100 x 1 million matrix multiplications, single threaded then parallel.
-
-	package main
-
-	import . "github.com/splace/tensor3"
-	import "time"
-	import "fmt"
-
-	func main(){
-		ms := make(Matrices, 1000000)
-		for i := range ms {
-			ms[i] = NewMatrix(1, 2, 3, 4, 5, 6, 7, 8, 9)
-		}
-		m := NewMatrix(9, 8, 7, 6, 5, 4, 3, 2, 1)
-		start:=time.Now()
-
-		for i := 0; i < 100; i++ {
-			ms.Product(m)
-		}
-		fmt.Println(time.Since(start))
-		Parallel=true
-		start=time.Now()
-		for i := 0; i < 100; i++ {
-			ms.Product(m)
-		}
-		fmt.Println(time.Since(start))
-	}
-
+with array types selectively broken into chunks for better parallel performance.
 
 */
 
 package tensor3
-
-// Overview/docs: [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3)
-
-// Overview/docs:(32bit) [![GoDoc](https://godoc.org/github.com/splace/tensor3/32bit?status.svg)](https://godoc.org/github.com/splace/tensor3/32bit)
 
 
 /*
@@ -77,4 +40,69 @@ BenchmarkVecsProductParallel-4   	     500	   3939572 ns/op
 PASS
 */
 
+/* benchmark: "" hal3 Sat 28 Apr 20:56:16 BST 2018 go version go1.10 linux/amd64
+goos: linux
+goarch: amd64
+BenchmarkMatrixProduct-2            	50000000	        26.3 ns/op
+BenchmarkMatsProduct-2              	     300	   4716321 ns/op
+BenchmarkMatsProductParallel-2      	     300	   4758117 ns/op
+BenchmarkVecRefsProduct-2           	     500	   2324318 ns/op
+BenchmarkVecRefsProductParallel-2   	    1000	   2418231 ns/op
+BenchmarkVecsSum-2                  	    2000	    890864 ns/op
+BenchmarkVecsSumParallel-2          	    2000	    894359 ns/op
+BenchmarkVecsCross-2                	    1000	   1425029 ns/op
+BenchmarkVecsCrossParallel-2        	    1000	   1456007 ns/op
+BenchmarkVecsProduct-2              	    1000	   1989979 ns/op
+BenchmarkVecsProductParallel-2      	    1000	   1980549 ns/op
+PASS
+ok  	_/run/media/simon/6a5530c2-1442-4e9b-b35f-3db0c9a6984c/home/simon/Dropbox/github/working/tensor3	20.849s
+Sat 28 Apr 20:56:37 BST 2018
+*/
+
+/*
+tensor3.test -test.bench Vecs
+As expected: runtime error: index out of range
+goos: linux
+goarch: arm
+BenchmarkVecsSum-4               	     100	  12240145 ns/op
+BenchmarkVecsSumParallel-4       	     100	  11940562 ns/op
+BenchmarkVecsCross-4             	     200	   7850206 ns/op
+BenchmarkVecsCrossParallel-4     	     500	   2793741 ns/op
+BenchmarkVecsProduct-4           	     100	  11736753 ns/op
+BenchmarkVecsProductParallel-4   	     500	   3939572 ns/op
+PASS
+*/
+/*  Hal3 Wed 25 Apr 21:44:55 BST 2018  go version go1.10 linux/amd64
+
+goos: linux
+goarch: amd64
+BenchmarkVecsSum-2               	    2000	    838379 ns/op
+BenchmarkVecsSumParallel-2       	    2000	    843700 ns/op
+BenchmarkVecsCross-2             	    1000	   1224486 ns/op
+BenchmarkVecsCrossParallel-2     	    1000	   1160309 ns/op
+BenchmarkVecsProduct-2           	    1000	   1882070 ns/op
+BenchmarkVecsProductParallel-2   	    1000	   1418380 ns/op
+PASS
+ok  	_/home/simon/Dropbox/github/working/tensor3	9.931s
+Wed 25 Apr 21:45:05 BST 2018
+*/
+
+/* benchmark: "" hal3 Sat 28 Apr 21:10:56 BST 2018 go version go1.10 linux/amd64
+goos: linux
+goarch: amd64
+BenchmarkMatrixProduct-2            	50000000	        26.4 ns/op
+BenchmarkMatsProduct-2              	     300	   4855418 ns/op
+BenchmarkMatsProductParallel-2      	     300	   4831943 ns/op
+BenchmarkVecRefsProduct-2           	    1000	   2305069 ns/op
+BenchmarkVecRefsProductParallel-2   	    1000	   2373720 ns/op
+BenchmarkVecsSum-2                  	    2000	    879362 ns/op
+BenchmarkVecsSumParallel-2          	    2000	    882587 ns/op
+BenchmarkVecsCross-2                	    1000	   1419000 ns/op
+BenchmarkVecsCrossParallel-2        	    1000	   1449856 ns/op
+BenchmarkVecsProduct-2              	    1000	   1967557 ns/op
+BenchmarkVecsProductParallel-2      	    1000	   2034425 ns/op
+PASS
+ok  	_/run/media/simon/6a5530c2-1442-4e9b-b35f-3db0c9a6984c/home/simon/Dropbox/github/working/tensor3	21.973s
+Sat 28 Apr 21:11:19 BST 2018
+*/
 

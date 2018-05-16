@@ -27,7 +27,7 @@ func (vs Vectors) Project(v Vector) {
 }
 
 func (vs Vectors) Sum() (v Vector) {
-	v.Aggregate(vs, (*Vector).Add)
+	v.ForAll(vs, (*Vector).Add)
 	return
 }
 
@@ -41,13 +41,13 @@ func (vs Vectors) Multiply(s BaseType) {
 
 func (vs Vectors) Max() (v Vector) {
 	v.Set(vs[0])
-	v.Aggregate(vs[1:], (*Vector).Max)
+	v.ForAll(vs[1:], (*Vector).Max)
 	return
 }
 
 func (vs Vectors) Min() (v Vector) {
 	v.Set(vs[0])
-	v.Aggregate(vs[1:], (*Vector).Min)
+	v.ForAll(vs[1:], (*Vector).Min)
 	return
 }
 
@@ -66,15 +66,7 @@ func (vs Vectors) ForEach(fn func(*Vector, Vector), v Vector) {
 	if !Parallel {
 		vectorsApply(vs, fn, v)
 	} else {
-		if Hints.ChunkSizeFixed {
-			vectorsApplyChunked(vs, fn, v, Hints.DefaultChunkSize)
-		} else {
-			cs := uint(len(vs)) / (Hints.Threads + 1)
-			if cs < Hints.DefaultChunkSize {
-				cs = Hints.DefaultChunkSize
-			}
-			vectorsApplyChunked(vs, fn, v, cs)
-		}
+		vectorsApplyChunked(vs, fn, v)
 	}
 }
 
@@ -84,10 +76,10 @@ func vectorsApply(vs Vectors, fn func(*Vector, Vector), v Vector) {
 	}
 }
 
-func vectorsApplyChunked(vs Vectors, fn func(*Vector, Vector), v Vector, chunkSize uint) {
+func vectorsApplyChunked(vs Vectors, fn func(*Vector, Vector), v Vector) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range vectorsInChunks(vs, chunkSize) {
+	for chunk := range vectorsInChunks(vs) {
 		running++
 		go func(c Vectors) {
 			vectorsApply(c, fn, v)
@@ -128,15 +120,7 @@ func (vs Vectors) ForAll(fn func(*Vector, Vector), vs2 Vectors) {
 	if !Parallel {
 		vectorsApplyAll(vs, fn, vs2)
 	} else {
-		if Hints.ChunkSizeFixed {
-			vectorsApplyAllChunked(vs, fn, vs2, Hints.DefaultChunkSize)
-		} else {
-			cs := uint(len(vs)) / (Hints.Threads + 1)
-			if cs < Hints.DefaultChunkSize {
-				cs = Hints.DefaultChunkSize
-			}
-			vectorsApplyAllChunked(vs, fn, vs2, cs)
-		}
+		vectorsApplyAllChunked(vs, fn, vs2)
 	}
 }
 
@@ -146,11 +130,11 @@ func vectorsApplyAll(vs Vectors, fn func(*Vector, Vector), vs2 Vectors) {
 	}
 }
 
-func vectorsApplyAllChunked(vs Vectors, fn func(*Vector, Vector), vs2 Vectors, chunkSize uint) {
+func vectorsApplyAllChunked(vs Vectors, fn func(*Vector, Vector), vs2 Vectors) {
 	done := make(chan struct{}, 1)
 	var running uint
-	chunks2 := vectorsInChunks(vs2, chunkSize)
-	for chunk := range vectorsInChunks(vs, chunkSize) {
+	chunks2 := vectorsInChunks(vs2)
+	for chunk := range vectorsInChunks(vs) {
 		running++
 		go func(c Vectors) {
 			vectorsApplyAll(c, fn, <-chunks2)

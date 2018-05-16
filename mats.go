@@ -114,11 +114,7 @@ func (ms Matrices) ForEach(fn func(*Matrix, Matrix), v Matrix) {
 	if !Parallel {
 		matricesApply(ms, fn, v)
 	} else {
-		if Hints.ChunkSizeFixed {
-			matricesApplyChunked(ms, fn, v, Hints.DefaultChunkSize)
-		} else {
-			matricesApplyChunked(ms, fn, v, Hints.DefaultChunkSize+uint(len(ms))/(Hints.Threads+1))
-		}
+		matricesApplyChunked(ms, fn, v)
 	}
 }
 
@@ -128,10 +124,10 @@ func matricesApply(ms Matrices, fn func(*Matrix, Matrix), v Matrix) {
 	}
 }
 
-func matricesApplyChunked(ms Matrices, fn func(*Matrix, Matrix), v Matrix, chunkSize uint) {
+func matricesApplyChunked(ms Matrices, fn func(*Matrix, Matrix), v Matrix) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range matricesInChunks(ms, chunkSize) {
+	for chunk := range matricesInChunks(ms) {
 		running++
 		go func(c Matrices) {
 			matricesApply(c, fn, v)
@@ -148,15 +144,7 @@ func (ms Matrices) vectorApply(mfn func(*Matrix, func(*Vector, Vector), Vector),
 	if !Parallel {
 		vectorApply(ms, mfn, fn, v)
 	} else {
-		if Hints.ChunkSizeFixed {
-			vectorApplyChunked(ms, mfn, fn, v, Hints.DefaultChunkSize)
-		} else {
-			cs := uint(len(ms)) / (Hints.Threads + 1)
-			if cs < Hints.DefaultChunkSize {
-				cs = Hints.DefaultChunkSize
-			}
-			vectorApplyChunked(ms, mfn, fn, v, cs)
-		}
+		vectorApplyChunked(ms, mfn, fn, v)
 	}
 }
 
@@ -166,10 +154,10 @@ func vectorApply(ms Matrices, mfn func(*Matrix, func(*Vector, Vector), Vector), 
 	}
 }
 
-func vectorApplyChunked(ms Matrices, mfn func(*Matrix, func(*Vector, Vector), Vector), fn func(*Vector, Vector), v Vector, chunkSize uint) {
+func vectorApplyChunked(ms Matrices, mfn func(*Matrix, func(*Vector, Vector), Vector), fn func(*Vector, Vector), v Vector) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range matricesInChunks(ms, chunkSize) {
+	for chunk := range matricesInChunks(ms) {
 		running++
 		go func(c Matrices) {
 			vectorApply(c, mfn, fn, v)

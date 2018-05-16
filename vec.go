@@ -154,7 +154,7 @@ func vectorApplyAll(v *Vector, fn func(*Vector, Vector), vs Vectors) {
 func vectorApplyAllChunked(v *Vector, fn func(*Vector, Vector), vs Vectors, chunkSize uint) {
 	done := make(chan Vector, 1)
 	var running uint
-	for chunk := range vectorsInChunks(vs, chunkSize) {
+	for chunk := range vectorsInChunks(vs) {
 		running++
 		go func(cvs Vectors) {
 			var nv Vector

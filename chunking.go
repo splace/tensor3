@@ -22,27 +22,15 @@ var Parallel bool
 // only improves performance if using costly functions, non of the built-ins are likely to benefit. YRMV.
 var ParallelComponents bool
 
-
-
 // return a channel of Vectors that are chunks of the passed Vectors
-func vectorsInChunks(vs Vectors, chunkSize uint) chan Vectors {
+func vectorsInChunks(vs Vectors) chan Vectors {
 	c := make(chan Vectors, 1)
-	lastSplitMax := uint(len(vs))-chunkSize
-	go func() {
-		var bottom uint
-		for top := chunkSize; top < lastSplitMax; top += chunkSize {
-			c <- vs[bottom:top]
-			bottom = top
+	chunkSize := Hints.DefaultChunkSize
+	if !Hints.ChunkSizeFixed {
+		if cs := uint(len(vs)) / (Hints.Threads + 1); cs > Hints.DefaultChunkSize {
+			chunkSize = cs
 		}
-		c <- vs[bottom:]
-		close(c)
-	}()
-	return c
-}
-
-// return a channel of VectorRefs that are chunks of the passed VectorRefs
-func vectorRefsInChunks(vs VectorRefs, chunkSize uint) chan VectorRefs {
-	c := make(chan VectorRefs, 1)
+	}
 	lastSplitMax := uint(len(vs))-chunkSize
 	go func() {
 		var bottom uint
@@ -57,8 +45,14 @@ func vectorRefsInChunks(vs VectorRefs, chunkSize uint) chan VectorRefs {
 }
 
 // return a channel of Matrices that are chunks of the passed Matrices
-func matricesInChunks(ms Matrices, chunkSize uint) chan Matrices {
+func matricesInChunks(ms Matrices) chan Matrices {
 	c := make(chan Matrices)
+	chunkSize := Hints.DefaultChunkSize
+	if !Hints.ChunkSizeFixed {
+		if cs := uint(len(ms)) / (Hints.Threads + 1); cs > Hints.DefaultChunkSize {
+			chunkSize = cs
+		}
+	}
 	lastSplitMax := uint(len(ms))-chunkSize
 	go func() {
 		var bottom uint
@@ -71,4 +65,28 @@ func matricesInChunks(ms Matrices, chunkSize uint) chan Matrices {
 	}()
 	return c
 }
+
+// return a channel of VectorRefs that are chunks of the passed VectorRefs
+func vectorRefsInChunks(vs VectorRefs) chan VectorRefs {
+	c := make(chan VectorRefs, 1)
+	chunkSize := Hints.DefaultChunkSize
+	if !Hints.ChunkSizeFixed {
+		if cs := uint(len(vs)) / (Hints.Threads + 1); cs > Hints.DefaultChunkSize {
+			chunkSize = cs
+		}
+	}
+	lastSplitMax := uint(len(vs))-chunkSize
+	go func() {
+		var bottom uint
+		for top := chunkSize; top < lastSplitMax; top += chunkSize {
+			c <- vs[bottom:top]
+			bottom = top
+		}
+		c <- vs[bottom:]
+		close(c)
+	}()
+	return c
+}
+
+
 

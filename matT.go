@@ -1,6 +1,6 @@
 package tensor3
 
-//	methods with a matrix parameter can come with 'T' prefixed version, meaning the result is post transposed, or a "T" suffix meaning the parameter is transposed before the operation. adding transpose(s) is a no cost operation.
+//	methods with a matrix parameter can come with 'T' prefixed version, meaning the result is post transposed, or a "T" suffix meaning the parameter is transposed before the operation. adding transpose(s) is a no extra cost operation.
 
 func (m *Matrix) TProduct(m2 Matrix) {
 	m.x.x, m.y.x, m.z.x, m.x.y, m.y.y, m.z.y, m.x.z, m.y.z, m.z.z =

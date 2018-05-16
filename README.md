@@ -2,19 +2,19 @@
 
 Vector, (3-component), and Matrix, (3-Vector) Types.
 
-Useful methods on same, operating in-place, not returning reference. (so no single line chained functions.)
+Useful methods on same, operating in-place ( not returning reference, meaning no single line chained functions.)
 
-Arrays, called Vectors and Matrices, with their useful methods (parallel).
+Arrays of both, (called Vectors and Matrices), with their useful methods.
 
-VectorRefs, array of pointers to Vector, with methods to convert to/from Vectors.
+single and parallel threaded, can be selected with a global var.
+
+VectorRefs; array of Vector pointers, with methods to convert to/from Vectors.
 
 64bit float, 32bit float, or fixed precision (int scaled for 3dp) component value types (separate packages).
 
-(import package multiple times, with different aliases, to enable simultaneous use.)
+doesn't use "math" package, left to importers, if necessary.
 
-doesn't use "math" package, left to importers, if necessary. (callbacks to use parallel functionality).
-
-single and parallel thread solutions, can be switched, with a global var.
+methods that accept a function and apply in to all etc. (in parallel).
 
 with array types selectively broken into chunks for better parallel performance.
 

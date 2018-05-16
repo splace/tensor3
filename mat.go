@@ -180,7 +180,7 @@ func matrixApply(vs Vectors, fn func(*Vector, Matrix), m Matrix) {
 func matrixApplyChunked(vs Vectors, fn func(*Vector, Matrix), m Matrix, chunkSize uint) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range vectorsInChunks(vs, chunkSize) {
+	for chunk := range vectorsInChunks(vs) {
 		running++
 		go func(c Vectors) {
 			matrixApply(c, fn, m)
