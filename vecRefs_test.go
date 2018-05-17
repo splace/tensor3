@@ -181,14 +181,3 @@ func BenchmarkVecRefsProductParallel(b *testing.B) {
 }
 
 
-/*  Hal3 Wed 25 Apr 22:19:09 BST 2018  go version go1.10 linux/amd64
-
-goos: linux
-goarch: amd64
-BenchmarkVecRefsProduct-2           	    1000	   2123885 ns/op
-BenchmarkVecRefsProductParallel-2   	    1000	   1940512 ns/op
-PASS
-ok  	_/home/simon/Dropbox/github/working/tensor3	4.556s
-Wed 25 Apr 22:19:15 BST 2018
-*/
-
