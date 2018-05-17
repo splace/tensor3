@@ -91,7 +91,7 @@ func vectorsApplyChunked(vs Vectors, fn func(*Vector, Vector), v Vector) {
 	}
 }
 
-// for each vecotr apply a function with no parameters
+// for each vector apply a function with no parameters
 func (vs Vectors) ForEachNoParameter(fn func(*Vector)) {
 	var inner func(*Vector, Vector)
 	inner = func(v *Vector, _ Vector) {

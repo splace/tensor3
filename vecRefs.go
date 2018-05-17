@@ -12,7 +12,8 @@ func NewVectorRefs(cs ...BaseType) (vs VectorRefs) {
 }
 
 
-// indexes are counting numbers, and in that the first vector has index 1.  
+// make a new VectorRefs that references Vector's at the provided indexes in the provided Vectors.  
+// (Notice: this package uses 1 for the first item.)
 func NewVectorRefsFromIndexes(cs Vectors, indexes ...uint) (vs VectorRefs) {
 	if len(indexes) == 0 {
 		vs = make(VectorRefs, len(cs))
@@ -28,7 +29,7 @@ func NewVectorRefsFromIndexes(cs Vectors, indexes ...uint) (vs VectorRefs) {
 	return
 }
 
-// rebases, maintaining values, a number of vectorrefs to point into a new returned vectors.
+// rebases, a number of VectorRefs, to point into a newly created Vectors.
 func NewVectorsFromVectorRefs(vss ...VectorRefs) Vectors {
 	m := make(map[*Vector]uint)
 	for _, vs := range vss {
@@ -50,9 +51,11 @@ func NewVectorsFromVectorRefs(vss ...VectorRefs) Vectors {
 	return nv
 }
 
-// convert memory Refs to array indexes, to retain information outside this execution context. 
-// TODO find index from pointer, use unsafe? or read text, coule be much faster?
+// return a slice of indexes, the same length as the VectorRefs, to the items it references in the provided Vectors. 
+// an index will be zero if the corresponding VectorRef is not referencing an item in the Vectors.
+// (Notice: this package uses 1 for the first item.)
 func (vsr VectorRefs) Indexes(vs Vectors) (is []uint) {
+	// TODO find index using unsafe pointer offset, would be much faster?
 	is = make([]uint, len(vsr))
 	for ir, r := range vsr {
 		for i := range vs {
@@ -65,7 +68,7 @@ func (vsr VectorRefs) Indexes(vs Vectors) (is []uint) {
 	return is
 }
 
-// make a slice of Vectors from a slice of Vector references. 
+// make a slice of Vectors from the values referenced by this VectorRefs. 
 func (vsr VectorRefs) Dereference() (vs Vectors) {
 	vs = make(Vectors, len(vsr))
 	for i := range vs {
@@ -74,7 +77,8 @@ func (vsr VectorRefs) Dereference() (vs Vectors) {
 	return
 }
 
-// make a slice of VectorRefs from a slice of Vectors. 
+// overwrite the references in a VectorRefs to refer to the elements of this Vectors. 
+// for upto the greater length of the two slices.
 func (vs Vectors) Reference(vsr VectorRefs) {
 	if len(vs) > len(vsr) {
 		for i := range vsr {
@@ -214,7 +218,7 @@ func matrixApplyRefChunked(vs VectorRefs, fn func(*Vector, Matrix), m Matrix) {
 	}
 }
 
-// apply a function without a vector parameter using a dummy
+// for each vector reference apply a function with no parameters
 func (vs VectorRefs) ForEachNoParameter(fn func(*Vector)) {
 	var inner func(*Vector, Vector)
 	inner = func(v *Vector, _ Vector) {
