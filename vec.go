@@ -9,7 +9,7 @@ func (v Vector) Components() (BaseType, BaseType, BaseType) {
 }
 
 var xAxis, yAxis, zAxis = Vector{scale, 0, 0}, Vector{0, scale, 0}, Vector{0, 0, scale}
-var yzPlane, xzPlane, zxPlane = Vector{0, scale, scale}, Vector{scale, 0, scale}, Vector{scale, scale, 0}
+var yzPlane, zxPlane, xyPlane = Vector{0, scale, scale}, Vector{scale, 0, scale}, Vector{scale, scale, 0}
 
 type Axis uint
 
@@ -20,7 +20,7 @@ const (
 )
 
 var Axes = [3]Vector{xAxis, yAxis, zAxis}
-var AxisPlanes = [3]Vector{yzPlane, xzPlane, zxPlane}
+var AxisPlanes = [3]Vector{yzPlane, zxPlane, xyPlane}
 
 // missing components default to zero, more than 3 are ignored
 func NewVector(cs ...BaseType) (v Vector) {
