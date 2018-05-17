@@ -113,7 +113,7 @@ func (vs VectorRefs) ProductT(m Matrix) {
 }
 
 func (vs VectorRefs) Sum() (v Vector) {
-	v.AggregateRefs(vs, (*Vector).Add)
+	v.ForAllRefs(vs, (*Vector).Add)
 	return
 }
 
@@ -127,13 +127,13 @@ func (vs VectorRefs) Multiply(s BaseType) {
 
 func (vs VectorRefs) Max() (v Vector) {
 	v.Set(*vs[0])
-	v.AggregateRefs(vs[1:], (*Vector).Max)
+	v.ForAllRefs(vs[1:], (*Vector).Max)
 	return
 }
 
 func (vs VectorRefs) Min() (v Vector) {
 	v.Set(*vs[0])
-	v.AggregateRefs(vs[1:], (*Vector).Min)
+	v.ForAllRefs(vs[1:], (*Vector).Min)
 	return
 }
 
@@ -146,6 +146,13 @@ func (vs VectorRefs) Interpolate(v Vector, f BaseType) {
 		v.Add(v2)
 	}
 	vs.ForEach(interpolate, v)
+}
+
+// apply a function repeatedly to the vector reference, parameterised by its current value and each vector in the supplied vectors in order.
+func (v *Vector) AggregateRefs(vs VectorRefs, fn func(*Vector, Vector)) {
+	for _, v2 := range vs {
+		fn(v, *v2)
+	}
 }
 
 func (vs VectorRefs) ForEach(fn func(*Vector, Vector), v Vector) {

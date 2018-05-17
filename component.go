@@ -20,3 +20,9 @@ func vectorScale(v *Vector) {
 func vectorUnscale(v *Vector) {
 	return
 }
+
+func New(x,y,z float64) *Vector{
+	return &Vector{BaseType(x),BaseType(y),BaseType(z)}
+}
+
+

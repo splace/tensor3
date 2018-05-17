@@ -21,3 +21,7 @@ func vectorUnscale(v *Vector){
 	return
 }
 
+func New(x,y,z float32) *Vector{
+	return &Vector{BaseType(x),BaseType(y),BaseType(z)}
+}
+

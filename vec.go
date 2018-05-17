@@ -121,7 +121,7 @@ func (v *Vector) Interpolate(v2 Vector, f BaseType) {
 	v.Add(v2)
 }
 
-// apply a function repeatedly to the vector, parameterised by the current value of the vector and each vector in the supplied vectors in order.
+// apply a function repeatedly to the vector, parameterised by its current value and each vector in the supplied vectors in order.
 func (v *Vector) Aggregate(vs Vectors, fn func(*Vector, Vector)) {
 	for _, v2 := range vs {
 		fn(v, v2)
@@ -164,12 +164,6 @@ func vectorApplyAllChunked(v *Vector, fn func(*Vector, Vector), vs Vectors, chun
 	}
 	for ; running > 0; running-- {
 		fn(v, <-done)
-	}
-}
-
-func (v *Vector) AggregateRefs(vs VectorRefs, fn func(*Vector, Vector)) {
-	for _, v2 := range vs {
-		fn(v, *v2)
 	}
 }
 

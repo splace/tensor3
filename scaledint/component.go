@@ -7,7 +7,6 @@ type BaseType int
 const scaleShift=10
 const scale = 1<<scaleShift
 
-// TODO could use base two scale
 
 func baseScale(v BaseType) BaseType{
 	return v<<scaleShift
@@ -43,4 +42,11 @@ func (v Vector) String()string{
 func (v Matrix) String()string{
 	return fmt.Sprintf("{%v %v %v}",v.x,v.y,v.z)
 }
+
+// TODO scan scaled?
+
+func New(x,y,z float64) *Vector{
+	return &Vector{BaseType(x*scale),BaseType(y*scale),BaseType(z*scale)}
+}
+
 

@@ -175,7 +175,6 @@ func (ms Matrices) ForEachNoParameter(fn func(*Matrix)) {
 	inner = func(m1 *Matrix, _ Matrix) {
 		fn(m1)
 	}
-	dummy := Matrix{}
-	ms.ForEach(inner, dummy) //TODO make new each time?
+	ms.ForEach(inner, Matrix{})
 }
 

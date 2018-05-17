@@ -23,6 +23,8 @@ with array types selectively broken into chunks for better parallel performance.
 package tensor3
 
 
+// some benchmarking
+
 /*
 tensor3.test -test.bench .
 As expected: runtime error: index out of range
@@ -55,7 +57,7 @@ BenchmarkVecsCrossParallel-2        	    1000	   1456007 ns/op
 BenchmarkVecsProduct-2              	    1000	   1989979 ns/op
 BenchmarkVecsProductParallel-2      	    1000	   1980549 ns/op
 PASS
-ok  	_/run/media/simon/6a5530c2-1442-4e9b-b35f-3db0c9a6984c/home/simon/Dropbox/github/working/tensor3	20.849s
+ok  	
 Sat 28 Apr 20:56:37 BST 2018
 */
 
@@ -83,26 +85,26 @@ BenchmarkVecsCrossParallel-2     	    1000	   1160309 ns/op
 BenchmarkVecsProduct-2           	    1000	   1882070 ns/op
 BenchmarkVecsProductParallel-2   	    1000	   1418380 ns/op
 PASS
-ok  	_/home/simon/Dropbox/github/working/tensor3	9.931s
+ok  	
 Wed 25 Apr 21:45:05 BST 2018
 */
 
 /* benchmark: "" hal3 Sat 28 Apr 21:10:56 BST 2018 go version go1.10 linux/amd64
 goos: linux
 goarch: amd64
-BenchmarkMatrixProduct-2            	50000000	        26.4 ns/op
-BenchmarkMatsProduct-2              	     300	   4855418 ns/op
-BenchmarkMatsProductParallel-2      	     300	   4831943 ns/op
-BenchmarkVecRefsProduct-2           	    1000	   2305069 ns/op
-BenchmarkVecRefsProductParallel-2   	    1000	   2373720 ns/op
-BenchmarkVecsSum-2                  	    2000	    879362 ns/op
-BenchmarkVecsSumParallel-2          	    2000	    882587 ns/op
-BenchmarkVecsCross-2                	    1000	   1419000 ns/op
-BenchmarkVecsCrossParallel-2        	    1000	   1449856 ns/op
-BenchmarkVecsProduct-2              	    1000	   1967557 ns/op
-BenchmarkVecsProductParallel-2      	    1000	   2034425 ns/op
+BenchmarkMatrixProduct-2    		   	50000000	        25.4 ns/op
+BenchmarkMatsProduct-2          	 	     300	   4034869 ns/op
+BenchmarkMatsProductParallel-2   		     500	   4047186 ns/op
+BenchmarkVecRefsProduct-2           	    1000	   2109461 ns/op
+BenchmarkVecRefsProductParallel-2   	    1000	   1858104 ns/op
+BenchmarkVecsSum-2                  	    2000	    858996 ns/op
+BenchmarkVecsSumParallel-2          	    3000	    548285 ns/op
+BenchmarkVecsCross-2                	    2000	   1189825 ns/op
+BenchmarkVecsCrossParallel-2        	    2000	   1041651 ns/op
+BenchmarkVecsProduct-2              	    1000	   1850390 ns/op
+BenchmarkVecsProductParallel-2      	    1000	   1193208 ns/op
 PASS
-ok  	_/run/media/simon/6a5530c2-1442-4e9b-b35f-3db0c9a6984c/home/simon/Dropbox/github/working/tensor3	21.973s
+ok  	
 Sat 28 Apr 21:11:19 BST 2018
 */
 
