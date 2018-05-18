@@ -147,6 +147,17 @@ func TestVecRefsCrossVecRefs(t *testing.T) {
 	}
 }
 
+func TestVecRefsSelect(t *testing.T) {
+	vs := VectorRefs{&Vector{1 * scale, 2 * scale, 3 * scale}, &Vector{4 * scale, 5 * scale, 6 * scale}, &Vector{7 * scale, 8 * scale, 9 * scale}}
+	vs2:= vs.Select(
+		func(vr *Vector)bool{
+			return vr.y==5*scale
+		}
+	)
+	if fmt.Sprint(vs2) != "[{4 5 6}]" {
+		t.Error(fmt.Sprint(vs2))
+	}
+}
 
 func BenchmarkVecRefsProduct(b *testing.B) {
 	b.StopTimer()
@@ -179,5 +190,4 @@ func BenchmarkVecRefsProductParallel(b *testing.B) {
 		vrs.Product(m)
 	}
 }
-
 

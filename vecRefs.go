@@ -152,6 +152,16 @@ func (vs VectorRefs) Interpolate(v Vector, f BaseType) {
 	vs.ForEach(interpolate, v)
 }
 
+// return a VectorRefs with the VectorRef's from this that return true from the provided function.
+func (vs VectorRefs) Select(fn func(*Vector)bool) (svs VectorRefs) {
+	for _, v2 := range vs {
+		if fn(v2){
+			svs=append(svs,v2)
+		}
+	}
+	return
+}
+
 // apply a function repeatedly to the vector reference, parameterised by its current value and each vector in the supplied vectors in order.
 func (v *Vector) AggregateRefs(vs VectorRefs, fn func(*Vector, Vector)) {
 	for _, v2 := range vs {
