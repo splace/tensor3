@@ -1,1 +1,1 @@
-/home/simon/Dropbox/github/working/tensor3/vecs_test.go
+../vecs_test.go
