@@ -1,1 +1,1 @@
-/home/simon/Dropbox/github/working/tensor3/mat_test.go
+../mat_test.go

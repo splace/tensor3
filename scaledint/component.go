@@ -50,3 +50,4 @@ func New(x,y,z float64) *Vector{
 }
 
 
+

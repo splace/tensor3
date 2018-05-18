@@ -1,1 +1,1 @@
-/home/simon/Dropbox/github/working/tensor3/vec.go
+../vec.go
