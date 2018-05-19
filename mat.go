@@ -11,7 +11,7 @@ func (m Matrix) Components() (Vector, Vector, Vector) {
 // missing parameters default to zero, more than 9 are ignored
 func NewMatrix(cs ...BaseType) (m Matrix) {
 	switch len(cs) {
-	case 9:
+	default:
 		m.z.z = baseScale(cs[8])
 		fallthrough
 	case 8:
@@ -37,6 +37,7 @@ func NewMatrix(cs ...BaseType) (m Matrix) {
 		fallthrough
 	case 1:
 		m.x.x = baseScale(cs[0])
+	case 0:
 	}
 	return
 }
