@@ -163,6 +163,9 @@ func (vs VectorRefs) Select(fn func(*Vector)bool) (svs VectorRefs) {
 }
 
 // return a slice of VectorRefs with the VectorRef's from this that returned the slices index value from the provided function.
+// or put another way;
+// bin the VecRef by the functions returned value.
+// bins start at 1, a returned value of 0 causes the VecRef not to be in any of the returned bins.
 func (vs VectorRefs) Split(fn func(*Vector)uint) (ssvs []VectorRefs) {
 	for _, v2 := range vs {
 		i:= fn(v2)
