@@ -162,6 +162,21 @@ func (vs VectorRefs) Select(fn func(*Vector)bool) (svs VectorRefs) {
 	return
 }
 
+// return a slice of VectorRefs with the VectorRef's from this that returned the slices index value from the provided function.
+func (vs VectorRefs) Split(fn func(*Vector)uint) (ssvs []VectorRefs) {
+	for _, v2 := range vs {
+		i:= fn(v2)
+		if i>0 {
+			for j:=uint(len(ssvs));j<i;j++{
+				ssvs=append(ssvs,nil)
+			}
+			ssvs[i-1]=append(ssvs[i-1],v2)
+		}
+	}
+	return
+}
+
+
 // apply a function repeatedly to the vector reference, parameterised by its current value and each vector in the supplied vectors in order.
 func (v *Vector) AggregateRefs(vs VectorRefs, fn func(*Vector, Vector)) {
 	for _, v2 := range vs {

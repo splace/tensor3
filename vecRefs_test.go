@@ -151,13 +151,26 @@ func TestVecRefsSelect(t *testing.T) {
 	vs := VectorRefs{&Vector{1 * scale, 2 * scale, 3 * scale}, &Vector{4 * scale, 5 * scale, 6 * scale}, &Vector{7 * scale, 8 * scale, 9 * scale}}
 	vs2:= vs.Select(
 		func(vr *Vector)bool{
-			return vr.y==5*scale
-		}
+			return vr.y==baseScale(5)
+		},
 	)
-	if fmt.Sprint(vs2) != "[{4 5 6}]" {
-		t.Error(fmt.Sprint(vs2))
+	if vs2[0] != vs[1] {
+		t.Error(vs2[0],vs[1])
 	}
 }
+
+func TestVecRefsSplit(t *testing.T) {
+	vs := VectorRefs{&Vector{1 * scale, 2 * scale, 3 * scale}, &Vector{4 * scale, 5 * scale, 6 * scale}, &Vector{7 * scale, 8 * scale, 9 * scale}}
+	vs2:= vs.Split(
+		func(vr *Vector)uint{
+			return uint(baseUnscale(vr.y))
+		},
+	)
+	if fmt.Sprint(vs2) != fmt.Sprint([]VectorRefs{nil,VectorRefs{vs[0]},nil,nil,VectorRefs{vs[1]},nil,nil,VectorRefs{vs[2]}}) {
+		t.Error(vs2,vs)
+	}
+}
+
 
 func BenchmarkVecRefsProduct(b *testing.B) {
 	b.StopTimer()
