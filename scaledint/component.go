@@ -39,10 +39,6 @@ func (v Vector) String()string{
 	return fmt.Sprintf("{%v %v %v}",v.x,v.y,v.z)
 }
 
-func (v Matrix) String()string{
-	return fmt.Sprintf("{%v %v %v}",v.x,v.y,v.z)
-}
-
 // TODO scan scaled?
 
 // new vector reference from float64's 

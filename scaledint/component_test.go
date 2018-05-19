@@ -5,16 +5,16 @@ import . "github.com/splace/tensor3/scaledint"
 
 func ExampleTextEncodingVector(){
 	v1:=New(1,0,0)
-	fmt.Printf("%+v",*v1)
+	fmt.Printf("%v",*v1)
 	// Output:
-	// {x:1 y:0 z:0}
+	// {1 0 0}
 }
 
 func ExampleTextEncodingMatrix(){
 	m1:=Matrix{*New(1,0,0),*New(1,0,0),*New(1,0,0)}
-	fmt.Printf("%+v",m1)
+	fmt.Printf("%v",m1)
 	// Output:
-	// [{x:1 y:0 z:0} {x:1 y:0 z:0} {x:1 y:0 z:0}]
+	// [{1 0 0} {1 0 0} {1 0 0}]
 }
 
 
