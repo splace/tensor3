@@ -45,6 +45,7 @@ func (v Matrix) String()string{
 
 // TODO scan scaled?
 
+// new vector reference from float64's 
 func New(x,y,z float64) *Vector{
 	return &Vector{BaseType(x*scale),BaseType(y*scale),BaseType(z*scale)}
 }
