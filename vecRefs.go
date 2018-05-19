@@ -167,8 +167,9 @@ func (vs VectorRefs) Split(fn func(*Vector)uint) (ssvs []VectorRefs) {
 	for _, v2 := range vs {
 		i:= fn(v2)
 		if i>0 {
-			for j:=uint(len(ssvs));j<i;j++{
-				ssvs=append(ssvs,nil)
+			if i> uint(len(ssvs)){
+				// append new VectorRefs up to the needed index.
+				ssvs=append(ssvs,make([]VectorRefs,i-uint(len(ssvs)))...)
 			}
 			ssvs[i-1]=append(ssvs[i-1],v2)
 		}

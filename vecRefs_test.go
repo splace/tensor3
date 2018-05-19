@@ -163,11 +163,19 @@ func TestVecRefsSplit(t *testing.T) {
 	vs := VectorRefs{&Vector{1 * scale, 2 * scale, 3 * scale}, &Vector{4 * scale, 5 * scale, 6 * scale}, &Vector{7 * scale, 8 * scale, 9 * scale}}
 	vs2:= vs.Split(
 		func(vr *Vector)uint{
-			return uint(baseUnscale(vr.y))
+			return uint(baseUnscale(vr.y-2))
 		},
 	)
-	if fmt.Sprint(vs2) != fmt.Sprint([]VectorRefs{nil,VectorRefs{vs[0]},nil,nil,VectorRefs{vs[1]},nil,nil,VectorRefs{vs[2]}}) {
+	if fmt.Sprint(vs2) != fmt.Sprint([]VectorRefs{nil,nil,VectorRefs{vs[1]},nil,nil,VectorRefs{vs[2]}}) {
 		t.Error(vs2,vs)
+	}
+	vs3:= vs.Split(
+		func(vr *Vector)uint{
+			return uint(baseUnscale(vr.z-vr.x-1))
+		},
+	)
+	if fmt.Sprint(vs3[0]) != fmt.Sprint(vs) {
+		t.Error(vs3,vs)
 	}
 }
 
