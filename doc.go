@@ -107,4 +107,46 @@ PASS
 ok  	
 Sat 28 Apr 21:11:19 BST 2018
 */
+/* benchmark: "Vecs" hal3 Sat 19 May 20:51:24 BST 2018 go version go1.10.2 linux/amd64
+goos: linux
+goarch: amd64
+BenchmarkVecsSum-2               	    2000	    898831 ns/op
+BenchmarkVecsSumParallel-2       	    2000	    943361 ns/op
+BenchmarkVecsCross-2             	    1000	   1281549 ns/op
+BenchmarkVecsCrossParallel-2     	    1000	   1327454 ns/op
+BenchmarkVecsProduct-2           	    1000	   1888471 ns/op
+BenchmarkVecsProductParallel-2   	    1000	   1944907 ns/op
+PASS
+ok  	_/run/media/simon/6a5530c2-1442-4e9b-b35f-3db0c9a6984c/home/simon/Dropbox/github/working/tensor3	11.104s
+Sat 19 May 20:51:36 BST 2018
+*/
+
+
+/* benchmark: "Vecs" hal3 Wed 16 May 23:29:56 BST 2018 go version go1.10 linux/amd64
+goos: linux
+goarch: amd64
+BenchmarkVecsSum-2               	    1000	   1511522 ns/op
+BenchmarkVecsSumParallel-2       	    1000	   1094181 ns/op
+BenchmarkVecsCross-2             	     500	   2372967 ns/op
+BenchmarkVecsCrossParallel-2     	    1000	   1639160 ns/op
+BenchmarkVecsProduct-2           	     500	   2421282 ns/op
+BenchmarkVecsProductParallel-2   	     500	   2247074 ns/op
+PASS
+ok  	_/run/media/simon/6a5530c2-1442-4e9b-b35f-3db0c9a6984c/home/simon/Dropbox/github/working/tensor3	9.206s
+Wed 16 May 23:30:06 BST 2018
+*/
+/*  Hal3 Sat 19 May 21:45:09 BST 2018  go version go1.10 linux/amd64
+
+goos: linux
+goarch: amd64
+BenchmarkVecsSum-2               	    2000	    875164 ns/op
+BenchmarkVecsSumParallel-2       	    3000	    558054 ns/op
+BenchmarkVecsCross-2             	    1000	   1269314 ns/op
+BenchmarkVecsCrossParallel-2     	    2000	   1126794 ns/op
+BenchmarkVecsProduct-2           	    1000	   1862880 ns/op
+BenchmarkVecsProductParallel-2   	    1000	   1222321 ns/op
+PASS
+ok  	_/home/simon/Dropbox/github/working/tensor3	10.834s
+Sat 19 May 21:45:20 BST 2018
+*/
 

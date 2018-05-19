@@ -4,28 +4,28 @@ import "testing"
 import "fmt"
 
 func TestMatrixIdentityPrint(t *testing.T) {
-	if fmt.Sprint(Identity) != "{{1 0 0} {0 1 0} {0 0 1}}" {
+	if fmt.Sprint(Identity) != "[{1 0 0} {0 1 0} {0 0 1}]" {
 		t.Error(Identity)
 	}
 }
 
 func TestMatrixNew(t *testing.T) {
 	v := *new(Matrix)
-	if fmt.Sprint(v) != "{{0 0 0} {0 0 0} {0 0 0}}" {
+	if fmt.Sprint(v) != "[{0 0 0} {0 0 0} {0 0 0}]" {
 		t.Error(v)
 	}
 }
 
 func TestMatrixPrint(t *testing.T) {
 	m := NewMatrix(1, 2, 3)
-	if fmt.Sprint(m) != "{{1 2 3} {0 0 0} {0 0 0}}" {
+	if fmt.Sprint(m) != "[{1 2 3} {0 0 0} {0 0 0}]" {
 		t.Error(m)
 	}
 }
 func TestMatrixAdd(t *testing.T) {
 	m := *new(Matrix)
 	m.Add(NewMatrix(1, 2, 3, 4, 5, 6, 7, 8, 9))
-	if fmt.Sprint(m) != "{{1 2 3} {4 5 6} {7 8 9}}" {
+	if fmt.Sprint(m) != "[{1 2 3} {4 5 6} {7 8 9}]" {
 		t.Error(m)
 	}
 }
@@ -51,7 +51,7 @@ func TestMatrixInvert(t *testing.T) {
 func TestMatrixProduct(t *testing.T) {
 	m := NewMatrix(1, 2, 3, 4, 5, 6, 7, 8, 9)
 	m.Product(NewMatrix(9, 8, 7, 6, 5, 4, 3, 2, 1))
-	if fmt.Sprint(m) != "{{30 24 18} {84 69 54} {138 114 90}}" {
+	if fmt.Sprint(m) != "[{30 24 18} {84 69 54} {138 114 90}]" {
 		t.Error(m)
 	}
 }
@@ -82,7 +82,7 @@ func TestMatrixInvertDet(t *testing.T) {
 func TestMatrixProductIndentity(t *testing.T) {
 	m := NewMatrix(1, 2, 3, 4, 5, 6, 7, 8, 9)
 	m.Product(Identity)
-	if fmt.Sprint(m) != "{{1 2 3} {4 5 6} {7 8 9}}" {
+	if fmt.Sprint(m) != "[{1 2 3} {4 5 6} {7 8 9}]" {
 		t.Error(m)
 	}
 }
@@ -90,7 +90,7 @@ func TestMatrixProductIndentity(t *testing.T) {
 func TestMatrixMultiply(t *testing.T) {
 	m := NewMatrix(1, 2, 3, 4, 5, 6, 7, 8, 9)
 	m.Multiply(2)
-	if fmt.Sprint(m) != "{{2 4 6} {8 10 12} {14 16 18}}" {
+	if fmt.Sprint(m) != "[{2 4 6} {8 10 12} {14 16 18}]" {
 		t.Error(m)
 	}
 }
@@ -98,7 +98,7 @@ func TestMatrixMultiply(t *testing.T) {
 func TestMatrixAggregate(t *testing.T) {
 	m := NewMatrix(1, 2, 3, 4, 5, 6, 7, 8, 9)
 	m.Aggregate(Matrices{NewMatrix(1, 2, 3, 4, 5, 6, 7, 8, 9), NewMatrix(1, 2, 3, 4, 5, 6, 7, 8, 9)}, (*Matrix).Add)
-	if fmt.Sprint(m) != "{{3 6 9} {12 15 18} {21 24 27}}" {
+	if fmt.Sprint(m) != "[{3 6 9} {12 15 18} {21 24 27}]" {
 		t.Error(m)
 	}
 }
@@ -106,7 +106,7 @@ func TestMatrixAggregate(t *testing.T) {
 func TestMatrixApplyXAdd(t *testing.T) {
 	m := NewMatrix(1, 2, 3, 4, 5, 6, 7, 8, 9)
 	m.applyX((*Vector).Add, NewVector(1, 2, 3))
-	if fmt.Sprint(m) != "{{2 4 6} {4 5 6} {7 8 9}}" {
+	if fmt.Sprint(m) != "[{2 4 6} {4 5 6} {7 8 9}]" {
 		t.Error(m)
 	}
 }
@@ -114,7 +114,7 @@ func TestMatrixApplyXAdd(t *testing.T) {
 func TestMatrixApplyZAdd(t *testing.T) {
 	m := NewMatrix(1, 2, 3, 4, 5, 6, 7, 8, 9)
 	m.applyZ((*Vector).Add, NewVector(1, 2, 3))
-	if fmt.Sprint(m) != "{{1 2 3} {4 5 6} {8 10 12}}" {
+	if fmt.Sprint(m) != "[{1 2 3} {4 5 6} {8 10 12}]" {
 		t.Error(m)
 	}
 }
@@ -122,7 +122,7 @@ func TestMatrixApplyZAdd(t *testing.T) {
 func TestMatrixApplyComponentWiseAxesAdd(t *testing.T) {
 	m := NewMatrix(1, 2, 3, 4, 5, 6, 7, 8, 9)
 	m.ApplyToComponentsByAxes((*Vector).Add)
-	if fmt.Sprint(m) != "{{2 2 3} {4 6 6} {7 8 10}}" {
+	if fmt.Sprint(m) != "[{2 2 3} {4 6 6} {7 8 10}]" {
 		t.Error(m)
 	}
 }

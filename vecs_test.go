@@ -258,17 +258,3 @@ func BenchmarkVecsProductParallel(b *testing.B) {
 	}
 
 }
-/* benchmark: "Vecs" hal3 Wed 16 May 23:29:56 BST 2018 go version go1.10 linux/amd64
-goos: linux
-goarch: amd64
-BenchmarkVecsSum-2               	    1000	   1511522 ns/op
-BenchmarkVecsSumParallel-2       	    1000	   1094181 ns/op
-BenchmarkVecsCross-2             	     500	   2372967 ns/op
-BenchmarkVecsCrossParallel-2     	    1000	   1639160 ns/op
-BenchmarkVecsProduct-2           	     500	   2421282 ns/op
-BenchmarkVecsProductParallel-2   	     500	   2247074 ns/op
-PASS
-ok  	_/run/media/simon/6a5530c2-1442-4e9b-b35f-3db0c9a6984c/home/simon/Dropbox/github/working/tensor3	9.206s
-Wed 16 May 23:30:06 BST 2018
-*/
-

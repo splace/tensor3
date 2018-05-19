@@ -1,42 +1,36 @@
 package tensor3
 
-type Matrix struct {
-	x, y, z Vector
-}
-
-func (m Matrix) Components() (Vector, Vector, Vector) {
-	return m.x, m.y, m.z
-}
+type Matrix [3]Vector
 
 // missing parameters default to zero, more than 9 are ignored
 func NewMatrix(cs ...BaseType) (m Matrix) {
 	switch len(cs) {
 	default:
-		m.z.z = baseScale(cs[8])
+		m[2].z = baseScale(cs[8])
 		fallthrough
 	case 8:
-		m.z.y = baseScale(cs[7])
+		m[2].y = baseScale(cs[7])
 		fallthrough
 	case 7:
-		m.z.x = baseScale(cs[6])
+		m[2].x = baseScale(cs[6])
 		fallthrough
 	case 6:
-		m.y.z = baseScale(cs[5])
+		m[1].z = baseScale(cs[5])
 		fallthrough
 	case 5:
-		m.y.y = baseScale(cs[4])
+		m[1].y = baseScale(cs[4])
 		fallthrough
 	case 4:
-		m.y.x = baseScale(cs[3])
+		m[1].x = baseScale(cs[3])
 		fallthrough
 	case 3:
-		m.x.z = baseScale(cs[2])
+		m[0].z = baseScale(cs[2])
 		fallthrough
 	case 2:
-		m.x.y = baseScale(cs[1])
+		m[0].y = baseScale(cs[1])
 		fallthrough
 	case 1:
-		m.x.x = baseScale(cs[0])
+		m[0].x = baseScale(cs[0])
 	case 0:
 	}
 	return
@@ -59,22 +53,22 @@ func (m *Matrix) Cross(v Vector) {
 
 // component-vector-wise length squared
 func (m Matrix) LengthLength() (v Vector) {
-	v.x = m.x.LengthLength()
-	v.y = m.y.LengthLength()
-	v.z = m.z.LengthLength()
+	v.x = m[0].LengthLength()
+	v.y = m[1].LengthLength()
+	v.z = m[2].LengthLength()
 	return
 }
 
 // component-vector-wise dot with vector
 func (m Matrix) Dot(v2 Vector) (v Vector) {
-	v.x = m.x.Dot(v2)
-	v.y = m.y.Dot(v2)
-	v.z = m.z.Dot(v2)
+	v.x = m[0].Dot(v2)
+	v.y = m[1].Dot(v2)
+	v.z = m[2].Dot(v2)
 	return
 }
 
 func (m Matrix) Determinant() BaseType {
-	return baseUnscale(baseUnscale(m.x.x*m.y.y*m.z.z - m.x.x*m.y.z*m.z.y + m.x.y*m.y.z*m.z.x - m.x.y*m.y.x*m.z.z + m.x.z*m.y.x*m.z.y - m.x.z*m.y.y*m.z.x))
+	return baseUnscale(baseUnscale(m[0].x*m[1].y*m[2].z - m[0].x*m[1].z*m[2].y + m[0].y*m[1].z*m[2].x - m[0].y*m[1].x*m[2].z + m[0].z*m[1].x*m[2].y - m[0].z*m[1].y*m[2].x))
 }
 
 func (m *Matrix) Invert() {
@@ -83,47 +77,47 @@ func (m *Matrix) Invert() {
 	det2x2 = func(a, b, c, d BaseType) BaseType {
 		return a*d - b*c
 	}
-	m.x.x, m.x.y, m.x.z, m.y.x, m.y.y, m.y.z, m.z.x, m.z.y, m.z.z =
-		det2x2(m.y.y, m.y.z, m.z.y, m.z.z), det2x2(m.x.z, m.x.y, m.z.z, m.z.y), det2x2(m.x.y, m.x.z, m.y.y, m.y.z),
-		det2x2(m.y.z, m.y.x, m.z.z, m.z.x), det2x2(m.x.x, m.x.z, m.z.x, m.z.z), det2x2(m.x.z, m.x.x, m.y.z, m.y.x),
-		det2x2(m.y.x, m.y.y, m.z.x, m.z.y), det2x2(m.x.y, m.x.x, m.z.y, m.z.x), det2x2(m.x.x, m.x.y, m.y.x, m.y.y)
+	m[0].x, m[0].y, m[0].z, m[1].x, m[1].y, m[1].z, m[2].x, m[2].y, m[2].z =
+		det2x2(m[1].y, m[1].z, m[2].y, m[2].z), det2x2(m[0].z, m[0].y, m[2].z, m[2].y), det2x2(m[0].y, m[0].z, m[1].y, m[1].z),
+		det2x2(m[1].z, m[1].x, m[2].z, m[2].x), det2x2(m[0].x, m[0].z, m[2].x, m[2].z), det2x2(m[0].z, m[0].x, m[1].z, m[1].x),
+		det2x2(m[1].x, m[1].y, m[2].x, m[2].y), det2x2(m[0].y, m[0].x, m[2].y, m[2].x), det2x2(m[0].x, m[0].y, m[1].x, m[1].y)
 	m.Divide(det)
 }
 
 func (m *Matrix) Multiply(s BaseType) {
-	m.x.Multiply(s)
-	m.y.Multiply(s)
-	m.z.Multiply(s)
+	m[0].Multiply(s)
+	m[1].Multiply(s)
+	m[2].Multiply(s)
 }
 
 func (m *Matrix) Divide(s BaseType) {
-	m.x.Divide(s)
-	m.y.Divide(s)
-	m.z.Divide(s)
+	m[0].Divide(s)
+	m[1].Divide(s)
+	m[2].Divide(s)
 }
 
 func (m *Matrix) Product(m2 Matrix) {
-	m.x.x, m.x.y, m.x.z, m.y.x, m.y.y, m.y.z, m.z.x, m.z.y, m.z.z =
-		m.x.x*m2.x.x+m.x.y*m2.y.x+m.x.z*m2.z.x, m.x.x*m2.x.y+m.x.y*m2.y.y+m.x.z*m2.z.y, m.x.x*m2.x.z+m.x.y*m2.y.z+m.x.z*m2.z.z,
-		m.y.x*m2.x.x+m.y.y*m2.y.x+m.y.z*m2.z.x, m.y.x*m2.x.y+m.y.y*m2.y.y+m.y.z*m2.z.y, m.y.x*m2.x.z+m.y.y*m2.y.z+m.y.z*m2.z.z,
-		m.z.x*m2.x.x+m.z.y*m2.y.x+m.z.z*m2.z.x, m.z.x*m2.x.y+m.z.y*m2.y.y+m.z.z*m2.z.y, m.z.x*m2.x.z+m.z.y*m2.y.z+m.z.z*m2.z.z
-	vectorUnscale(&m.x)
-	vectorUnscale(&m.y)
-	vectorUnscale(&m.z)
+	m[0].x, m[0].y, m[0].z, m[1].x, m[1].y, m[1].z, m[2].x, m[2].y, m[2].z =
+		m[0].x*m2[0].x+m[0].y*m2[1].x+m[0].z*m2[2].x, m[0].x*m2[0].y+m[0].y*m2[1].y+m[0].z*m2[2].y, m[0].x*m2[0].z+m[0].y*m2[1].z+m[0].z*m2[2].z,
+		m[1].x*m2[0].x+m[1].y*m2[1].x+m[1].z*m2[2].x, m[1].x*m2[0].y+m[1].y*m2[1].y+m[1].z*m2[2].y, m[1].x*m2[0].z+m[1].y*m2[1].z+m[1].z*m2[2].z,
+		m[2].x*m2[0].x+m[2].y*m2[1].x+m[2].z*m2[2].x, m[2].x*m2[0].y+m[2].y*m2[1].y+m[2].z*m2[2].y, m[2].x*m2[0].z+m[2].y*m2[1].z+m[2].z*m2[2].z
+	vectorUnscale(&m[0])
+	vectorUnscale(&m[1])
+	vectorUnscale(&m[2])
 }
 
 func (m *Matrix) ProductRight(m2 Matrix) {
-	m.x.x, m.x.y, m.x.z, m.y.x, m.y.y, m.y.z, m.z.x, m.z.y, m.z.z =
-		m2.x.x*m.x.x+m2.x.y*m.y.x+m2.x.z*m.z.x, m2.x.x*m.x.y+m2.x.y*m.y.y+m2.x.z*m.z.y, m2.x.x*m.x.z+m2.x.y*m.y.z+m2.x.z*m.z.z,
-		m2.y.x*m.x.x+m2.y.y*m.y.x+m2.y.z*m.z.x, m2.y.x*m.x.y+m2.y.y*m.y.y+m2.y.z*m.z.y, m2.y.x*m.x.z+m2.y.y*m.y.z+m2.y.z*m.z.z,
-		m2.z.x*m.x.x+m2.z.y*m.y.x+m2.z.z*m.z.x, m2.z.x*m.x.y+m2.z.y*m.y.y+m2.z.z*m.z.y, m2.z.x*m.x.z+m2.z.y*m.y.z+m2.z.z*m.z.z
-	vectorUnscale(&m.x)
-	vectorUnscale(&m.y)
-	vectorUnscale(&m.z)
+	m[0].x, m[0].y, m[0].z, m[1].x, m[1].y, m[1].z, m[2].x, m[2].y, m[2].z =
+		m2[0].x*m[0].x+m2[0].y*m[1].x+m2[0].z*m[2].x, m2[0].x*m[0].y+m2[0].y*m[1].y+m2[0].z*m[2].y, m2[0].x*m[0].z+m2[0].y*m[1].z+m2[0].z*m[2].z,
+		m2[1].x*m[0].x+m2[1].y*m[1].x+m2[1].z*m[2].x, m2[1].x*m[0].y+m2[1].y*m[1].y+m2[1].z*m[2].y, m2[1].x*m[0].z+m2[1].y*m[1].z+m2[1].z*m[2].z,
+		m2[2].x*m[0].x+m2[2].y*m[1].x+m2[2].z*m[2].x, m2[2].x*m[0].y+m2[2].y*m[1].y+m2[2].z*m[2].y, m2[2].x*m[0].z+m2[2].y*m[1].z+m2[2].z*m[2].z
+	vectorUnscale(&m[0])
+	vectorUnscale(&m[1])
+	vectorUnscale(&m[2])
 }
 
 func (m *Matrix) Transpose() {
-	m.x.y, m.x.z, m.y.z, m.y.x, m.z.x, m.z.y = m.y.x, m.z.x, m.z.y, m.x.y, m.x.z, m.y.z
+	m[0].y, m[0].z, m[1].z, m[1].x, m[2].x, m[2].y = m[1].x, m[2].x, m[2].y, m[0].y, m[0].z, m[1].z
 }
 
 func (m *Matrix) Project(m2 Matrix) {
@@ -196,21 +190,21 @@ func matrixApplyChunked(vs Vectors, fn func(*Vector, Matrix), m Matrix, chunkSiz
 // apply a function to each of the matrices 3 vector components, parameterised by the existing component and the corresponding component of the passed matrix.
 func (m *Matrix) ApplyToComponents(fn func(*Vector, Vector), m2 Matrix) {
 	if !ParallelComponents {
-		fn(&m.x, m2.x)
-		fn(&m.y, m2.y)
-		fn(&m.z, m2.z)
+		fn(&m[0], m2[0])
+		fn(&m[1], m2[1])
+		fn(&m[2], m2[2])
 	} else {
 		done := make(chan struct{}, 1)
 		go func() {
-			fn(&m.x, m2.x)
+			fn(&m[0], m2[0])
 			done <- struct{}{}
 		}()
 		go func() {
-			fn(&m.y, m2.y)
+			fn(&m[1], m2[1])
 			done <- struct{}{}
 		}()
 		go func() {
-			fn(&m.z, m2.z)
+			fn(&m[2], m2[2])
 			done <- struct{}{}
 		}()
 		<-done
@@ -227,21 +221,21 @@ func (m *Matrix) ApplyToComponentsByAxes(fn func(*Vector, Vector)) {
 // apply a function to each of the matrices 3 vector components, parameterised by the existing component and the passed vector.
 func (m *Matrix) ApplyToComponentsBySameVector(fn func(*Vector, Vector), v Vector) {
 	if !ParallelComponents {
-		fn(&m.x, v)
-		fn(&m.y, v)
-		fn(&m.z, v)
+		fn(&m[0], v)
+		fn(&m[1], v)
+		fn(&m[2], v)
 	} else {
 		done := make(chan struct{}, 1)
 		go func() {
-			fn(&m.x, v)
+			fn(&m[0], v)
 			done <- struct{}{}
 		}()
 		go func() {
-			fn(&m.y, v)
+			fn(&m[1], v)
 			done <- struct{}{}
 		}()
 		go func() {
-			fn(&m.z, v)
+			fn(&m[2], v)
 			done <- struct{}{}
 		}()
 		<-done
@@ -252,16 +246,16 @@ func (m *Matrix) ApplyToComponentsBySameVector(fn func(*Vector, Vector), v Vecto
 
 // apply a function to a matrices first vector component, parameterised by the existing component and the passed vector.
 func (m *Matrix) applyX(fn func(*Vector, Vector), v Vector) {
-	fn(&m.x, v)
+	fn(&m[0], v)
 }
 
 // apply a function to a matrices second vector component, parameterised by the existing component and the passed vector.
 func (m *Matrix) applyY(fn func(*Vector, Vector), v Vector) {
-	fn(&m.y, v)
+	fn(&m[1], v)
 }
 
 // apply a function to a matrices third vector component, parameterised by the existing component and the passed vector.
 func (m *Matrix) applyZ(fn func(*Vector, Vector), v Vector) {
-	fn(&m.z, v)
+	fn(&m[2], v)
 }
 

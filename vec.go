@@ -4,10 +4,6 @@ type Vector struct {
 	x, y, z BaseType
 }
 
-func (v Vector) Components() (BaseType, BaseType, BaseType) {
-	return v.x, v.y, v.z
-}
-
 var xAxis, yAxis, zAxis = Vector{scale, 0, 0}, Vector{0, scale, 0}, Vector{0, 0, scale}
 var yzPlane, zxPlane, xyPlane = Vector{0, scale, scale}, Vector{scale, 0, scale}, Vector{scale, scale, 0}
 
@@ -22,7 +18,7 @@ const (
 var Axes = [3]Vector{xAxis, yAxis, zAxis}
 var AxisPlanes = [3]Vector{yzPlane, zxPlane, xyPlane}
 
-// missing components default to zero, more than 3 are ignored
+// vector from component values, type BaseType, missing components default to zero, more than 3 are ignored
 func NewVector(cs ...BaseType) (v Vector) {
 	switch len(cs) {
 	default:
@@ -207,12 +203,12 @@ func (v Vector) ShortestAxis() Axis {
 
 // vector - matrix multiplication
 func (v *Vector) Product(m Matrix) {
-	v.x, v.y, v.z = v.x*m.x.x+v.y*m.y.x+v.z*m.z.x, v.x*m.x.y+v.y*m.y.y+v.z*m.z.y, v.x*m.x.z+v.y*m.y.z+v.z*m.z.z
+	v.x, v.y, v.z = v.x*m[0].x+v.y*m[1].x+v.z*m[2].x, v.x*m[0].y+v.y*m[1].y+v.z*m[2].y, v.x*m[0].z+v.y*m[1].z+v.z*m[2].z
 	vectorUnscale(v)
 }
 
 // vector - transposed matrix multiplication
 func (v *Vector) ProductT(m Matrix) {
-	v.x, v.y, v.z = v.x*m.x.x+v.y*m.x.y+v.z*m.x.z, v.x*m.y.x+v.y*m.y.y+v.z*m.y.z, v.x*m.z.x+v.y*m.z.y+v.z*m.z.z
+	v.x, v.y, v.z = v.x*m[0].x+v.y*m[0].y+v.z*m[0].z, v.x*m[1].x+v.y*m[1].y+v.z*m[1].z, v.x*m[2].x+v.y*m[2].y+v.z*m[2].z
 	vectorUnscale(v)
 }
