@@ -51,12 +51,13 @@ func (vs Vectors) Min() (v Vector) {
 	return
 }
 
-func (vs Vectors) Interpolate(v Vector, f BaseType) {
-	f2 := 1 - f
+func (vs Vectors) Interpolate(v Vector, f float64) {
+	f1:=Base64(1-f)
+	f2:=Base64(f)
 	var interpolate func(*Vector, Vector)
 	interpolate = func(v *Vector, v2 Vector) {
-		v2.Multiply(f2)
-		v.Multiply(f)
+		v2.Multiply(f1)
+		v.Multiply(f2)
 		v.Add(v2)
 	}
 	vs.ForEach(interpolate, v)

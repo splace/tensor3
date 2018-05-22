@@ -5,6 +5,15 @@ type BaseType float32
 
 const scale = 1
 
+func Base64(f float64) BaseType{
+	return BaseType(float32(f))
+}
+
+func Base32(f float32) BaseType{
+	return BaseType(f)
+}
+
+
 func baseScale(v BaseType) BaseType {
 	return v
 }

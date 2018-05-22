@@ -52,6 +52,7 @@ func (v *Vector) Multiply(s BaseType) {
 	v.x *= s
 	v.y *= s
 	v.z *= s
+	vectorUnscale(v)
 }
 
 // components independently divided
@@ -59,6 +60,7 @@ func (v *Vector) Divide(s BaseType) {
 	v.x /= s
 	v.y /= s
 	v.z /= s
+	vectorUnscale(v)
 }
 
 func (v Vector) Dot(v2 Vector) BaseType {
@@ -72,7 +74,7 @@ func (v *Vector) Cross(v2 Vector) {
 
 // length squared. (returning squared means this package is not dependent on math package.)
 func (v Vector) LengthLength() BaseType {
-	return v.Dot(v)
+	return baseUnscale(v.Dot(v)) 
 }
 
 func (v *Vector) Set(v2 Vector) {
@@ -111,9 +113,9 @@ func (v *Vector) Mid(v2 Vector) {
 	v.z = (v2.z + v.z) / 2
 }
 
-func (v *Vector) Interpolate(v2 Vector, f BaseType) {
-	v2.Multiply(1 - f)
-	v.Multiply(f)
+func (v *Vector) Interpolate(v2 Vector, f float64) {
+	v2.Multiply(1 - Base64(f))
+	v.Multiply(Base64(f))
 	v.Add(v2)
 }
 

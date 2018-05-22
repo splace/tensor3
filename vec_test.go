@@ -4,13 +4,13 @@ import "testing"
 import "fmt"
 
 func TestVecPrint(t *testing.T) {
-	v := NewVector(1, 2, 3)
+	v := *New(1, 2, 3)
 	if fmt.Sprint(v) != "{1 2 3}" {
 		t.Error(v)
 	}
 }
 
-func TestNewVector(t *testing.T) {
+func TestNew(t *testing.T) {
 	v := *new(Vector)
 	if fmt.Sprint(v) != "{0 0 0}" {
 		t.Error(v)
@@ -18,140 +18,140 @@ func TestNewVector(t *testing.T) {
 }
 
 func TestNewVectorPrint(t *testing.T) {
-	v := NewVector(1, 2, 3)
+	v := *New(1, 2, 3)
 	if fmt.Sprint(v) != "{1 2 3}" {
 		t.Error(v)
 	}
 }
 
 func TestVecDot(t *testing.T) {
-	v := NewVector(1, 2, 3)
-	if v.Dot(NewVector(4, 5, 6)) != baseScale(32) {
+	v :=*New(1, 2, 3)
+	if v.Dot(*New(4, 5, 6)) != 32 {
 		t.Error(v)
 	}
 }
 
 func TestVecAdd(t *testing.T) {
-	v := NewVector(1, 2, 3)
-	v.Add(NewVector(4, 5, 6))
-	if v != (NewVector(5, 7, 9)) {
+	v := New(1, 2, 3)
+	v.Add(*New(4, 5, 6))
+	if *v != (*New(5, 7, 9)) {
 		t.Error(v)
 	}
 }
 
 func TestVecSubtract(t *testing.T) {
-	v := NewVector(1, 2, 3)
-	v.Subtract(NewVector(4, 5, 6))
-	if v != (NewVector(-3, -3, -3)) {
+	v := New(1, 2, 3)
+	v.Subtract(*New(4, 5, 6))
+	if *v != (*New(-3, -3, -3)) {
 		t.Error(v)
 	}
 }
 
 func TestVecCross(t *testing.T) {
-	v := NewVector(1, 2, 3)
-	v.Cross(NewVector(4, 5, 6))
-	if v != (NewVector(-3, 6, -3)) {
+	v := New(1, 2, 3)
+	v.Cross(*New(4, 5, 6))
+	if *v != (*New(-3, 6, -3)) {
 		t.Error(v)
 	}
 }
 
 func TestVecLengthLength(t *testing.T) {
-	v := NewVector(1, 2, 3)
-	if v.LengthLength() != baseScale(14) {
+	v := New(1, 2, 3)
+	if v.LengthLength() != 14 {
 		t.Error(v.LengthLength())
 	}
 }
 
 func TestVecProduct(t *testing.T) {
-	v := NewVector(1, 2, 3)
+	v := New(1, 2, 3)
 	v.Product(Identity)
-	if v != (NewVector(1, 2, 3)) {
+	if *v != (*New(1, 2, 3)) {
 		t.Error(v)
 	}
 }
 
 func TestVecProductT(t *testing.T) {
-	v := NewVector(1, 2, 3)
+	v := New(1, 2, 3)
 	v.ProductT(Identity)
-	if v != (NewVector(1, 2, 3)) {
+	if *v != (*New(1, 2, 3)) {
 		t.Error(v)
 	}
 }
 
 func TestVecProject(t *testing.T) {
-	v := NewVector(1, 2, 3)
-	v.Project(NewVector(-2, 1, -1))
-	if v != (NewVector(-2, 2, -3)) {
+	v := New(1, 2, 3)
+	v.Project(*New(-2, 1, -1))
+	if *v != (*New(-2, 2, -3)) {
 		t.Error(v)
 	}
 }
 
 func TestVecLongestAxis(t *testing.T) {
-	v := NewVector(1, 2, 3)
+	v := New(1, 2, 3)
 	if v.LongestAxis() != ZAxisIndex {
 		t.Error(v.LongestAxis())
 	}
-	v.Subtract(NewVector(0, 0, 3))
+	v.Subtract(*New(0, 0, 3))
 	if v.LongestAxis() != YAxisIndex {
 		t.Error(v.LongestAxis())
 	}
-	v.Subtract(NewVector(0, 2, 0))
+	v.Subtract(*New(0, 2, 0))
 	if v.LongestAxis() != XAxisIndex {
 		t.Error(v.LongestAxis())
 	}
 }
 
 func TestVecShortestAxis(t *testing.T) {
-	v := NewVector(1, 2, 3)
+	v := New(1, 2, 3)
 	if v.ShortestAxis() != XAxisIndex {
 		t.Error(v.ShortestAxis())
 	}
-	v.Subtract(NewVector(-1, 0, 3))
+	v.Subtract(*New(-1, 0, 3))
 	if v.ShortestAxis() != ZAxisIndex {
 		t.Error(v.ShortestAxis())
 	}
-	v.Subtract(NewVector(-1, 0, -3))
+	v.Subtract(*New(-1, 0, -3))
 	if v.ShortestAxis() != YAxisIndex {
 		t.Error(v.ShortestAxis())
 	}
 }
 
 func TestVecMax(t *testing.T) {
-	v := NewVector(1, 2, 3)
-	v.Max(NewVector(-2, 1, -1))
-	if v != (NewVector(1, 2, 3)) {
+	v := New(1, 2, 3)
+	v.Max(*New(-2, 1, -1))
+	if *v != (*New(1, 2, 3)) {
 		t.Error(v)
 	}
 }
 
 func TestVecMin(t *testing.T) {
-	v := NewVector(1, 2, 3)
-	v.Min(NewVector(-2, 1, -1))
-	if v != (NewVector(-2, 1, -1)) {
+	v := New(1, 2, 3)
+	v.Min(*New(-2, 1, -1))
+	if *v != (*New(-2, 1, -1)) {
 		t.Error(v)
 	}
 }
 
 func TestVecMid(t *testing.T) {
-	v := NewVector(0, 5, 3)
-	v.Mid(NewVector(-2, 1, -1))
-	if v != (NewVector(-1, 3, 1)) {
+	v := New(0, 5, 3)
+	v.Mid(*New(-2, 1, -1))
+	if *v != (*New(-1, 3, 1)) {
 		t.Error(v)
 	}
 }
 
 func TestVecInterpolate(t *testing.T) {
-	v := NewVector(1, 2, 3)
-	v.Interpolate(NewVector(-2, 1, -1), 2)
-	if v != (NewVector(4, 3, 7)) {
+	v := New(1, 2, 3)
+	v.Interpolate(*New(-2, 1, -1), .5)
+	if *v != (*New(-.5, 1.5, 1)) {
 		t.Error(v)
 	}
 }
 
 func TestVecApplyRunning(t *testing.T) {
-	v := NewVector(1, 2, 3)
-	v.Aggregate(Vectors{NewVector(1, 2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9)}, (*Vector).Add)
-	if fmt.Sprint(v) != "{13 17 21}" {
+	v := New(1, 2, 3)
+	v.Aggregate(Vectors{*New(1, 2, 3), *New(4, 5, 6), *New(7, 8, 9)}, (*Vector).Add)
+	if fmt.Sprint(*v) != "{13 17 21}" {
 		t.Error(v)
 	}
 }
@@ -164,8 +164,8 @@ func TestVecApplyForAll(t *testing.T) {
 	}(Hints.DefaultChunkSize)
 	Hints.ChunkSizeFixed = true
 	Hints.DefaultChunkSize = 2
-	v := NewVector(1, 2, 3)
-	v.ForAll(Vectors{NewVector(1, 2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9)}, (*Vector).Add)
+	v := *New(1, 2, 3)
+	v.ForAll(Vectors{*New(1, 2, 3), *New(4, 5, 6), *New(7, 8, 9)}, (*Vector).Add)
 	if fmt.Sprint(v) != "{13 17 21}" {
 		t.Error(v)
 	}

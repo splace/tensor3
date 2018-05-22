@@ -7,6 +7,13 @@ type BaseType int
 const scaleShift=10
 const scale = 1<<scaleShift
 
+func Base64(f float64) BaseType{
+	return BaseType(f*float64(scale))
+}
+
+func Base32(f float32) BaseType{
+	return BaseType(f*float32(scale))
+}
 
 func baseScale(v BaseType) BaseType{
 	return v<<scaleShift
@@ -43,7 +50,7 @@ func (v Vector) String()string{
 
 // new vector reference from float64's 
 func New(x,y,z float64) *Vector{
-	return &Vector{BaseType(x*scale),BaseType(y*scale),BaseType(z*scale)}
+	return &Vector{Base64(x),Base64(y),Base64(z)}
 }
 
 

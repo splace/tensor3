@@ -63,22 +63,22 @@ func TestVecsIndexesFromVectorRefs(t *testing.T) {
 }
 
 func TestVecRefsPrint(t *testing.T) {
-	vr := VectorRefs{&Vector{1 * scale, 2 * scale, 3 * scale}}
+	vr := VectorRefs{New(1,2,3)}
 	if fmt.Sprint(*vr[0]) != "{1 2 3}" {
 		t.Error(fmt.Sprint(*vr[0]))
 	}
 }
 
 func TestVecRefsSum(t *testing.T) {
-	vs := VectorRefs{&Vector{7 * scale, 8 * scale, 9 * scale}, &Vector{7 * scale, 8 * scale, 9 * scale}, &Vector{7 * scale, 8 * scale, 9 * scale}}
+	vs := VectorRefs{New(7,8,9), New(7,8,9), New(7,8,9)}
 	if fmt.Sprint(vs.Sum()) != "{21 24 27}" {
 		t.Error(vs.Sum())
 	}
 }
 
 func TestVecRefsAddRefs(t *testing.T) {
-	vs := VectorRefs{&Vector{1 * scale, 2 * scale, 3 * scale}, &Vector{4 * scale, 5 * scale, 6 * scale}, &Vector{7 * scale, 8 * scale, 9 * scale}}
-	vs2 := VectorRefs{&Vector{9 * scale, 8 * scale, 7 * scale}, &Vector{6 * scale, 5 * scale, 4 * scale}, &Vector{3 * scale, 2 * scale, 1 * scale}}
+	vs := VectorRefs{New(1,2,3), New(4,5,6), New(7,8,9)}
+	vs2 := VectorRefs{New(9,8,7), New(6,5,4), New(3,2,1)}
 	vs.AddAllRefs(vs2)
 	if fmt.Sprint(*vs[0], *vs[1], *vs[2]) != "{10 10 10} {10 10 10} {10 10 10}" {
 		t.Error(fmt.Sprint(*vs[0], *vs[1], *vs[2]))
@@ -86,8 +86,8 @@ func TestVecRefsAddRefs(t *testing.T) {
 }
 
 func TestVecRefsCrossRefs(t *testing.T) {
-	vs := VectorRefs{&Vector{1 * scale, 2 * scale, 3 * scale}, &Vector{4 * scale, 5 * scale, 6 * scale}, &Vector{7 * scale, 8 * scale, 9 * scale}}
-	vs2 := VectorRefs{&Vector{9 * scale, 8 * scale, 7 * scale}, &Vector{6 * scale, 5 * scale, 4 * scale}, &Vector{3 * scale, 2 * scale, 1 * scale}}
+	vs := VectorRefs{New(1,2,3), New(4,5,6), New(7,8,9)}
+	vs2 := VectorRefs{New(9,8,7), New(6,5,4), New(3,2,1)}
 	vs.CrossAllRefs(vs2)
 	if fmt.Sprint(*vs[0], *vs[1], *vs[2]) != "{-10 20 -10} {-10 20 -10} {-10 20 -10}" {
 		t.Error(fmt.Sprint(*vs[0], *vs[1], *vs[2]))
@@ -96,7 +96,7 @@ func TestVecRefsCrossRefs(t *testing.T) {
 
 func TestVecsAddVecRefs(t *testing.T) {
 	vs := Vectors{NewVector(1, 2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9)}
-	vs2 := VectorRefs{&Vector{9 * scale, 8 * scale, 7 * scale}, &Vector{6 * scale, 5 * scale, 4 * scale}, &Vector{3 * scale, 2 * scale, 1 * scale}}
+	vs2 := VectorRefs{New(9,8,7), New(6,5,4), New(3,2,1)}
 	vs.AddAllRefs(vs2)
 	if fmt.Sprint(vs[0], vs[1], vs[2]) != "{10 10 10} {10 10 10} {10 10 10}" {
 		t.Error(fmt.Sprint(vs[0], vs[1], vs[2]))
@@ -105,14 +105,14 @@ func TestVecsAddVecRefs(t *testing.T) {
 
 func TestVecsCrossVecRefs(t *testing.T) {
 	vs := Vectors{NewVector(1, 2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9)}
-	vs2 := VectorRefs{&Vector{9 * scale, 8 * scale, 7 * scale}, &Vector{6 * scale, 5 * scale, 4 * scale}, &Vector{3 * scale, 2 * scale, 1 * scale}}
+	vs2 := VectorRefs{New(9,8,7), New(6,5,4), New(3,2,1)}
 	vs.CrossAllRefs(vs2)
 	if fmt.Sprint(vs[0], vs[1], vs[2]) != "{-10 20 -10} {-10 20 -10} {-10 20 -10}" {
 		t.Error(fmt.Sprint(vs[0], vs[1], vs[2]))
 	}
 }
 func TestVecsRefsAddVecs(t *testing.T) {
-	vs := VectorRefs{&Vector{1 * scale, 2 * scale, 3 * scale}, &Vector{4 * scale, 5 * scale, 6 * scale}, &Vector{7 * scale, 8 * scale, 9 * scale}}
+	vs := VectorRefs{New(1,2,3), New(4,5,6), New(7,8,9)}
 	vs2 := Vectors{NewVector(9, 8, 7), NewVector(6, 5, 4), NewVector(3, 2, 1)}
 	vs.AddAll(vs2)
 	if fmt.Sprint(*vs[0], *vs[1], *vs[2]) != "{10 10 10} {10 10 10} {10 10 10}" {
@@ -121,7 +121,7 @@ func TestVecsRefsAddVecs(t *testing.T) {
 }
 
 func TestVecRefsCrossVecs(t *testing.T) {
-	vs := VectorRefs{&Vector{1 * scale, 2 * scale, 3 * scale}, &Vector{4 * scale, 5 * scale, 6 * scale}, &Vector{7 * scale, 8 * scale, 9 * scale}}
+	vs := VectorRefs{New(1,2,3), New(4,5,6), New(7,8,9)}
 	vs2 := Vectors{NewVector(9, 8, 7), NewVector(6, 5, 4), NewVector(3, 2, 1)}
 	vs.CrossAll(vs2)
 	if fmt.Sprint(*vs[0], *vs[1], *vs[2]) != "{-10 20 -10} {-10 20 -10} {-10 20 -10}" {
@@ -130,8 +130,8 @@ func TestVecRefsCrossVecs(t *testing.T) {
 }
 
 func TestVecsRefsAddVecRefs(t *testing.T) {
-	vs := VectorRefs{&Vector{1 * scale, 2 * scale, 3 * scale}, &Vector{4 * scale, 5 * scale, 6 * scale}, &Vector{7 * scale, 8 * scale, 9 * scale}}
-	vs2 := VectorRefs{&Vector{9 * scale, 8 * scale, 7 * scale}, &Vector{6 * scale, 5 * scale, 4 * scale}, &Vector{3 * scale, 2 * scale, 1 * scale}}
+	vs := VectorRefs{New(1,2,3), New(4,5,6), New(7,8,9)}
+	vs2 := VectorRefs{New(9,8,7), New(6,5,4), New(3,2,1)}
 	vs.AddAllRefs(vs2)
 	if fmt.Sprint(*vs[0], *vs[1], *vs[2]) != "{10 10 10} {10 10 10} {10 10 10}" {
 		t.Error(fmt.Sprint(*vs[0], *vs[1], *vs[2]))
@@ -139,8 +139,8 @@ func TestVecsRefsAddVecRefs(t *testing.T) {
 }
 
 func TestVecRefsCrossVecRefs(t *testing.T) {
-	vs := VectorRefs{&Vector{1 * scale, 2 * scale, 3 * scale}, &Vector{4 * scale, 5 * scale, 6 * scale}, &Vector{7 * scale, 8 * scale, 9 * scale}}
-	vs2 := VectorRefs{&Vector{9 * scale, 8 * scale, 7 * scale}, &Vector{6 * scale, 5 * scale, 4 * scale}, &Vector{3 * scale, 2 * scale, 1 * scale}}
+	vs := VectorRefs{New(1,2,3), New(4,5,6), New(7,8,9)}
+	vs2 := VectorRefs{New(9,8,7), New(6,5,4), New(3,2,1)}
 	vs.CrossAllRefs(vs2)
 	if fmt.Sprint(*vs[0], *vs[1], *vs[2]) != "{-10 20 -10} {-10 20 -10} {-10 20 -10}" {
 		t.Error(fmt.Sprint(*vs[0], *vs[1], *vs[2]))
@@ -148,7 +148,7 @@ func TestVecRefsCrossVecRefs(t *testing.T) {
 }
 
 func TestVecRefsSelect(t *testing.T) {
-	vs := VectorRefs{&Vector{1 * scale, 2 * scale, 3 * scale}, &Vector{4 * scale, 5 * scale, 6 * scale}, &Vector{7 * scale, 8 * scale, 9 * scale}}
+	vs := VectorRefs{New(1,2,3), New(4,5,6), New(7,8,9)}
 	vs2:= vs.Select(
 		func(vr *Vector)bool{
 			return vr.y==baseScale(5)
@@ -160,7 +160,7 @@ func TestVecRefsSelect(t *testing.T) {
 }
 
 func TestVecRefsSplit(t *testing.T) {
-	vs := VectorRefs{&Vector{1 * scale, 2 * scale, 3 * scale}, &Vector{4 * scale, 5 * scale, 6 * scale}, &Vector{7 * scale, 8 * scale, 9 * scale}}
+	vs := VectorRefs{New(1,2,3), New(4,5,6), New(7,8,9)}
 	vs2:= vs.Split(
 		func(vr *Vector)uint{
 			return uint(baseUnscale(vr.y)-2)
@@ -184,7 +184,7 @@ func BenchmarkVecRefsProduct(b *testing.B) {
 	b.StopTimer()
 	vrs := make(VectorRefs, 100000)
 	for i := range vrs {
-		vrs[i] = &Vector{1 * scale, 2 * scale, 3 * scale}
+		vrs[i] = New(1,2,3)
 	}
 	m := Matrix{}
 	b.StartTimer()
@@ -198,7 +198,7 @@ func BenchmarkVecRefsProductParallel(b *testing.B) {
 	b.StopTimer()
 	vrs := make(VectorRefs, 100000)
 	for i := range vrs {
-		vrs[i] = &Vector{1 * scale, 2 * scale, 3 * scale}
+		vrs[i] = New(1,2,3)
 	}
 	m := Matrix{}
 	Parallel = true

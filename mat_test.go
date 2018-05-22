@@ -105,7 +105,7 @@ func TestMatrixAggregate(t *testing.T) {
 
 func TestMatrixApplyXAdd(t *testing.T) {
 	m := NewMatrix(1, 2, 3, 4, 5, 6, 7, 8, 9)
-	m.applyX((*Vector).Add, NewVector(1, 2, 3))
+	m.applyX((*Vector).Add, *New(1, 2, 3))
 	if fmt.Sprint(m) != "[{2 4 6} {4 5 6} {7 8 9}]" {
 		t.Error(m)
 	}
@@ -113,7 +113,7 @@ func TestMatrixApplyXAdd(t *testing.T) {
 
 func TestMatrixApplyZAdd(t *testing.T) {
 	m := NewMatrix(1, 2, 3, 4, 5, 6, 7, 8, 9)
-	m.applyZ((*Vector).Add, NewVector(1, 2, 3))
+	m.applyZ((*Vector).Add, *New(1, 2, 3))
 	if fmt.Sprint(m) != "[{1 2 3} {4 5 6} {8 10 12}]" {
 		t.Error(m)
 	}
