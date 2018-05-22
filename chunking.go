@@ -83,8 +83,26 @@ func vectorRefsInChunks(vs VectorRefs) chan VectorRefs {
 }
 
 
+// return a channel of chunks of, fixed length overlapping slices of, the passed Vectors
+// include slices that wrap around, from the end to the start of the Vectors.
+// (notice that all the slices are the same provided length.)
+// (notice the same Vector, at the ends of the chunks, will in general be in slices in different chunks.)
+func vectorSlicesInChunks(vs Vectors,length int,wrap bool) chan []Vectors {
+	c := make(chan []Vectors, 1)
+	for vsc:=range vectorsInChunks(vs){
+		vssc := make([]Vectors,len(vsc))
+		for i := range vssc {
+			vssc[i]=vsc[i:i+length]
+		} 
+		c <- vssc
+	}
+	return c
+}
+
+
 // return a channel of VectorRefs that are chunks of the passed VectorRefs.
-// as an optimisation, which some functions might benefit from, the VectorRefs are reordered so that each chunk contains all/only the values within a region. nearby points are MUCH more likely to be in the same chunk.
+// as an optimisation, which some functions might benefit from, the VectorRefs are reordered so that each chunk contains all/only the values within a spacial region, so nearby points are MUCH more likely to be in the same chunk.
+// keep record of returned chunks to be able to efficiently repeat use a functin on the same vectors.
 func vectorRefsInRegionalChunks(vs VectorRefs) chan VectorRefs {
 	c := make(chan VectorRefs, 1)
 	cs:=chunkSize(uint(len(vs)))
