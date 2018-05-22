@@ -88,7 +88,7 @@ func TestVecsInterpolate(t *testing.T) {
 	}
 }
 
-func TestVecsExtropolate(t *testing.T) {
+func TestVecsExtrapolate(t *testing.T) {
 	vs := Vectors{*New(7, 8, 9), *New(7, 8, 9), *New(7, 8, 9)}
 	vs.Interpolate(*New(-2, 1, -1), 2)
 	if fmt.Sprint(vs) != "[{16 15 19} {16 15 19} {16 15 19}]" {
@@ -170,6 +170,7 @@ func TestVecsCrossVecs(t *testing.T) {
 	}
 }
 
+
 func BenchmarkVecsSum(b *testing.B) {
 	b.StopTimer()
 	vs := make(Vectors, 100000)
@@ -189,10 +190,10 @@ func BenchmarkVecsSumParallel(b *testing.B) {
 		vs[i] = *New(1, 2, 3)
 	}
 	Parallel = true
+	Hints.ChunkSizeFixed = true
 	defer func() {
 		Parallel = false
 	}()
-	Hints.ChunkSizeFixed = true
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		vs.Sum()
@@ -221,10 +222,10 @@ func BenchmarkVecsCrossParallel(b *testing.B) {
 	}
 	v := *New(9, 8, 7)
 	Parallel = true
+	Hints.ChunkSizeFixed = true
 	defer func() {
 		Parallel = false
 	}()
-	Hints.ChunkSizeFixed = true
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		vs.Cross(v)
@@ -254,13 +255,15 @@ func BenchmarkVecsProductParallel(b *testing.B) {
 	}
 	m := Matrix{}
 	Parallel = true
+	Hints.ChunkSizeFixed = true
 	defer func() {
 		Parallel = false
 	}()
-	Hints.ChunkSizeFixed = true
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		vs.Product(m)
 	}
 
 }
+
+

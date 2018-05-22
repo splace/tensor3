@@ -22,22 +22,22 @@ var Parallel bool
 // only improves performance if using costly functions, non of the built-ins are likely to benefit. YRMV.
 var ParallelComponents bool
 
-func chunkSize(l uint) uint {
+func chunkSize(l int) int {
 	if !Hints.ChunkSizeFixed {
-		if cs := l / (Hints.Threads + 1); cs > Hints.DefaultChunkSize {
+		if cs := l / int(Hints.Threads + 1); cs > int(Hints.DefaultChunkSize) {
 			return cs
 		}
 	}
-	return Hints.DefaultChunkSize
+	return int(Hints.DefaultChunkSize)
 }
 
 // return a channel of Vectors that are chunks of the passed Vectors
 func vectorsInChunks(vs Vectors) chan Vectors {
 	c := make(chan Vectors, 1)
-	cs:=chunkSize(uint(len(vs)))
-	lastSplitMax := uint(len(vs))-cs
+	cs:=chunkSize(len(vs))
+	lastSplitMax := len(vs)-cs
 	go func() {
-		var bottom uint
+		var bottom int
 		for top := cs; top < lastSplitMax; top += cs {
 			c <- vs[bottom:top]
 			bottom = top
@@ -51,10 +51,10 @@ func vectorsInChunks(vs Vectors) chan Vectors {
 // return a channel of Matrices that are chunks of the passed Matrices
 func matricesInChunks(ms Matrices) chan Matrices {
 	c := make(chan Matrices)
-	cs:=chunkSize(uint(len(ms)))
-	lastSplitMax := uint(len(ms))-cs
+	cs:=chunkSize(len(ms))
+	lastSplitMax := len(ms)-cs
 	go func() {
-		var bottom uint
+		var bottom int
 		for top := cs; top < lastSplitMax; top += cs {
 			c <- ms[bottom:top]
 			bottom = top
@@ -68,10 +68,10 @@ func matricesInChunks(ms Matrices) chan Matrices {
 // return a channel of VectorRefs that are chunks of the passed VectorRefs
 func vectorRefsInChunks(vs VectorRefs) chan VectorRefs {
 	c := make(chan VectorRefs, 1)
-	cs:=chunkSize(uint(len(vs)))
-	lastSplitMax := uint(len(vs))-cs
+	cs:=chunkSize(len(vs))
+	lastSplitMax := len(vs)-cs
 	go func() {
-		var bottom uint
+		var bottom int
 		for top := cs; top < lastSplitMax; top += cs {
 			c <- vs[bottom:top]
 			bottom = top
@@ -89,13 +89,16 @@ func vectorRefsInChunks(vs VectorRefs) chan VectorRefs {
 // (notice the same Vector, at the ends of the chunks, will in general be in slices in different chunks.)
 func vectorSlicesInChunks(vs Vectors,length int,wrap bool) chan []Vectors {
 	c := make(chan []Vectors, 1)
-	for vsc:=range vectorsInChunks(vs){
-		vssc := make([]Vectors,len(vsc))
-		for i := range vssc {
-			vssc[i]=vsc[i:i+length]
-		} 
-		c <- vssc
-	}
+	go func(){
+		for vsc:=range vectorsInChunks(vs){
+			vssc := make([]Vectors,len(vsc))
+			for i := range vssc {
+				vssc[i]=vsc[i:i+length]
+			} 
+			c <- vssc
+		}
+		close(c)
+	}()
 	return c
 }
 
@@ -105,8 +108,8 @@ func vectorSlicesInChunks(vs Vectors,length int,wrap bool) chan []Vectors {
 // keep record of returned chunks to be able to efficiently repeat use a functin on the same vectors.
 func vectorRefsInRegionalChunks(vs VectorRefs) chan VectorRefs {
 	c := make(chan VectorRefs, 1)
-	cs:=chunkSize(uint(len(vs)))
-	if cs>uint(len(vs)){
+	cs:=chunkSize(len(vs))
+	if cs>len(vs){
 		c <- vs
 		close(c)
 		return c
