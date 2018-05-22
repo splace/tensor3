@@ -170,6 +170,25 @@ func TestVecsCrossVecs(t *testing.T) {
 	}
 }
 
+func TestVecsSlicesInChunks(t *testing.T) {
+	Hints.ChunkSizeFixed = true
+	defer func(dcs uint) {
+		Hints.ChunkSizeFixed = false
+		Hints.DefaultChunkSize = dcs 
+	}(Hints.DefaultChunkSize)
+	Hints.DefaultChunkSize = 2
+
+	vs := Vectors{*New(1, 2, 3), *New(4, 5, 6), *New(7, 8, 9)}
+	for vss:=range vectorSlicesInChunks(vs,1,1,true){
+		t.Error(fmt.Println(vss))
+	}
+	for vss:=range vectorSlicesInChunks(vs,2,1,false){
+		t.Error(fmt.Println(vss))
+	}
+	for vss:=range vectorSlicesInChunks(vs,3,1,true){
+		t.Error(fmt.Println(vss))
+	}
+}
 
 func BenchmarkVecsSum(b *testing.B) {
 	b.StopTimer()

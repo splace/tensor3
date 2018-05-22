@@ -83,18 +83,44 @@ func vectorRefsInChunks(vs VectorRefs) chan VectorRefs {
 }
 
 
-// return a channel of chunks of, fixed length overlapping slices of, the passed Vectors
-// include slices that wrap around, from the end to the start of the Vectors.
+// return a channel of chunks of, fixed length slices of, the passed Vectors
+// progress by Stride Vectors for each slice, if Stride less than length Vector's can appear in consequative slices.
+// if wrap true, include slices that wrap around, from the end to the start of the passed Vectors.
 // (notice that all the slices are the same provided length.)
 // (notice the same Vector, at the ends of the chunks, will in general be in slices in different chunks.)
-func vectorSlicesInChunks(vs Vectors,length int,wrap bool) chan []Vectors {
-	c := make(chan []Vectors, 1)
+func vectorSlicesInChunks(vs Vectors,length,stride int, wrap bool) chan []Vectors {
+	c := make(chan []Vectors, 2)  // 2 so next chunk able to be calculated in parallel, here unlike other chunking it has a significant cost
 	go func(){
-		for vsc:=range vectorsInChunks(vs){
-			vssc := make([]Vectors,len(vsc))
+		// need to special case last chunk, it might have to be short, but dont know its the last until channel closes.
+		chunkChan :=vectorsInChunks(vs)
+		fChunk := <- chunkChan
+		lChunk := fChunk
+		for chunk:=range chunkChan{
+			vssc := make([]Vectors,len(lChunk))
+			for i := 0;i<len(vssc);i++ {
+				vssc[i]=lChunk[i:i+length]
+			}
+			c <- vssc
+			lChunk=chunk
+		}
+		if wrap {
+			vssc := make([]Vectors,len(lChunk))
+			var i int
+			for ; i< len(vssc)-length+1;i++ {
+				vssc[i]=lChunk[i:i+length]
+			}
+			// add the overlapping slices
+			for ;i < len(vssc);i++ {
+				vssc[i]=lChunk[i:]
+				vssc[i]=append(vssc[i],fChunk[:length-len(vssc[i])]...)
+			}			
+			c <- vssc
+		}else{
+			// not wrapping so its just short
+			vssc := make([]Vectors,len(lChunk)-length+1)
 			for i := range vssc {
-				vssc[i]=vsc[i:i+length]
-			} 
+				vssc[i]=lChunk[i:i+length]
+			}
 			c <- vssc
 		}
 		close(c)
