@@ -94,31 +94,32 @@ func vectorSlicesInChunks(vs Vectors,length,stride int, wrap bool) chan []Vector
 		chunkChan :=vectorsInChunks(vs)
 		firstChunk := <- chunkChan
 		previousChunk := firstChunk
+		var i int
 		for chunk:=range chunkChan{
-			vssc := make([]Vectors,len(previousChunk))
-			for i := 0;i<len(vssc);i++ {
+			vssc := make([]Vectors,len(previousChunk)/stride)
+			for ;i<len(vssc);i+=stride {
 				vssc[i]=previousChunk[i:i+length]
 			}
 			c <- vssc
 			previousChunk=chunk
+			i=i%stride
 		}
 		// now handle last (previous) chunk
 		if wrap {
-			vssc := make([]Vectors,len(previousChunk))
-			var i int
-			for ; i< len(vssc)-length+1;i++ {
+			vssc := make([]Vectors,len(previousChunk)/stride)
+			for ; i< len(vssc)-length+1;i+=stride {
 				vssc[i]=previousChunk[i:i+length]
 			}
 			// add the overlapping slices
-			for ;i < len(vssc);i++ {
+			for ;i < len(vssc);i+=stride {
 				vssc[i]=previousChunk[i:]
 				vssc[i]=append(vssc[i],firstChunk[:length-len(vssc[i])]...)
 			}			
 			c <- vssc
 		}else{
 			// not wrapping so its just shortened
-			vssc := make([]Vectors,len(previousChunk)-length+1)
-			for i := 0;i < len(vssc);i++ {
+			vssc := make([]Vectors,(len(previousChunk)-length+1)/stride)
+			for ;i < len(vssc);i+=stride {
 				vssc[i]=previousChunk[i:i+length]
 			}
 			c <- vssc
