@@ -35,7 +35,7 @@ func chunkSize(l int) int {
 func vectorsInChunks(vs Vectors) chan Vectors {
 	c := make(chan Vectors, 1)
 	cs:=chunkSize(len(vs))
-	lastSplitMax := len(vs)-cs
+	lastSplitMax := len(vs)-cs/2
 	go func() {
 		var bottom int
 		for top := cs; top < lastSplitMax; top += cs {
@@ -52,7 +52,7 @@ func vectorsInChunks(vs Vectors) chan Vectors {
 func matricesInChunks(ms Matrices) chan Matrices {
 	c := make(chan Matrices)
 	cs:=chunkSize(len(ms))
-	lastSplitMax := len(ms)-cs
+	lastSplitMax := len(ms)-cs/2
 	go func() {
 		var bottom int
 		for top := cs; top < lastSplitMax; top += cs {
@@ -69,7 +69,7 @@ func matricesInChunks(ms Matrices) chan Matrices {
 func vectorRefsInChunks(vs VectorRefs) chan VectorRefs {
 	c := make(chan VectorRefs, 1)
 	cs:=chunkSize(len(vs))
-	lastSplitMax := len(vs)-cs
+	lastSplitMax := len(vs)-cs/2
 	go func() {
 		var bottom int
 		for top := cs; top < lastSplitMax; top += cs {
@@ -90,8 +90,8 @@ func vectorRefsInChunks(vs VectorRefs) chan VectorRefs {
 func vectorSlicesInChunks(vs Vectors,length,stride int, wrap bool) chan []Vectors {
 	c := make(chan []Vectors, 2)  // 2 so that the next chunk is being calculated in parallel, here unlike other chunking it has a significant cost, although if all cores kept 100% busy, not benefitial.
 	go func(){
-		// need to special case last chunk; it might have to include the wrap-around's, but dont know its the last until channel closes, so push to channel from one loop behind, then add 'special' wrapping chunk.
-		chunkChan :=vectorsInChunks(vs)
+		// need to special case last chunk; it might have to include the wrap-around's, but dont know its the last until channel closes, so push out from one loop behind, then add 'special' wrapping chunk.
+		chunkChan :=vectorsInChunks(vs) //  TODO cant do this, unable to 'see' items length ahead
 		firstChunk := <- chunkChan
 		previousChunk := firstChunk
 		var i int
@@ -102,9 +102,9 @@ func vectorSlicesInChunks(vs Vectors,length,stride int, wrap bool) chan []Vector
 			}
 			c <- vssc
 			previousChunk=chunk
-			i=i%stride
+			i%=stride
 		}
-		// now handle last (previous) chunk
+		// now handle the last (previous) chunk
 		if wrap {
 			vssc := make([]Vectors,len(previousChunk)/stride)
 			for ; i< len(vssc)-length+1;i+=stride {
@@ -128,7 +128,6 @@ func vectorSlicesInChunks(vs Vectors,length,stride int, wrap bool) chan []Vector
 	}()
 	return c
 }
-
 
 // return a channel of VectorRefs that are chunks of the passed VectorRefs.
 // as an optimisation, which some functions might benefit from, the VectorRefs are reordered so that each chunk contains all/only the values within a spacial region, so nearby points are MUCH more likely to be in the same chunk.
