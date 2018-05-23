@@ -84,42 +84,42 @@ func vectorRefsInChunks(vs VectorRefs) chan VectorRefs {
 
 
 // return a channel of chunks of, fixed length slices of, the passed Vectors
-// progress by Stride Vectors for each slice, if Stride less than length Vector's can appear in consequative slices.
+// progress by Stride Vector's for each slice, if Stride less than length, the same Vector can appear in consequative slices.
 // if wrap true, include slices that wrap around, from the end to the start of the passed Vectors.
-// (notice that all the slices are the same provided length.)
-// (notice the same Vector, at the ends of the chunks, will in general be in slices in different chunks.)
+// (notice that all the slices will be the same provided length.)
 func vectorSlicesInChunks(vs Vectors,length,stride int, wrap bool) chan []Vectors {
-	c := make(chan []Vectors, 2)  // 2 so next chunk able to be calculated in parallel, here unlike other chunking it has a significant cost
+	c := make(chan []Vectors, 2)  // 2 so that the next chunk is being calculated in parallel, here unlike other chunking it has a significant cost, although if all cores kept 100% busy, not benefitial.
 	go func(){
-		// need to special case last chunk, it might have to be short, but dont know its the last until channel closes.
+		// need to special case last chunk; it might have to include the wrap-around's, but dont know its the last until channel closes, so push to channel from one loop behind, then add 'special' wrapping chunk.
 		chunkChan :=vectorsInChunks(vs)
-		fChunk := <- chunkChan
-		lChunk := fChunk
+		firstChunk := <- chunkChan
+		previousChunk := firstChunk
 		for chunk:=range chunkChan{
-			vssc := make([]Vectors,len(lChunk))
+			vssc := make([]Vectors,len(previousChunk))
 			for i := 0;i<len(vssc);i++ {
-				vssc[i]=lChunk[i:i+length]
+				vssc[i]=previousChunk[i:i+length]
 			}
 			c <- vssc
-			lChunk=chunk
+			previousChunk=chunk
 		}
+		// now handle last (previous) chunk
 		if wrap {
-			vssc := make([]Vectors,len(lChunk))
+			vssc := make([]Vectors,len(previousChunk))
 			var i int
 			for ; i< len(vssc)-length+1;i++ {
-				vssc[i]=lChunk[i:i+length]
+				vssc[i]=previousChunk[i:i+length]
 			}
 			// add the overlapping slices
 			for ;i < len(vssc);i++ {
-				vssc[i]=lChunk[i:]
-				vssc[i]=append(vssc[i],fChunk[:length-len(vssc[i])]...)
+				vssc[i]=previousChunk[i:]
+				vssc[i]=append(vssc[i],firstChunk[:length-len(vssc[i])]...)
 			}			
 			c <- vssc
 		}else{
-			// not wrapping so its just short
-			vssc := make([]Vectors,len(lChunk)-length+1)
-			for i := range vssc {
-				vssc[i]=lChunk[i:i+length]
+			// not wrapping so its just shortened
+			vssc := make([]Vectors,len(previousChunk)-length+1)
+			for i := 0;i < len(vssc);i++ {
+				vssc[i]=previousChunk[i:i+length]
 			}
 			c <- vssc
 		}

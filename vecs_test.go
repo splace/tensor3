@@ -179,14 +179,22 @@ func TestVecsSlicesInChunks(t *testing.T) {
 	Hints.DefaultChunkSize = 2
 
 	vs := Vectors{*New(1, 2, 3), *New(4, 5, 6), *New(7, 8, 9)}
+	
+	// loop to receive Vectors but for these settings only one actual chunk produced.
 	for vss:=range vectorSlicesInChunks(vs,1,1,true){
-		t.Error(fmt.Println(vss))
+		if fmt.Sprint(vss) != "[[{1 2 3}] [{4 5 6}] [{7 8 9}]]" {
+			t.Error(fmt.Println(vss))
+		}
 	}
 	for vss:=range vectorSlicesInChunks(vs,2,1,false){
-		t.Error(fmt.Println(vss))
+		if fmt.Sprint(vss) != "[[{1 2 3} {4 5 6}] [{4 5 6} {7 8 9}]]" {
+			t.Error(fmt.Println(vss))
+		}
 	}
 	for vss:=range vectorSlicesInChunks(vs,3,1,true){
-		t.Error(fmt.Println(vss))
+		if fmt.Sprint(vss) != "[[{1 2 3} {4 5 6} {7 8 9}] [{4 5 6} {7 8 9} {1 2 3}] [{7 8 9} {1 2 3} {4 5 6}]]" {
+			t.Error(fmt.Println(vss))
+		}
 	}
 }
 
