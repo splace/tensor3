@@ -1,22 +1,25 @@
 /*
 
-Vector, (3-component), and Matrix, (3-Vector) Types.
+Vector, (3-component x,y,z), and Matrix, (3-Vector array) Types.
 
-Useful methods on same, operating in-place ( not returning reference, meaning no single line chained functions.)
+Useful methods on same, operating in-place (no returned reference, meaning no single line method chaining.)
 
 Arrays of both, (called Vectors and Matrices), with their useful methods.
 
-single and parallel threaded, can be selected with a global var.
+single and parallel threaded, transparently, switched with a global var.
 
 VectorRefs; array of Vector pointers, with methods to convert to/from Vectors.
 
-64bit float, 32bit float, or fixed precision (int scaled for 3dp) component value types (separate packages).
-
-doesn't use "math" package, left to importers, if necessary.
+all in typed versions, 64bit float, 32bit float, or fixed precision (int scaled for 3dp) component value types (separate packages).
 
 methods that accept a function and apply in to all etc. (in parallel).
 
-with array types selectively broken into chunks for better parallel performance.
+
+notes:
+
+doesn't use "math" package, left to importers, if necessary.
+
+array types selectively broken into chunks for better parallel performance.
 
 
 installation:
@@ -66,4 +69,3 @@ package tensor3
 
 // Overview/docs: [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3)
 
-// Overview/docs:(32bit) [![GoDoc](https://godoc.org/github.com/splace/tensor3/32bit?status.svg)](https://godoc.org/github.com/splace/tensor3/32bit/tensor3)

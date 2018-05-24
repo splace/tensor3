@@ -8,9 +8,9 @@ func init() {
 }
 
 var Hints struct {
-	Threads          int
+	Threads          int   // used to stop unnecessarily making more chunks than available cores.
 	ChunkSizeFixed   bool
-	DefaultChunkSize int
+	DefaultChunkSize int   // ideally set at run time to number of items that fit into cpu cache.
 }
 
 // selects parallel application of functions to Vectors and Matrices types (slices of Vector and Matrix types).
@@ -28,7 +28,7 @@ func chunkSize(l int) int {
 			return cs
 		}
 	}
-	return int(Hints.DefaultChunkSize)
+	return Hints.DefaultChunkSize
 }
 
 // return a channel of Vectors that are chunks of the passed Vectors

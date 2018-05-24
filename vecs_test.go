@@ -178,25 +178,61 @@ func TestVecsSlicesInChunks(t *testing.T) {
 	}(Hints.DefaultChunkSize)
 	Hints.DefaultChunkSize = 2
 
-	vs := Vectors{*New(1, 2, 3), *New(4, 5, 6), *New(7, 8, 9)}
+	vs := Vectors{*New(1, 2, 3), *New(4, 5, 6), *New(7, 8, 9), *New(10, 11, 12), *New(13, 14, 15)}
+	var vs2 [][]Vectors
 	
-	// loop to receive Vectors but for these settings only one actual chunk produced.
-	for vss:=range vectorSlicesInChunks(vs,chunkSize(len(vs)),1,1,true){
-		if fmt.Sprint(vss) != "[[{1 2 3}] [{4 5 6}] [{7 8 9}]]" {
-			t.Error(fmt.Println(vss))
-		}
+	for vss:=range vectorSlicesInChunks(vs,10,1,1,true){
+		vs2=append(vs2,vss)
 	}
-	for vss:=range vectorSlicesInChunks(vs,chunkSize(len(vs)),2,1,false){
-		if fmt.Sprint(vss) != "[[{1 2 3} {4 5 6}] [{4 5 6} {7 8 9}]]" {
-			t.Error(fmt.Println(vss))
-		}
+	if fmt.Sprint(vs2) != "[[[{1 2 3}] [{4 5 6}] [{7 8 9}] [{10 11 12}] [{13 14 15}]]]" {
+		t.Error(fmt.Println(vs2))
 	}
-	for vss:=range vectorSlicesInChunks(vs,chunkSize(len(vs)),3,1,true){
-		if fmt.Sprint(vss) != "[[{1 2 3} {4 5 6} {7 8 9}] [{4 5 6} {7 8 9} {1 2 3}] [{7 8 9} {1 2 3} {4 5 6}]]" {
-			t.Error(fmt.Println(vss))
-		}
+	vs2=vs2[:0]
+	for vss:=range vectorSlicesInChunks(vs,10,2,1,false){
+		vs2=append(vs2,vss)
+	}
+
+	if fmt.Sprint(vs2) != "[[[{1 2 3} {4 5 6}] [{4 5 6} {7 8 9}] [{7 8 9} {10 11 12}] [{10 11 12} {13 14 15}]]]" {
+		t.Error(fmt.Println(vs2))
+	}
+
+	vs2=vs2[:0]
+	for vss:=range vectorSlicesInChunks(vs,10,3,1,true){
+		vs2=append(vs2,vss)
+	}
+	if fmt.Sprint(vs2) != "[[[{1 2 3} {4 5 6} {7 8 9}] [{4 5 6} {7 8 9} {10 11 12}] [{7 8 9} {10 11 12} {13 14 15}] [{10 11 12} {13 14 15} {1 2 3}] [{13 14 15} {1 2 3} {4 5 6}]]]" {
+		t.Error(fmt.Println(vs2))
+	}
+
+
+	vs2=vs2[:0]
+	for vss:=range vectorSlicesInChunks(vs,1,1,1,true){
+		vs2=append(vs2,vss)
+	}
+	if fmt.Sprint(vs2) != "[[[{1 2 3}]] [[{4 5 6}]] [[{7 8 9}]] [[{10 11 12}]] [[{13 14 15}]]]" {
+		t.Error(fmt.Println(vs2))
+	}
+
+
+	vs2=vs2[:0]
+	for vss:=range vectorSlicesInChunks(vs,2,2,1,true){
+		vs2=append(vs2,vss)
+	}
+	if fmt.Sprint(vs2) != "[[[{1 2 3} {4 5 6}] [{4 5 6} {7 8 9}]] [[{7 8 9} {10 11 12}] [{10 11 12} {13 14 15}] [{13 14 15} {1 2 3}]]]" {
+		t.Error(fmt.Println(vs2))
+	}
+
+	vs2=vs2[:0]
+	for vss:=range vectorSlicesInChunks(vs,4,2,1,false){
+		vs2=append(vs2,vss)
+	}
+	if fmt.Sprint(vs2) != "[[[{1 2 3} {4 5 6}] [{4 5 6} {7 8 9}] [{7 8 9} {10 11 12}] [{10 11 12} {13 14 15}]]]" {
+		t.Error(fmt.Println(vs2))
 	}
 }
+
+
+
 
 func BenchmarkVecsSum(b *testing.B) {
 	b.StopTimer()
@@ -293,17 +329,4 @@ func BenchmarkVecsProductParallel(b *testing.B) {
 
 }
 
-/* benchmark: "Vecs" hal3 Thu 24 May 16:09:48 BST 2018 go version go1.10.2 linux/amd64
-goos: linux
-goarch: amd64
-BenchmarkVecsSum-2               	    2000	    965165 ns/op
-BenchmarkVecsSumParallel-2       	    2000	    900285 ns/op
-BenchmarkVecsCross-2             	    1000	   1417655 ns/op
-BenchmarkVecsCrossParallel-2     	    1000	   1429321 ns/op
-BenchmarkVecsProduct-2           	    1000	   1951688 ns/op
-BenchmarkVecsProductParallel-2   	    1000	   1940458 ns/op
-PASS
-ok  	_/run/media/simon/6a5530c2-1442-4e9b-b35f-3db0c9a6984c/home/simon/Dropbox/github/working/tensor3	11.463s
-Thu 24 May 16:10:00 BST 2018
-*/
 
