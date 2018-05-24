@@ -205,7 +205,7 @@ func vectorRefsApply(vs VectorRefs, fn func(*Vector, Vector), v Vector) {
 func vectorRefsApplyChunked(vs VectorRefs, fn func(*Vector, Vector), v Vector) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range vectorRefsInChunks(vs) {
+	for chunk := range vectorRefsInChunks(vs,chunkSize(len(vs))) {
 		running++
 		go func(c VectorRefs) {
 			vectorRefsApply(c, fn, v)
@@ -235,7 +235,7 @@ func matrixApplyRef(vs VectorRefs, fn func(*Vector, Matrix), m Matrix) {
 func matrixApplyRefChunked(vs VectorRefs, fn func(*Vector, Matrix), m Matrix) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range vectorRefsInChunks(vs) {
+	for chunk := range vectorRefsInChunks(vs,chunkSize(len(vs))) {
 		running++
 		go func(c VectorRefs) {
 			matrixApplyRef(c, fn, m)
@@ -289,8 +289,8 @@ func vectorsApplyAllRefs(vs Vectors, fn func(*Vector, Vector), vs2 VectorRefs) {
 func vectorsApplyAllRefsChunked(vs Vectors, fn func(*Vector, Vector), vrs VectorRefs) {
 	done := make(chan struct{}, 1)
 	var running uint
-	chunks2 := vectorRefsInChunks(vrs)
-	for chunk := range vectorsInChunks(vs) {
+	chunks2 := vectorRefsInChunks(vrs,chunkSize(len(vrs)))
+	for chunk := range vectorsInChunks(vs,chunkSize(len(vs))) {
 		running++
 		go func(c Vectors) {
 			vectorsApplyAllRefs(c, fn, <-chunks2)
@@ -335,8 +335,8 @@ func vectorRefsApplyAllRefs(vrs VectorRefs, fn func(*Vector, Vector), vrs2 Vecto
 func vectorRefsApplyAllChunkedRefs(vrs VectorRefs, fn func(*Vector, Vector), vrs2 VectorRefs) {
 	done := make(chan struct{}, 1)
 	var running uint
-	chunks2 := vectorRefsInChunks(vrs2)
-	for chunk := range vectorRefsInChunks(vrs) {
+	chunks2 := vectorRefsInChunks(vrs2,chunkSize(len(vrs2)))
+	for chunk := range vectorRefsInChunks(vrs,chunkSize(len(vrs))) {
 		running++
 		go func(c VectorRefs) {
 			vectorRefsApplyAllRefs(c, fn, <-chunks2)
@@ -381,8 +381,8 @@ func vectorRefsApplyAll(vs VectorRefs, fn func(*Vector, Vector), vs2 Vectors) {
 func vectorRefsApplyAllChunked(vs VectorRefs, fn func(*Vector, Vector), vs2 Vectors) {
 	done := make(chan struct{}, 1)
 	var running uint
-	chunks2 := vectorsInChunks(vs2)
-	for chunk := range vectorRefsInChunks(vs) {
+	chunks2 := vectorsInChunks(vs2,chunkSize(len(vs2)))
+	for chunk := range vectorRefsInChunks(vs,chunkSize(len(vs))) {
 		running++
 		go func(c VectorRefs) {
 			vectorRefsApplyAll(c, fn, <-chunks2)

@@ -131,15 +131,7 @@ func (v *Vector) ForAll(vs Vectors, fn func(*Vector, Vector)) {
 	if !Parallel {
 		vectorApplyAll(v, fn, vs)
 	} else {
-		if Hints.ChunkSizeFixed {
-			vectorApplyAllChunked(v, fn, vs, Hints.DefaultChunkSize)
-		} else {
-			cs := uint(len(vs)) / (Hints.Threads + 1)
-			if cs < Hints.DefaultChunkSize {
-				cs = Hints.DefaultChunkSize
-			}
-			vectorApplyAllChunked(v, fn, vs, cs)
-		}
+		vectorApplyAllChunked(v, fn, vs)
 	}
 }
 
@@ -149,10 +141,10 @@ func vectorApplyAll(v *Vector, fn func(*Vector, Vector), vs Vectors) {
 	}
 }
 
-func vectorApplyAllChunked(v *Vector, fn func(*Vector, Vector), vs Vectors, chunkSize uint) {
+func vectorApplyAllChunked(v *Vector, fn func(*Vector, Vector), vs Vectors) {
 	done := make(chan Vector, 1)
 	var running uint
-	for chunk := range vectorsInChunks(vs) {
+	for chunk := range vectorsInChunks(vs,chunkSize(len(vs))) {
 		running++
 		go func(cvs Vectors) {
 			var nv Vector

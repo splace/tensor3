@@ -80,7 +80,7 @@ func vectorsApply(vs Vectors, fn func(*Vector, Vector), v Vector) {
 func vectorsApplyChunked(vs Vectors, fn func(*Vector, Vector), v Vector) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range vectorsInChunks(vs) {
+	for chunk := range vectorsInChunks(vs,chunkSize(len(vs))) {
 		running++
 		go func(c Vectors) {
 			vectorsApply(c, fn, v)
@@ -134,8 +134,8 @@ func vectorsApplyAll(vs Vectors, fn func(*Vector, Vector), vs2 Vectors) {
 func vectorsApplyAllChunked(vs Vectors, fn func(*Vector, Vector), vs2 Vectors) {
 	done := make(chan struct{}, 1)
 	var running uint
-	chunks2 := vectorsInChunks(vs2)
-	for chunk := range vectorsInChunks(vs) {
+	chunks2 := vectorsInChunks(vs2,chunkSize(len(vs2))) // TODO can we assume same sized chunks?
+	for chunk := range vectorsInChunks(vs,chunkSize(len(vs))) {
 		running++
 		go func(c Vectors) {
 			vectorsApplyAll(c, fn, <-chunks2)

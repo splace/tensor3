@@ -155,13 +155,9 @@ func (m Matrix) ForEach(fn func(*Vector, Matrix), vs Vectors) {
 		matrixApply(vs, fn, m)
 	} else {
 		if Hints.ChunkSizeFixed {
-			matrixApplyChunked(vs, fn, m, Hints.DefaultChunkSize)
+			matrixApplyChunked(vs, fn, m)
 		} else {
-			cs := uint(len(vs)) / (Hints.Threads + 1)
-			if cs < Hints.DefaultChunkSize {
-				cs = Hints.DefaultChunkSize
-			}
-			matrixApplyChunked(vs, fn, m, cs)
+			matrixApplyChunked(vs, fn, m)
 		}
 	}
 }
@@ -172,10 +168,10 @@ func matrixApply(vs Vectors, fn func(*Vector, Matrix), m Matrix) {
 	}
 }
 
-func matrixApplyChunked(vs Vectors, fn func(*Vector, Matrix), m Matrix, chunkSize uint) {
+func matrixApplyChunked(vs Vectors, fn func(*Vector, Matrix), m Matrix) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range vectorsInChunks(vs) {
+	for chunk := range vectorsInChunks(vs,chunkSize(len(vs))) {
 		running++
 		go func(c Vectors) {
 			matrixApply(c, fn, m)

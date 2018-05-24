@@ -22,6 +22,7 @@ var Parallel bool
 // only improves performance if using costly functions, non of the built-ins are likely to benefit. YRMV.
 var ParallelComponents bool
 
+// use hints to calc a good chunk size
 func chunkSize(l int) int {
 	if !Hints.ChunkSizeFixed {
 		if cs := l / int(Hints.Threads + 1); cs > int(Hints.DefaultChunkSize) {
@@ -32,9 +33,8 @@ func chunkSize(l int) int {
 }
 
 // return a channel of Vectors that are chunks of the passed Vectors
-func vectorsInChunks(vs Vectors) chan Vectors {
+func vectorsInChunks(vs Vectors, cs int) chan Vectors {
 	c := make(chan Vectors, 1)
-	cs:=chunkSize(len(vs))
 	lastSplitMax := len(vs)-cs/2
 	go func() {
 		var bottom int
@@ -49,9 +49,8 @@ func vectorsInChunks(vs Vectors) chan Vectors {
 }
 
 // return a channel of Matrices that are chunks of the passed Matrices
-func matricesInChunks(ms Matrices) chan Matrices {
+func matricesInChunks(ms Matrices, cs int) chan Matrices {
 	c := make(chan Matrices)
-	cs:=chunkSize(len(ms))
 	lastSplitMax := len(ms)-cs/2
 	go func() {
 		var bottom int
@@ -66,9 +65,8 @@ func matricesInChunks(ms Matrices) chan Matrices {
 }
 
 // return a channel of VectorRefs that are chunks of the passed VectorRefs
-func vectorRefsInChunks(vs VectorRefs) chan VectorRefs {
+func vectorRefsInChunks(vs VectorRefs, cs int) chan VectorRefs {
 	c := make(chan VectorRefs, 1)
-	cs:=chunkSize(len(vs))
 	lastSplitMax := len(vs)-cs/2
 	go func() {
 		var bottom int
@@ -86,13 +84,14 @@ func vectorRefsInChunks(vs VectorRefs) chan VectorRefs {
 // return a channel of chunks of, fixed length slices of, the passed Vectors
 // progress by Stride Vector's for each slice, if Stride less than length, the same Vector can appear in consequative slices.
 // if wrap true, include slices that wrap around, from the end to the start of the passed Vectors.
-// (notice that all the slices will be the same provided length.)
-func vectorSlicesInChunks(vs Vectors,length,stride int, wrap bool) chan []Vectors {
-	c := make(chan []Vectors, 2)  // 2 so that the next chunk is being calculated in parallel, here unlike other chunking it has a significant cost, although if all cores kept 100% busy, not benefitial.
+// notice: all the slices will be the same provided length.
+// notice: can panic if length larger than chunksize/2 (ie the min. terminal chunk size)  
+func vectorSlicesInChunks(vs Vectors, cs int,length,stride int, wrap bool) chan []Vectors {
+	c := make(chan []Vectors, 2)  // 2 so that the next chunk is being calculated in parallel, here unlike other chunking it has a significant cost, although if all cores kept 100% busy, not beneficial.
 	go func(){
-		// need to special case last chunk; it might have to include the wrap-around's, but dont know its the last until channel closes, so push out from one loop behind, then add 'special' wrapping chunk.
-		chunkChan :=vectorsInChunks(vs) //  TODO cant do this, unable to 'see' items length ahead
-		firstChunk := <- chunkChan
+		// need to special case last chunk; it might have to include the wrap-round's, but don't know its the last until channel closes, so handle previous loop cycle.
+		chunkChan :=vectorsInChunks(vs,cs)
+		firstChunk := <- chunkChan // keep first chunk for potential wrap-round
 		previousChunk := firstChunk
 		var i int
 		for chunk:=range chunkChan{
@@ -102,7 +101,7 @@ func vectorSlicesInChunks(vs Vectors,length,stride int, wrap bool) chan []Vector
 			}
 			c <- vssc
 			previousChunk=chunk
-			i%=stride
+			i%=stride  // reset start index, but allow for stride continuation
 		}
 		// now handle the last (previous) chunk
 		if wrap {
@@ -131,10 +130,9 @@ func vectorSlicesInChunks(vs Vectors,length,stride int, wrap bool) chan []Vector
 
 // return a channel of VectorRefs that are chunks of the passed VectorRefs.
 // as an optimisation, which some functions might benefit from, the VectorRefs are reordered so that each chunk contains all/only the values within a spacial region, so nearby points are MUCH more likely to be in the same chunk.
-// keep record of returned chunks to be able to efficiently repeat use a functin on the same vectors.
-func vectorRefsInRegionalChunks(vs VectorRefs) chan VectorRefs {
-	c := make(chan VectorRefs, 1)
-	cs:=chunkSize(len(vs))
+// holding on to the returned chunks, buffered chan splitter?, allows efficient repeated use on the same vectors.
+func vectorRefsInRegionalChunks(vs VectorRefs, cs int) chan VectorRefs {
+	c := make(chan VectorRefs, 8) 
 	if cs>len(vs){
 		c <- vs
 		close(c)
@@ -142,13 +140,11 @@ func vectorRefsInRegionalChunks(vs VectorRefs) chan VectorRefs {
 	}
 	go func() {
 		// sample 5% of points to make guess at distribution
-		// TODO sample cubed root number of points?
 		sp:=make(VectorRefs,len(vs)/20)
 		for i:=range(sp){
 			sp[i]=vs[i*20]
 		}
-		// TODO improve this fixed 8-way only scheme. but if less than 8 cores, is there much point?
-		// TODO regions to give chunks of a size similar to other chunking functions. 
+		// TODO could improve this fixed 8-way only scheme. recursively? but if not more than 8 cores, is there much point?
 		average:=sp.Sum()
 		divisor:=BaseType(len(sp))
 		average.x/=divisor

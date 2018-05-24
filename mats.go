@@ -127,7 +127,7 @@ func matricesApply(ms Matrices, fn func(*Matrix, Matrix), v Matrix) {
 func matricesApplyChunked(ms Matrices, fn func(*Matrix, Matrix), v Matrix) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range matricesInChunks(ms) {
+	for chunk := range matricesInChunks(ms,chunkSize(len(ms))) {
 		running++
 		go func(c Matrices) {
 			matricesApply(c, fn, v)
@@ -157,7 +157,7 @@ func vectorApply(ms Matrices, mfn func(*Matrix, func(*Vector, Vector), Vector), 
 func vectorApplyChunked(ms Matrices, mfn func(*Matrix, func(*Vector, Vector), Vector), fn func(*Vector, Vector), v Vector) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range matricesInChunks(ms) {
+	for chunk := range matricesInChunks(ms,chunkSize(len(ms))) {
 		running++
 		go func(c Matrices) {
 			vectorApply(c, mfn, fn, v)
