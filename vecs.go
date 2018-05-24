@@ -134,8 +134,13 @@ func vectorsApplyAll(vs Vectors, fn func(*Vector, Vector), vs2 Vectors) {
 func vectorsApplyAllChunked(vs Vectors, fn func(*Vector, Vector), vs2 Vectors) {
 	done := make(chan struct{}, 1)
 	var running uint
-	chunks2 := vectorsInChunks(vs2,chunkSize(len(vs2))) // TODO can we assume same sized chunks?
-	for chunk := range vectorsInChunks(vs,chunkSize(len(vs))) {
+	// shorten vs to use only what we have in vs2
+	if len(vs)>len(vs2){
+		vs=vs[:len(vs2)]
+	}
+	cs:=chunkSize(len(vs))
+	chunks2 := vectorsInChunks(vs2,cs) 
+	for chunk := range vectorsInChunks(vs,cs) {
 		running++
 		go func(c Vectors) {
 			vectorsApplyAll(c, fn, <-chunks2)

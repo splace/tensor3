@@ -178,3 +178,4 @@ func (ms Matrices) ForEachNoParameter(fn func(*Matrix)) {
 	ms.ForEach(inner, Matrix{})
 }
 
+

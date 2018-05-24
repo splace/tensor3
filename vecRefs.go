@@ -289,8 +289,13 @@ func vectorsApplyAllRefs(vs Vectors, fn func(*Vector, Vector), vs2 VectorRefs) {
 func vectorsApplyAllRefsChunked(vs Vectors, fn func(*Vector, Vector), vrs VectorRefs) {
 	done := make(chan struct{}, 1)
 	var running uint
-	chunks2 := vectorRefsInChunks(vrs,chunkSize(len(vrs)))
-	for chunk := range vectorsInChunks(vs,chunkSize(len(vs))) {
+	// shorten vs to use only what we have in vs2rs
+	if len(vs)>len(vrs){
+		vs=vs[:len(vrs)]
+	}
+	cs:=chunkSize(len(vs))
+	chunks2 := vectorRefsInChunks(vrs,cs)
+	for chunk := range vectorsInChunks(vs,cs) {
 		running++
 		go func(c Vectors) {
 			vectorsApplyAllRefs(c, fn, <-chunks2)
@@ -335,8 +340,13 @@ func vectorRefsApplyAllRefs(vrs VectorRefs, fn func(*Vector, Vector), vrs2 Vecto
 func vectorRefsApplyAllChunkedRefs(vrs VectorRefs, fn func(*Vector, Vector), vrs2 VectorRefs) {
 	done := make(chan struct{}, 1)
 	var running uint
-	chunks2 := vectorRefsInChunks(vrs2,chunkSize(len(vrs2)))
-	for chunk := range vectorRefsInChunks(vrs,chunkSize(len(vrs))) {
+	// shorten vs to use only what we have in vs2
+	if len(vrs)>len(vrs2){
+		vrs=vrs[:len(vrs2)]
+	}
+	cs:=chunkSize(len(vrs))
+	chunks2 := vectorRefsInChunks(vrs2,cs)
+	for chunk := range vectorRefsInChunks(vrs,cs) {
 		running++
 		go func(c VectorRefs) {
 			vectorRefsApplyAllRefs(c, fn, <-chunks2)
@@ -378,11 +388,16 @@ func vectorRefsApplyAll(vs VectorRefs, fn func(*Vector, Vector), vs2 Vectors) {
 	}
 }
 
-func vectorRefsApplyAllChunked(vs VectorRefs, fn func(*Vector, Vector), vs2 Vectors) {
+func vectorRefsApplyAllChunked(vrs VectorRefs, fn func(*Vector, Vector), vs2 Vectors) {
 	done := make(chan struct{}, 1)
 	var running uint
-	chunks2 := vectorsInChunks(vs2,chunkSize(len(vs2)))
-	for chunk := range vectorRefsInChunks(vs,chunkSize(len(vs))) {
+	// shorten vrs to use only what we have in vs2
+	if len(vrs)>len(vs2){
+		vrs=vrs[:len(vs2)]
+	}
+	cs:=chunkSize(len(vrs))
+	chunks2 := vectorsInChunks(vs2,cs)
+	for chunk := range vectorRefsInChunks(vrs,cs) {
 		running++
 		go func(c VectorRefs) {
 			vectorRefsApplyAll(c, fn, <-chunks2)

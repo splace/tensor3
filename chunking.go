@@ -3,15 +3,14 @@ package tensor3
 import "runtime"
 
 func init() {
-	Hints.Threads = uint(runtime.NumCPU()) - 1
+	Hints.Threads = runtime.NumCPU() - 1
 	Hints.DefaultChunkSize = 10000
-	//runtime.GOMAXPROCS(1)
 }
 
 var Hints struct {
-	Threads          uint
+	Threads          int
 	ChunkSizeFixed   bool
-	DefaultChunkSize uint
+	DefaultChunkSize int
 }
 
 // selects parallel application of functions to Vectors and Matrices types (slices of Vector and Matrix types).
@@ -25,7 +24,7 @@ var ParallelComponents bool
 // use hints to calc a good chunk size
 func chunkSize(l int) int {
 	if !Hints.ChunkSizeFixed {
-		if cs := l / int(Hints.Threads + 1); cs > int(Hints.DefaultChunkSize) {
+		if cs := l / Hints.Threads; cs > Hints.DefaultChunkSize {
 			return cs
 		}
 	}

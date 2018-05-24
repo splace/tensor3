@@ -71,7 +71,7 @@ func BenchmarkMatsProductParallel(b *testing.B) {
 	}
 	m := Matrix{*New(9, 8, 7), *New(6, 5, 4), *New(3, 2, 1)}
 	Parallel = true
-	defer func(d uint) {
+	defer func(d int) {
 		Parallel = false
 		Hints.DefaultChunkSize = d
 	}(Hints.DefaultChunkSize)

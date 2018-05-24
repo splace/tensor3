@@ -106,7 +106,7 @@ func TestVecsProductT(t *testing.T) {
 
 func TestVecsCrossChunked1(t *testing.T) {
 	Parallel = true
-	defer func(d uint) {
+	defer func(d int) {
 		Parallel = false
 		Hints.DefaultChunkSize = d
 	}(Hints.DefaultChunkSize)
@@ -122,7 +122,7 @@ func TestVecsCrossChunked1(t *testing.T) {
 
 func TestVecsCrossChunked2(t *testing.T) {
 	Parallel = true
-	defer func(d uint) {
+	defer func(d int) {
 		Parallel = false
 		Hints.DefaultChunkSize = d
 	}(Hints.DefaultChunkSize)
@@ -138,7 +138,7 @@ func TestVecsCrossChunked2(t *testing.T) {
 
 func TestVecsCrossChunked3(t *testing.T) {
 	Parallel = true
-	defer func(d uint) {
+	defer func(d int) {
 		Parallel = false
 		Hints.DefaultChunkSize = d
 	}(Hints.DefaultChunkSize)
@@ -172,7 +172,7 @@ func TestVecsCrossVecs(t *testing.T) {
 
 func TestVecsSlicesInChunks(t *testing.T) {
 	Hints.ChunkSizeFixed = true
-	defer func(dcs uint) {
+	defer func(dcs int) {
 		Hints.ChunkSizeFixed = false
 		Hints.DefaultChunkSize = dcs 
 	}(Hints.DefaultChunkSize)
@@ -293,4 +293,17 @@ func BenchmarkVecsProductParallel(b *testing.B) {
 
 }
 
+/* benchmark: "Vecs" hal3 Thu 24 May 16:09:48 BST 2018 go version go1.10.2 linux/amd64
+goos: linux
+goarch: amd64
+BenchmarkVecsSum-2               	    2000	    965165 ns/op
+BenchmarkVecsSumParallel-2       	    2000	    900285 ns/op
+BenchmarkVecsCross-2             	    1000	   1417655 ns/op
+BenchmarkVecsCrossParallel-2     	    1000	   1429321 ns/op
+BenchmarkVecsProduct-2           	    1000	   1951688 ns/op
+BenchmarkVecsProductParallel-2   	    1000	   1940458 ns/op
+PASS
+ok  	_/run/media/simon/6a5530c2-1442-4e9b-b35f-3db0c9a6984c/home/simon/Dropbox/github/working/tensor3	11.463s
+Thu 24 May 16:10:00 BST 2018
+*/
 
