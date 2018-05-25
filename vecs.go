@@ -51,6 +51,12 @@ func (vs Vectors) Min() (v Vector) {
 	return
 }
 
+func (vs Vectors) Middle() (v Vector) {
+	v=vs.Max()
+	v.Mid(vs.Min())
+	return
+}
+
 func (vs Vectors) Interpolate(v Vector, f float64) {
 	f1:=Base64(1-f)
 	f2:=Base64(f)

@@ -81,7 +81,7 @@ func vectorRefsInChunks(vs VectorRefs, cs int) chan VectorRefs {
 
 
 // return a channel of chunks of, fixed length slices of, the passed Vectors
-// progress by Stride Vector's for each slice, if Stride less than length, the same Vector can appear in consequative slices.
+// progress by Stride Vector's for each slice, if Stride less than length, the same Vector can appear in consecutive slices.
 // if wrap true, include slices that wrap around, from the end to the start of the passed Vectors.
 // notice: all the slices will be the same provided length.
 // notice: can panic if length larger than chunksize/2 (ie the min. terminal chunk size)  
@@ -100,7 +100,7 @@ func vectorSlicesInChunks(vs Vectors, cs int,length,stride int, wrap bool) chan 
 			}
 			c <- vssc
 			previousChunk=chunk
-			i%=stride  // reset start index, but allow for stride continuation
+			i%=stride  // reset start index, allowing for stride continuation
 		}
 		// now handle the last (previous) chunk
 		if wrap {
@@ -127,10 +127,15 @@ func vectorSlicesInChunks(vs Vectors, cs int,length,stride int, wrap bool) chan 
 	return c
 }
 
+// TODO VectorRefSlicesInChunks(vs Vectors, cs int,length,stride int, wrap bool) chan []Vectors {
+
+
 // return a channel of VectorRefs that are chunks of the passed VectorRefs.
 // as an optimisation, which some functions might benefit from, the VectorRefs are reordered so that each chunk contains all/only the values within a spacial region, so nearby points are MUCH more likely to be in the same chunk.
-// holding on to the returned chunks, buffered chan splitter?, allows efficient repeated use on the same vectors.
-func vectorRefsInRegionalChunks(vs VectorRefs, cs int) chan VectorRefs {
+// re-apply on returned chunks, recursively,  to sub-divide
+func vectorRefsInRegionalChunks(vs VectorRefs, centre Vector, cs int) chan VectorRefs {
+	// TODO continue to subdivide if exceed chunk size 
+	// TODO return, another channel?, boundingbox of chunk? 
 	c := make(chan VectorRefs, 8) 
 	if cs>len(vs){
 		c <- vs
@@ -143,38 +148,31 @@ func vectorRefsInRegionalChunks(vs VectorRefs, cs int) chan VectorRefs {
 		for i:=range(sp){
 			sp[i]=vs[i*20]
 		}
-		// TODO could improve this fixed 8-way only scheme. recursively? but if not more than 8 cores, is there much point?
-		average:=sp.Sum()
-		divisor:=BaseType(len(sp))
-		average.x/=divisor
-		average.y/=divisor
-		average.z/=divisor
-		//(&average).Divide(BaseType(len(sp)))
 		var chunks [2][2][2]VectorRefs
 		for _,v := range(vs){
-			if v.x>average.x {
-				if v.y>average.y {
-					if v.z>average.z {
+			if v.x>centre.x {
+				if v.y>centre.y {
+					if v.z>centre.z {
 						chunks[1][1][1]=append(chunks[1][1][1],v)
 					}else{
 						chunks[1][1][0]=append(chunks[1][1][0],v)
 					}
 				}else{
-					if v.z>average.z {
+					if v.z>centre.z {
 						chunks[1][0][1]=append(chunks[1][0][1],v)
 					}else{
 						chunks[1][0][0]=append(chunks[1][0][0],v)
 					}
 				}
 			}else{
-				if v.y>average.y {
-					if v.z>average.z {
+				if v.y>centre.y {
+					if v.z>centre.z {
 						chunks[0][1][1]=append(chunks[0][1][1],v)
 					}else{
 						chunks[0][1][0]=append(chunks[0][1][0],v)
 					}
 				}else{
-					if v.z>average.z {
+					if v.z>centre.z {
 						chunks[0][0][1]=append(chunks[0][0][1],v)
 					}else{
 						chunks[0][0][0]=append(chunks[0][0][0],v)

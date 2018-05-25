@@ -159,6 +159,15 @@ func TestVecRefsSelect(t *testing.T) {
 	}
 }
 
+func TestVecRefsStride(t *testing.T) {
+	vs := VectorRefs{New(1,2,3), New(4,5,6), New(7,8,9)}
+	vs2:=vs.Stride(2)
+	if fmt.Sprint(vs2.Dereference()) != "[{1 2 3} {7 8 9}]" {
+		t.Error(fmt.Sprint(vs2.Dereference()))
+	}
+}
+
+
 func TestVecRefsSplit(t *testing.T) {
 	vs := VectorRefs{New(1,2,3), New(4,5,6), New(7,8,9)}
 	vs2:= vs.Split(
@@ -179,6 +188,26 @@ func TestVecRefsSplit(t *testing.T) {
 	}
 }
 
+func TestVecRefsReginalSlicesInChunks(t *testing.T) {
+	Hints.ChunkSizeFixed = true
+	defer func(dcs int) {
+		Hints.ChunkSizeFixed = false
+		Hints.DefaultChunkSize = dcs 
+	}(Hints.DefaultChunkSize)
+	Hints.DefaultChunkSize = 2
+
+	vrs := VectorRefs{New(1, 2, 3), New(4, 5, 6), New(7, 8, 9), New(10, 11, 12), New(13, 14, 15)}
+	var vrs2 []VectorRefs
+	
+	for vrss:=range vectorRefsInRegionalChunks(vrs,vrs.Middle(),4){
+		vrs2=append(vrs2,vrss)
+	}
+	
+	if fmt.Sprint(vrs2) != fmt.Sprintf("[[%p %p %p] [] [] [] [] [] [] [%p %p]]",vrs[0],vrs[1],vrs[2],vrs[3],vrs[4]) {
+		t.Error(fmt.Sprint(vrs2),fmt.Sprintf("[[%p %p %p] [] [] [] [] [] [] [%p %p]]",vrs[0],vrs[1],vrs[2],vrs[3],vrs[4]))
+	}
+	vrs2=vrs2[:0]
+}
 
 func BenchmarkVecRefsProduct(b *testing.B) {
 	b.StopTimer()
@@ -191,7 +220,6 @@ func BenchmarkVecRefsProduct(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		vrs.Product(m)
 	}
-
 }
 
 func BenchmarkVecRefsProductParallel(b *testing.B) {

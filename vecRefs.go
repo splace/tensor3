@@ -141,6 +141,12 @@ func (vs VectorRefs) Min() (v Vector) {
 	return
 }
 
+func (vs VectorRefs) Middle() (v Vector) {
+	v=vs.Max()
+	v.Mid(vs.Min())
+	return
+}
+
 func (vs VectorRefs) Interpolate(v Vector, f BaseType) {
 	f2 := 1 - f
 	var interpolate func(*Vector, Vector)
@@ -162,10 +168,19 @@ func (vs VectorRefs) Select(fn func(*Vector)bool) (svs VectorRefs) {
 	return
 }
 
+// return a VectorRefs with the VectorRef's from this that at equal spaced strides.
+func (vs VectorRefs) Stride(s int) (svs VectorRefs) {
+	svs=make(VectorRefs,len(vs)/s+1)
+	for i:= range(svs) {
+		svs[i]=vs[i*s]
+	}
+	return
+}
+
 // return a slice of VectorRefs with the VectorRef's from this that returned the slices index value from the provided function.
 // or put another way;
 // bin the VecRef by the functions returned value.
-// bins start at 1, a returned value of 0 causes the VecRef not to be in any of the returned bins.
+// bins start at 1, a function returning a value of 0 causes the VecRef not to be in any of the returned bins.
 func (vs VectorRefs) Split(fn func(*Vector)uint) (ssvs []VectorRefs) {
 	for _, v2 := range vs {
 		i:= fn(v2)
