@@ -157,3 +157,26 @@ func vectorsApplyAllChunked(vs Vectors, fn func(*Vector, Vector), vs2 Vectors) {
 		<-done
 	}
 }
+
+// search Vectors for the two Vector's that return the minimum value from the provided function
+func  (vs Vectors) SearchMin(toMin func(Vector,Vector) BaseType) (i,j int,value BaseType){
+	value = toMin(vs[0],vs[1])
+	var v1,v2 Vector
+	var il,jl int = 0,1
+	for jl,v2= range vs[2:]{
+		nl:= toMin(vs[0],v2)
+		if nl<value{
+			value,j=nl,jl+2
+		}
+	}
+	
+	for il,v1= range vs[1:]{
+		for jl,v2= range vs[il+2:]{
+			nl:= toMin(v1,v2)
+			if nl<value{
+				value,i,j=nl,il+1,jl+il+2
+			}
+		}
+	}
+	return
+}

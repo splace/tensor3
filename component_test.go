@@ -3,8 +3,8 @@ package tensor3_test
 import "fmt"
 import . "github.com/splace/tensor3"
 import "math"
-import "math/rand"
-import "time"
+//import "math/rand"
+//import "time"
 
 func ExampleTextEncodingVector(){
 	v1:=New(1,0,0)
@@ -50,43 +50,23 @@ func ExampleForEachVector(){
 
 
 
-func ExampleSmallestSeparation(){
-	vrs:=make(Vectors,100000)
-	for i := range vrs{
-		vrs[i]=*New(rand.NormFloat64()*100,rand.NormFloat64()*100,rand.NormFloat64()*100)
-	}
-
-	test:=func(v1,v2 Vector) BaseType{
-		v1.Subtract(v2)
-		return v1.LengthLength()
-	}
-
-	// brute force
-	start:=time.Now()
-	var i,j int
-	var v1,v2 Vector
-	var il,jl int = 0,1
-	l:= test(vrs[il],vrs[jl])
-	// nl=l
-	for j,v2= range vrs[2:]{
-		nl:= test(vrs[0],v2)
-		if nl<l{
-			l,jl=nl,j+2
-		}
-	}
-	
-	for i,v1= range vrs[1:]{
-		for j,v2= range vrs[i+2:]{
-			nl:= test(v1,v2)
-			if nl<l{
-				l,il,jl=nl,i+1,j+i+2
-			}
-		}
-	}
-	fmt.Printf("%v %v %v %v %v %v %v",il,jl,l,len(vrs),vrs[il],vrs[jl],time.Since(start))
-	// Output:
-	// [{x:2 y:0 z:0}]
-}
+//func ExampleSmallestSeparation(){
+//	vrs:=make(Vectors,100000)
+//	for i := range vrs{
+//		vrs[i]=*New(rand.NormFloat64()*100,rand.NormFloat64()*100,rand.NormFloat64()*100)
+//	}
+//
+//	separation:=func(v1,v2 Vector) BaseType{
+//		v1.Subtract(v2)
+//		return v1.LengthLength()
+//	}
+//
+//	start:=time.Now()
+//	il,jl,ll:=vrs.SearchMin(separation)
+//	fmt.Printf("%v %v %v %v %v %v %v",il,jl,math.Sqrt(ll),len(vrs),vrs[il],vrs[jl],time.Since(start))
+//	// Output:
+//	// [{x:2 y:0 z:0}]
+//}
 
 
 
