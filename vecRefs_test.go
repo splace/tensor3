@@ -188,7 +188,7 @@ func TestVecRefsSplit(t *testing.T) {
 	}
 }
 
-func TestVecRefsReginalSlicesInChunks(t *testing.T) {
+func TestVecRefsRegionalSlicesInChunks(t *testing.T) {
 	Hints.ChunkSizeFixed = true
 	defer func(dcs int) {
 		Hints.ChunkSizeFixed = false
@@ -203,8 +203,8 @@ func TestVecRefsReginalSlicesInChunks(t *testing.T) {
 		vrs2=append(vrs2,vrss)
 	}
 	
-	if fmt.Sprint(vrs2) != fmt.Sprintf("[[%p %p %p] [] [] [] [] [] [] [%p %p]]",vrs[0],vrs[1],vrs[2],vrs[3],vrs[4]) {
-		t.Error(fmt.Sprint(vrs2),fmt.Sprintf("[[%p %p %p] [] [] [] [] [] [] [%p %p]]",vrs[0],vrs[1],vrs[2],vrs[3],vrs[4]))
+	if fmt.Sprint(vrs2) != fmt.Sprintf("[[%p %p] [] [] [] [] [] [] [%p %p %p]]",vrs[0],vrs[1],vrs[2],vrs[3],vrs[4]) {
+		t.Error(fmt.Sprint(vrs2),fmt.Sprintf("[[%p %p] [] [] [] [] [] [] [%p %p %p]]",vrs[0],vrs[1],vrs[2],vrs[3],vrs[4]))
 	}
 	vrs2=vrs2[:0]
 }

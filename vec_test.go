@@ -62,6 +62,20 @@ func TestVecLengthLength(t *testing.T) {
 	}
 }
 
+func TestVecDistDist(t *testing.T) {
+	v := New(3, 2, 4)
+	if v.DistDist(*New(-3, 2, -4)) != 100 {
+		t.Error(v.DistDist(*New(-3, 2, -4)))
+	}
+}
+
+func TestVecDistDistSame(t *testing.T) {
+	v := New(1, 2, 3)
+	if v.DistDist(*New(1, 2, 3)) != 0 {
+		t.Error(v.DistDist(*New(1, 2, 3)))
+	}
+}
+
 func TestVecProduct(t *testing.T) {
 	v := New(1, 2, 3)
 	v.Product(Identity)

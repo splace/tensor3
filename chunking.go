@@ -7,14 +7,14 @@ func init() {
 	Hints.DefaultChunkSize = 10000
 }
 
+// parallel optimisation Hints.
 var Hints struct {
-	Threads          int   // used to stop unnecessarily making more chunks than available cores.
+	Threads          int   // used to keep chunk to core ratio near parity.
 	ChunkSizeFixed   bool
-	DefaultChunkSize int   // ideally set at run time to number of items that fit into cpu cache.
+	DefaultChunkSize int   // ideally set at run time to number of items that fit into CPU cache.
 }
 
 // selects parallel application of functions to Vectors and Matrices types (slices of Vector and Matrix types).
-// this occurs in chunks whose size is controlled by Hints.
 var Parallel bool
 
 // selects parallel application of functions to Matrix components,(its Vector fields).
@@ -127,71 +127,31 @@ func vectorSlicesInChunks(vs Vectors, cs int,length,stride int, wrap bool) chan 
 	return c
 }
 
+
 // TODO VectorRefSlicesInChunks(vs Vectors, cs int,length,stride int, wrap bool) chan []Vectors {
 
 
 // return a channel of VectorRefs that are chunks of the passed VectorRefs.
-// as an optimisation, which some functions might benefit from, the VectorRefs are reordered so that each chunk contains all/only the values within a spacial region, so nearby points are MUCH more likely to be in the same chunk.
-// re-apply on returned chunks, recursively,  to sub-divide
+// as an optimisation, which some functions might benefit from, the VectorRefs are split so that each chunk contains all/only the VectorRefs within a spacial region, meaning nearby points are MUCH more likely to be in the same chunk.
 func vectorRefsInRegionalChunks(vs VectorRefs, centre Vector, cs int) chan VectorRefs {
-	// TODO continue to subdivide if exceed chunk size 
+	// TODO continue to subdivide if exceed chunk size?
 	// TODO return, another channel?, boundingbox of chunk? 
-	c := make(chan VectorRefs, 8) 
-	if cs>len(vs){
-		c <- vs
-		close(c)
-		return c
+	cvr := make(chan VectorRefs,8)  // no blocking since a max on 8 VectorRefs from this used split function
+	// range over a slice of VectorRefs, returned by the Split function using a function that splits into 8 regions using which side of the origin Vector, by axis alignment, the point is on.
+	for _,s:=range func() []VectorRefs {
+		return vs.Split(
+			func(v *Vector)(i uint){
+				i++   // i never zero,since all points go somewhere
+				if v.x>=centre.x {i++}
+				if v.y>=centre.y {i+=2} 
+				if v.z>=centre.z {i+=4}
+				return
+			},
+		)
+	}(){
+		cvr <- s
 	}
-	go func() {
-		// sample 5% of points to make guess at distribution
-		sp:=make(VectorRefs,len(vs)/20)
-		for i:=range(sp){
-			sp[i]=vs[i*20]
-		}
-		var chunks [2][2][2]VectorRefs
-		for _,v := range(vs){
-			if v.x>centre.x {
-				if v.y>centre.y {
-					if v.z>centre.z {
-						chunks[1][1][1]=append(chunks[1][1][1],v)
-					}else{
-						chunks[1][1][0]=append(chunks[1][1][0],v)
-					}
-				}else{
-					if v.z>centre.z {
-						chunks[1][0][1]=append(chunks[1][0][1],v)
-					}else{
-						chunks[1][0][0]=append(chunks[1][0][0],v)
-					}
-				}
-			}else{
-				if v.y>centre.y {
-					if v.z>centre.z {
-						chunks[0][1][1]=append(chunks[0][1][1],v)
-					}else{
-						chunks[0][1][0]=append(chunks[0][1][0],v)
-					}
-				}else{
-					if v.z>centre.z {
-						chunks[0][0][1]=append(chunks[0][0][1],v)
-					}else{
-						chunks[0][0][0]=append(chunks[0][0][0],v)
-					}
-				}
-			}
-		}
-		c <- chunks[0][0][0]
-		c <- chunks[0][0][1]
-		c <- chunks[0][1][0]
-		c <- chunks[0][1][1]
-		c <- chunks[1][0][0]
-		c <- chunks[1][0][1]
-		c <- chunks[1][1][0]
-		c <- chunks[1][1][1]
-		close(c)
-	}()
-	return c
+	close(cvr)
+	return cvr
 }
-
-
 

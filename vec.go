@@ -74,7 +74,13 @@ func (v *Vector) Cross(v2 Vector) {
 
 // length squared. (returning squared means this package is not dependent on math package.)
 func (v Vector) LengthLength() BaseType {
-	return baseUnscale(v.Dot(v)) 
+	return baseUnscale(v.x*v.x + v.y*v.y + v.z*v.z)
+}
+
+// distance squared. (returning squared means this package is not dependent on math package.)
+func (v Vector) DistDist(v2 Vector) BaseType {
+	v.Subtract(v2)
+	return v.LengthLength()
 }
 
 func (v *Vector) Set(v2 Vector) {
@@ -118,6 +124,12 @@ func (v *Vector) Interpolate(v2 Vector, f float64) {
 	v.Multiply(Base64(f))
 	v.Add(v2)
 }
+
+// three points, the projections to axis planes. 
+func (v Vector) AxisProjections(o Vector) (Vector,Vector,Vector) {
+	return Vector{v.x,o.y,o.z},Vector{o.x,v.y,o.z},Vector{o.x,o.y,v.z}
+}
+
 
 // apply a function repeatedly to the vector, parameterised by its current value and each vector in the supplied vectors in order.
 func (v *Vector) Aggregate(vs Vectors, fn func(*Vector, Vector)) {
