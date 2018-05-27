@@ -265,7 +265,6 @@ func TestVecsSlicesStridingInChunks(t *testing.T) {
 	if fmt.Sprint(vs2) != "[[[{1 2 3}]] [[{7 8 9}]] [[{13 14 15}]]]" {
 		t.Error(fmt.Println(vs2))
 	}
-
 }
 
 func TestSearchMin(t *testing.T) {

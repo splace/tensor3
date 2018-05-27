@@ -52,14 +52,14 @@ func (vs Vectors) Min() (v Vector) {
 }
 
 func (vs Vectors) Middle() (v Vector) {
-	v=vs.Max()
+	v = vs.Max()
 	v.Mid(vs.Min())
 	return
 }
 
 func (vs Vectors) Interpolate(v Vector, f float64) {
-	f1:=Base64(1-f)
-	f2:=Base64(f)
+	f1 := Base64(1 - f)
+	f2 := Base64(f)
 	var interpolate func(*Vector, Vector)
 	interpolate = func(v *Vector, v2 Vector) {
 		v2.Multiply(f1)
@@ -86,7 +86,7 @@ func vectorsApply(vs Vectors, fn func(*Vector, Vector), v Vector) {
 func vectorsApplyChunked(vs Vectors, fn func(*Vector, Vector), v Vector) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range vectorsInChunks(vs,chunkSize(len(vs))) {
+	for chunk := range vectorsInChunks(vs, chunkSize(len(vs))) {
 		running++
 		go func(c Vectors) {
 			vectorsApply(c, fn, v)
@@ -141,12 +141,12 @@ func vectorsApplyAllChunked(vs Vectors, fn func(*Vector, Vector), vs2 Vectors) {
 	done := make(chan struct{}, 1)
 	var running uint
 	// shorten vs to use only what we have in vs2
-	if len(vs)>len(vs2){
-		vs=vs[:len(vs2)]
+	if len(vs) > len(vs2) {
+		vs = vs[:len(vs2)]
 	}
-	cs:=chunkSize(len(vs))
-	chunks2 := vectorsInChunks(vs2,cs) 
-	for chunk := range vectorsInChunks(vs,cs) {
+	cs := chunkSize(len(vs))
+	chunks2 := vectorsInChunks(vs2, cs)
+	for chunk := range vectorsInChunks(vs, cs) {
 		running++
 		go func(c Vectors) {
 			vectorsApplyAll(c, fn, <-chunks2)
@@ -159,22 +159,22 @@ func vectorsApplyAllChunked(vs Vectors, fn func(*Vector, Vector), vs2 Vectors) {
 }
 
 // search Vectors for the two Vector's that return the minimum value from the provided function
-func  (vs Vectors) SearchMin(toMin func(Vector,Vector) BaseType) (i,j int,value BaseType){
-	value = toMin(vs[0],vs[1])
-	var v1,v2 Vector
-	var il,jl int = 0,1
-	for jl,v2= range vs[2:]{
-		nl:= toMin(vs[0],v2)
-		if nl<value{
-			value,j=nl,jl+2
+func (vs Vectors) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int, value BaseType) {
+	value = toMin(vs[0], vs[1])
+	var v1, v2 Vector
+	var il, jl int = 0, 1
+	for jl, v2 = range vs[2:] {
+		nl := toMin(vs[0], v2)
+		if nl < value {
+			value, j = nl, jl+2
 		}
 	}
-	
-	for il,v1= range vs[1:]{
-		for jl,v2= range vs[il+2:]{
-			nl:= toMin(v1,v2)
-			if nl<value{
-				value,i,j=nl,il+1,jl+il+2
+
+	for il, v1 = range vs[1:] {
+		for jl, v2 = range vs[il+2:] {
+			nl := toMin(v1, v2)
+			if nl < value {
+				value, i, j = nl, il+1, jl+il+2
 			}
 		}
 	}
