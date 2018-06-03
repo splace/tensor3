@@ -13,7 +13,7 @@ func NewVectorRefs(cs ...BaseType) (vs VectorRefs) {
 
 
 // make a new VectorRefs that references Vector's at the provided indexes in the provided Vectors.  
-// (Notice: this package uses 1 for the first item.)
+// (Notice: when index is encoded, not an internal slice index, its a uint, 1 is used for the first item, o is a side-channel, possibly used for an error value.)
 func NewVectorRefsFromIndexes(cs Vectors, indexes ...uint) (vs VectorRefs) {
 	if len(indexes) == 0 {
 		vs = make(VectorRefs, len(cs))
@@ -169,10 +169,12 @@ func (vs VectorRefs) Select(fn func(*Vector)bool) (svs VectorRefs) {
 }
 
 // return a VectorRefs with the VectorRef's from this that at equal spaced strides.
-func (vs VectorRefs) Stride(s int) (svs VectorRefs) {
-	svs=make(VectorRefs,len(vs)/s+1)
+func (vs VectorRefs) Stride(s uint) (svs VectorRefs) {
+	if s==0 {return}
+	is:=int(s)
+	svs=make(VectorRefs,len(vs)/is+1)
 	for i:= range(svs) {
-		svs[i]=vs[i*s]
+		svs[i]=vs[i*is]
 	}
 	return
 }
