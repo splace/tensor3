@@ -80,11 +80,13 @@ func vectorRefsInChunks(vs VectorRefs, cs int) chan VectorRefs {
 }
 
 
-// return a channel of chunks of, fixed length slices of, the passed Vectors
-// progress by Stride Vector's for each slice, if Stride less than length, the same Vector can appear in consecutive slices.
-// if wrap true, include slices that wrap around, from the end to the start of the passed Vectors.
-// notice: all the slices will be the same provided length.
-// notice: can panic if length larger than chunksize/2 (ie the min. terminal chunk size)  
+// return a channel of slices of the passed Vectors.
+// each returned slice is of the provided Length.
+// the start index is increased by Stride for each slice.
+// if wrap true, then the last Vector is considered to join to the first.
+// notice: wrapped around slices are newly created, modifying their content, unlike non-wrapped, won't change the source Vectors, if consistent behaviour needed use VectorRefs chunks. 
+// notice: if Stride less than Length, then the same Vector will appear in consecutive slices.
+// notice: can panic if Length larger than chunksize/2 (ie the min. possible size of the last chunk)  
 func vectorSlicesInChunks(vs Vectors, cs int,length,stride int, wrap bool) chan []Vectors {
 	c := make(chan []Vectors, 2)  // 2 so that the next chunk is being calculated in parallel, here unlike other chunking it has a significant cost, although if all cores kept 100% busy, not beneficial.
 	go func(){
@@ -108,7 +110,7 @@ func vectorSlicesInChunks(vs Vectors, cs int,length,stride int, wrap bool) chan 
 			for ; i< len(vssc)-length+1;i+=stride {
 				vssc[i]=previousChunk[i:i+length]
 			}
-			// add the overlapping slices
+			// add the beginning Vectors
 			for ;i < len(vssc);i+=stride {
 				vssc[i]=previousChunk[i:]
 				vssc[i]=append(vssc[i],firstChunk[:length-len(vssc[i])]...)
@@ -136,12 +138,12 @@ func vectorSlicesInChunks(vs Vectors, cs int,length,stride int, wrap bool) chan 
 func vectorRefsInRegionalChunks(vs VectorRefs, centre Vector, cs int) chan VectorRefs {
 	// TODO continue to subdivide if exceed chunk size?
 	// TODO return, another channel?, boundingbox of chunk? 
-	cvr := make(chan VectorRefs,8)  // no blocking since a max on 8 VectorRefs from this used split function
+	cvr := make(chan VectorRefs,8)  // non blocking since a max on 8 VectorRefs from this split function
 	// range over a slice of VectorRefs, returned by the Split function using a function that splits into 8 regions using which side of the origin Vector, by axis alignment, the point is on.
 	for _,s:=range func() []VectorRefs {
 		return vs.Split(
 			func(v *Vector)(i uint){
-				i++   // i never zero,since all points go somewhere
+				i++   // index never zero, since for this all points go somewhere
 				if v.x>=centre.x {i++}
 				if v.y>=centre.y {i+=2} 
 				if v.z>=centre.z {i+=4}
