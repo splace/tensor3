@@ -65,7 +65,7 @@ Example:  100 x 1 million matrix multiplications, single threaded then parallel.
 
 */
 
-package tensor3
+package tensor3    note: there are a lot of methods for common operations on the 4 main types, and comments are missing on methods that appear unambiguous, to me, from their name, or i havent got round to yet.
 
 // Overview/docs: [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3)
 
