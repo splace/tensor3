@@ -168,7 +168,7 @@ func (vs VectorRefs) Select(fn func(*Vector)bool) (svs VectorRefs) {
 	return
 }
 
-// return a VectorRefs with the VectorRef's from this that at equal spaced strides.
+// return a VectorRefs with the VectorRef's from this that are at equal spaced strides.
 func (vs VectorRefs) Stride(s uint) (svs VectorRefs) {
 	if s==0 {return}
 	is:=int(s)
@@ -187,8 +187,8 @@ func (vs VectorRefs) Split(fn func(*Vector)uint) (ssvs []VectorRefs) {
 	for _, v2 := range vs {
 		i:= fn(v2)
 		if i>0 {
+			// pad, if needed, with a series of new VectorRefs to fill up to index. (max index not preknown)
 			if i> uint(len(ssvs)){
-				// append new VectorRefs up to the needed index.
 				ssvs=append(ssvs,make([]VectorRefs,i-uint(len(ssvs)))...)
 			}
 			ssvs[i-1]=append(ssvs[i-1],v2)

@@ -80,12 +80,12 @@ func vectorRefsInChunks(vs VectorRefs, cs int) chan VectorRefs {
 }
 
 
-// return a channel of slices of the passed Vectors.
-// each returned slice is of the provided Length.
-// the start index is increased by Stride for each slice.
-// if wrap true, then the last Vector is considered to join to the first.
-// notice: wrapped around slices are newly created, modifying their content, unlike non-wrapped, won't change the source Vectors, if consistent behaviour needed use VectorRefs chunks. 
-// notice: if Stride less than Length, then the same Vector will appear in consecutive slices.
+// return a channel of slices from the passed Vectors.
+// the inner slices are al the same, provided, Length.
+// the start of each slice is spaced by Stride.
+// if wrap is true then the last Vector is considered to join to the first.
+// notice: wrapped around slices are newly created, modifying their content, unlike non-wrapped, won't change the source Vectors, if consistent behaviour is needed use VectorRefs chunks.
+// notice: if the Stride is less than the Length, then the same Vector will appear in consecutive slices.
 // notice: can panic if Length larger than chunksize/2 (ie the min. possible size of the last chunk)  
 func vectorSlicesInChunks(vs Vectors, cs int,length,stride int, wrap bool) chan []Vectors {
 	c := make(chan []Vectors, 2)  // 2 so that the next chunk is being calculated in parallel, here unlike other chunking it has a significant cost, although if all cores kept 100% busy, not beneficial.
@@ -95,32 +95,33 @@ func vectorSlicesInChunks(vs Vectors, cs int,length,stride int, wrap bool) chan 
 		firstChunk := <- chunkChan // keep first chunk for potential wrap-round
 		previousChunk := firstChunk
 		var i int
+		// TODO all array lengths could be precalculate instead of using append
 		for chunk:=range chunkChan{
-			vssc := make([]Vectors,len(previousChunk)/stride)
-			for ;i<len(vssc);i+=stride {
-				vssc[i]=previousChunk[i:i+length]
+			var vssc []Vectors
+			for ;i<len(previousChunk);i+=stride {
+				vssc=append(vssc,previousChunk[i:i+length])
 			}
 			c <- vssc
+			i%=len(previousChunk)  // reset start index, allowing for stride continuation across chunks
 			previousChunk=chunk
-			i%=stride  // reset start index, allowing for stride continuation
 		}
 		// now handle the last (previous) chunk
 		if wrap {
-			vssc := make([]Vectors,len(previousChunk)/stride)
-			for ; i< len(vssc)-length+1;i+=stride {
-				vssc[i]=previousChunk[i:i+length]
+			var vssc []Vectors
+			for ;i<len(previousChunk)-length+1;i+=stride {
+				vssc=append(vssc,previousChunk[i:i+length])
 			}
 			// add the beginning Vectors
-			for ;i < len(vssc);i+=stride {
-				vssc[i]=previousChunk[i:]
-				vssc[i]=append(vssc[i],firstChunk[:length-len(vssc[i])]...)
+			for ;i<len(previousChunk);i+=stride {
+				vssc=append(vssc,previousChunk[i:])
+				vssc[len(vssc)-1]=append(vssc[len(vssc)-1],firstChunk[:length-len(vssc[len(vssc)-1])]...)
 			}			
 			c <- vssc
 		}else{
 			// not wrapping so its just shortened
-			vssc := make([]Vectors,(len(previousChunk)-length+1)/stride)
-			for ;i < len(vssc);i+=stride {
-				vssc[i]=previousChunk[i:i+length]
+			var vssc []Vectors
+			for ;i<len(previousChunk)-length+1;i+=stride {
+				vssc=append(vssc,previousChunk[i:i+length])
 			}
 			c <- vssc
 		}
@@ -139,7 +140,7 @@ func vectorRefsInRegionalChunks(vs VectorRefs, centre Vector, cs int) chan Vecto
 	// TODO continue to subdivide if exceed chunk size?
 	// TODO return, another channel?, boundingbox of chunk? 
 	cvr := make(chan VectorRefs,8)  // non blocking since a max on 8 VectorRefs from this split function
-	// range over a slice of VectorRefs, returned by the Split function using a function that splits into 8 regions using which side of the origin Vector, by axis alignment, the point is on.
+	// range over a slice of VectorRefs, returned by the Split function, using a function that splits into 8 regions using which side of the origin Vector, by axis alignment, the point is on.
 	for _,s:=range func() []VectorRefs {
 		return vs.Split(
 			func(v *Vector)(i uint){

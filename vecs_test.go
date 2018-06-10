@@ -189,7 +189,7 @@ func TestVecsSlicesInChunks(t *testing.T) {
 	vs := Vectors{*New(1, 2, 3), *New(4, 5, 6), *New(7, 8, 9), *New(10, 11, 12), *New(13, 14, 15)}
 	var vs2 [][]Vectors
 	
-	for vss:=range vectorSlicesInChunks(vs,10,1,1,true){
+	for vss:=range vectorSlicesInChunks(vs,10,1,1,false){
 		vs2=append(vs2,vss)
 	}
 	if fmt.Sprint(vs2) != "[[[{1 2 3}] [{4 5 6}] [{7 8 9}] [{10 11 12}] [{13 14 15}]]]" {
@@ -205,16 +205,16 @@ func TestVecsSlicesInChunks(t *testing.T) {
 	}
 
 	vs2=vs2[:0]
-	for vss:=range vectorSlicesInChunks(vs,10,3,1,true){
+	for vss:=range vectorSlicesInChunks(vs,10,3,1,false){
 		vs2=append(vs2,vss)
 	}
-	if fmt.Sprint(vs2) != "[[[{1 2 3} {4 5 6} {7 8 9}] [{4 5 6} {7 8 9} {10 11 12}] [{7 8 9} {10 11 12} {13 14 15}] [{10 11 12} {13 14 15} {1 2 3}] [{13 14 15} {1 2 3} {4 5 6}]]]" {
+	if fmt.Sprint(vs2) != "[[[{1 2 3} {4 5 6} {7 8 9}] [{4 5 6} {7 8 9} {10 11 12}] [{7 8 9} {10 11 12} {13 14 15}]]]" {
 		t.Error(fmt.Println(vs2))
 	}
 
 
 	vs2=vs2[:0]
-	for vss:=range vectorSlicesInChunks(vs,1,1,1,true){
+	for vss:=range vectorSlicesInChunks(vs,1,1,1,false){
 		vs2=append(vs2,vss)
 	}
 	if fmt.Sprint(vs2) != "[[[{1 2 3}]] [[{4 5 6}]] [[{7 8 9}]] [[{10 11 12}]] [[{13 14 15}]]]" {
@@ -223,10 +223,10 @@ func TestVecsSlicesInChunks(t *testing.T) {
 
 
 	vs2=vs2[:0]
-	for vss:=range vectorSlicesInChunks(vs,2,2,1,true){
+	for vss:=range vectorSlicesInChunks(vs,2,2,1,false){
 		vs2=append(vs2,vss)
 	}
-	if fmt.Sprint(vs2) != "[[[{1 2 3} {4 5 6}] [{4 5 6} {7 8 9}]] [[{7 8 9} {10 11 12}] [{10 11 12} {13 14 15}] [{13 14 15} {1 2 3}]]]" {
+	if fmt.Sprint(vs2) != "[[[{1 2 3} {4 5 6}] [{4 5 6} {7 8 9}]] [[{7 8 9} {10 11 12}] [{10 11 12} {13 14 15}]]]" {
 		t.Error(fmt.Println(vs2))
 	}
 
@@ -248,24 +248,146 @@ func TestVecsSlicesInChunks(t *testing.T) {
 
 }
 
-//func TestVecsSlicesStridingInChunks(t *testing.T) {
-//	Hints.ChunkSizeFixed = true
-//	defer func(dcs int) {
-//		Hints.ChunkSizeFixed = false
-//		Hints.DefaultChunkSize = dcs 
-//	}(Hints.DefaultChunkSize)
-//	Hints.DefaultChunkSize = 2
-//
-//	vs := Vectors{*New(1, 2, 3), *New(4, 5, 6), *New(7, 8, 9), *New(10, 11, 12), *New(13, 14, 15)}
-//	var vs2 [][]Vectors
-//	
-//	for vss:=range vectorSlicesInChunks(vs,10,1,2,false){
-//		vs2=append(vs2,vss)
-//	}
-//	if fmt.Sprint(vs2) != "[[[{1 2 3}]] [[{7 8 9}]] [[{13 14 15}]]]" {
-//		t.Error(fmt.Println(vs2))
-//	}
-//}
+func TestVecsSlicesStridingInChunks(t *testing.T) {
+	Hints.ChunkSizeFixed = true
+	defer func(dcs int) {
+		Hints.ChunkSizeFixed = false
+		Hints.DefaultChunkSize = dcs 
+	}(Hints.DefaultChunkSize)
+	Hints.DefaultChunkSize = 2
+
+	vs := Vectors{*New(1, 2, 3), *New(4, 5, 6), *New(7, 8, 9), *New(10, 11, 12), *New(13, 14, 15), *New(16, 17, 18), *New(19, 20, 21), *New(22, 23, 24)}
+
+	var vs2 [][]Vectors
+	
+	for vss:=range vectorSlicesInChunks(vs,10,1,2,false){
+		vs2=append(vs2,vss)
+	}
+	if fmt.Sprint(vs2) != "[[[{1 2 3}] [{7 8 9}] [{13 14 15}] [{19 20 21}]]]" {
+		t.Error(fmt.Println(vs2))
+	}
+
+	vs2=vs2[:0]
+	for vss:=range vectorSlicesInChunks(vs,10,2,3,false){
+		vs2=append(vs2,vss)
+	}
+	if fmt.Sprint(vs2) != "[[[{1 2 3} {4 5 6}] [{10 11 12} {13 14 15}] [{19 20 21} {22 23 24}]]]" {
+		t.Error(fmt.Println(vs2))
+	}
+
+	vs2=vs2[:0]
+	for vss:=range vectorSlicesInChunks(vs,4,1,2,false){
+		vs2=append(vs2,vss)
+	}
+	if fmt.Sprint(vs2) != "[[[{1 2 3}] [{7 8 9}]] [[{13 14 15}] [{19 20 21}]]]" {
+		t.Error(fmt.Println(vs2))
+	}
+
+	vs2=vs2[:0]
+	for vss:=range vectorSlicesInChunks(vs,4,2,2,false){
+		vs2=append(vs2,vss)
+	}
+	if fmt.Sprint(vs2) != "[[[{1 2 3} {4 5 6}] [{7 8 9} {10 11 12}]] [[{13 14 15} {16 17 18}] [{19 20 21} {22 23 24}]]]" {
+		t.Error(fmt.Println(vs2))
+	}
+
+	vs2=vs2[:0]
+	for vss:=range vectorSlicesInChunks(vs,4,2,1,false){
+		vs2=append(vs2,vss)
+	}
+	if fmt.Sprint(vs2) != "[[[{1 2 3} {4 5 6}] [{4 5 6} {7 8 9}] [{7 8 9} {10 11 12}] [{10 11 12} {13 14 15}]] [[{13 14 15} {16 17 18}] [{16 17 18} {19 20 21}] [{19 20 21} {22 23 24}]]]" {
+		t.Error(fmt.Println(vs2))
+	}
+
+}
+
+
+func TestVecsSlicesStridingAndWrappingInChunks(t *testing.T) {
+	Hints.ChunkSizeFixed = true
+	defer func(dcs int) {
+		Hints.ChunkSizeFixed = false
+		Hints.DefaultChunkSize = dcs 
+	}(Hints.DefaultChunkSize)
+	Hints.DefaultChunkSize = 2
+
+	vs := Vectors{*New(1, 2, 3), *New(4, 5, 6), *New(7, 8, 9), *New(10, 11, 12), *New(13, 14, 15), *New(16, 17, 18), *New(19, 20, 21), *New(22, 23, 24)}
+
+	var vs2 [][]Vectors
+	
+	for vss:=range vectorSlicesInChunks(vs,10,1,2,true){
+		vs2=append(vs2,vss)
+	}
+	if fmt.Sprint(vs2) != "[[[{1 2 3}] [{7 8 9}] [{13 14 15}] [{19 20 21}]]]" {
+		t.Error(fmt.Println(vs2))
+	}
+
+	vs2=vs2[:0]
+	for vss:=range vectorSlicesInChunks(vs,10,2,3,true){
+		vs2=append(vs2,vss)
+	}
+	if fmt.Sprint(vs2) != "[[[{1 2 3} {4 5 6}] [{10 11 12} {13 14 15}] [{19 20 21} {22 23 24}]]]" {
+		t.Error(fmt.Println(vs2))
+	}
+
+	vs2=vs2[:0]
+	for vss:=range vectorSlicesInChunks(vs,4,1,2,true){
+		vs2=append(vs2,vss)
+	}
+	if fmt.Sprint(vs2) != "[[[{1 2 3}] [{7 8 9}]] [[{13 14 15}] [{19 20 21}]]]" {
+		t.Error(fmt.Println(vs2))
+	}
+
+	vs2=vs2[:0]
+	for vss:=range vectorSlicesInChunks(vs,4,2,2,true){
+		vs2=append(vs2,vss)
+	}
+	if fmt.Sprint(vs2) != "[[[{1 2 3} {4 5 6}] [{7 8 9} {10 11 12}]] [[{13 14 15} {16 17 18}] [{19 20 21} {22 23 24}]]]" {
+		t.Error(fmt.Println(vs2))
+	}
+
+	vs2=vs2[:0]
+	for vss:=range vectorSlicesInChunks(vs,4,2,3,true){
+		vs2=append(vs2,vss)
+	}
+	if fmt.Sprint(vs2) != "[[[{1 2 3} {4 5 6}] [{10 11 12} {13 14 15}]] [[{19 20 21} {22 23 24}]]]" {
+		t.Error(fmt.Println(vs2))
+	}
+
+	vs2=vs2[:0]
+	for vss:=range vectorSlicesInChunks(vs,10,2,3,true){
+		vs2=append(vs2,vss)
+	}
+	if fmt.Sprint(vs2) != "[[[{1 2 3} {4 5 6}] [{10 11 12} {13 14 15}] [{19 20 21} {22 23 24}]]]" {
+		t.Error(fmt.Println(vs2))
+	}
+
+	vs2=vs2[:0]
+	for vss:=range vectorSlicesInChunks(vs,4,3,2,true){
+		vs2=append(vs2,vss)
+	}
+	if fmt.Sprint(vs2) != "[[[{1 2 3} {4 5 6} {7 8 9}] [{7 8 9} {10 11 12} {13 14 15}]] [[{13 14 15} {16 17 18} {19 20 21}] [{19 20 21} {22 23 24} {1 2 3}]]]" {
+		t.Error(fmt.Println(vs2))
+	}
+
+	vs2=vs2[:0]
+	for vss:=range vectorSlicesInChunks(vs,10,3,1,true){
+		vs2=append(vs2,vss)
+	}
+	if fmt.Sprint(vs2) != "[[[{1 2 3} {4 5 6} {7 8 9}] [{4 5 6} {7 8 9} {10 11 12}] [{7 8 9} {10 11 12} {13 14 15}] [{10 11 12} {13 14 15} {16 17 18}] [{13 14 15} {16 17 18} {19 20 21}] [{16 17 18} {19 20 21} {22 23 24}] [{19 20 21} {22 23 24} {1 2 3}] [{22 23 24} {1 2 3} {4 5 6}]]]" {
+		t.Error(fmt.Println(vs2))
+	}
+
+	vs2=vs2[:0]
+	for vss:=range vectorSlicesInChunks(vs,6,3,1,true){
+		vs2=append(vs2,vss)
+	}
+	if fmt.Sprint(vs2) != "[[[{1 2 3} {4 5 6} {7 8 9}] [{4 5 6} {7 8 9} {10 11 12}] [{7 8 9} {10 11 12} {13 14 15}] [{10 11 12} {13 14 15} {16 17 18}] [{13 14 15} {16 17 18} {19 20 21}] [{16 17 18} {19 20 21} {22 23 24}] [{19 20 21} {22 23 24} {1 2 3}] [{22 23 24} {1 2 3} {4 5 6}]]]" {
+		t.Error(fmt.Println(vs2))
+	}
+
+
+}
+
 
 func TestSearchMin(t *testing.T) {
 	vs := Vectors{*New(1, 2, 3), *New(4, 5, 6), *New(7, 8, 9), *New(10, 11, 12), *New(13, 14, 15)}
