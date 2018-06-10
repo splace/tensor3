@@ -131,7 +131,49 @@ func vectorSlicesInChunks(vs Vectors, cs int,length,stride int, wrap bool) chan 
 }
 
 
-// TODO VectorRefSlicesInChunks(vs Vectors, cs int,length,stride int, wrap bool) chan []Vectors {
+// as vectorSlicesInChunks
+func vectorRefSlicesInChunks(vs VectorRefs, cs int,length,stride int, wrap bool) chan []VectorRefs {
+	c := make(chan []VectorRefs, 2)  // 2 so that the next chunk is being calculated in parallel, here unlike other chunking it has a significant cost, although if all cores kept 100% busy, not beneficial.
+	go func(){
+		// need to special case last chunk; it might have to include the wrap-round's, but don't know its the last until channel closes, so handle previous loop cycle.
+		chunkChan :=vectorRefsInChunks(vs,cs)
+		firstChunk := <- chunkChan // keep first chunk for potential wrap-round
+		previousChunk := firstChunk
+		var i int
+		// TODO all array lengths could be precalculate instead of using append
+		for chunk:=range chunkChan{
+			var vssc []VectorRefs
+			for ;i<len(previousChunk);i+=stride {
+				vssc=append(vssc,previousChunk[i:i+length])
+			}
+			c <- vssc
+			i%=len(previousChunk)  // reset start index, allowing for stride continuation across chunks
+			previousChunk=chunk
+		}
+		// now handle the last (previous) chunk
+		if wrap {
+			var vssc []VectorRefs
+			for ;i<len(previousChunk)-length+1;i+=stride {
+				vssc=append(vssc,previousChunk[i:i+length])
+			}
+			// add the beginning Vectors
+			for ;i<len(previousChunk);i+=stride {
+				vssc=append(vssc,previousChunk[i:])
+				vssc[len(vssc)-1]=append(vssc[len(vssc)-1],firstChunk[:length-len(vssc[len(vssc)-1])]...)
+			}			
+			c <- vssc
+		}else{
+			// not wrapping so its just shortened
+			var vssc []VectorRefs
+			for ;i<len(previousChunk)-length+1;i+=stride {
+				vssc=append(vssc,previousChunk[i:i+length])
+			}
+			c <- vssc
+		}
+		close(c)
+	}()
+	return c
+}
 
 
 // return a channel of VectorRefs that are chunks of the passed VectorRefs.
