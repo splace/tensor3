@@ -160,6 +160,7 @@ func vectorsApplyAllChunked(vs Vectors, fn func(*Vector, Vector), vs2 Vectors) {
 
 // search Vectors for the two Vector's that return the minimum value from the provided function
 func (vs Vectors) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int, value BaseType) {
+	// TODO search in chunks
 	value = toMin(vs[0], vs[1])
 	var v1, v2 Vector
 	var il, jl int = 0, 1
@@ -180,3 +181,17 @@ func (vs Vectors) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int, valu
 	}
 	return
 }
+
+
+func (b *BaseType) Aggregate(vs Vectors,length,stride int, fn func(*BaseType, Vectors)) {
+	for vsc := range vectorSlicesInChunks(vs,chunkSize(len(vs)),length,stride,false) {
+		for _,vs:=range(vsc){
+			fn(b, vs)
+		}
+	}
+}
+
+//func(vs Vectors) Vector
+//func(vs Vectors) BaseType
+
+

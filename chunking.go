@@ -87,7 +87,7 @@ func vectorRefsInChunks(vs VectorRefs, cs int) chan VectorRefs {
 // notice: wrapped around slices are newly created, modifying their content, unlike non-wrapped, won't change the source Vectors, if consistent behaviour is needed use VectorRefs chunks.
 // notice: if the Stride is less than the Length, then the same Vector will appear in consecutive slices.
 // notice: can panic if Length larger than chunksize/2 (ie the min. possible size of the last chunk)  
-func vectorSlicesInChunks(vs Vectors, cs int,length,stride int, wrap bool) chan []Vectors {
+func vectorSlicesInChunks(vs Vectors, cs,length,stride int, wrap bool) chan []Vectors {
 	c := make(chan []Vectors, 2)  // 2 so that the next chunk is being calculated in parallel, here unlike other chunking it has a significant cost, although if all cores kept 100% busy, not beneficial.
 	go func(){
 		// need to special case last chunk; it might have to include the wrap-round's, but don't know its the last until channel closes, so handle previous loop cycle.
@@ -131,8 +131,8 @@ func vectorSlicesInChunks(vs Vectors, cs int,length,stride int, wrap bool) chan 
 }
 
 
-// as vectorSlicesInChunks
-func vectorRefSlicesInChunks(vs VectorRefs, cs int,length,stride int, wrap bool) chan []VectorRefs {
+// see vectorSlicesInChunks
+func vectorRefsSlicesInChunks(vs VectorRefs, cs,length,stride int, wrap bool) chan []VectorRefs {
 	c := make(chan []VectorRefs, 2)  // 2 so that the next chunk is being calculated in parallel, here unlike other chunking it has a significant cost, although if all cores kept 100% busy, not beneficial.
 	go func(){
 		// need to special case last chunk; it might have to include the wrap-round's, but don't know its the last until channel closes, so handle previous loop cycle.
@@ -175,6 +175,99 @@ func vectorRefSlicesInChunks(vs VectorRefs, cs int,length,stride int, wrap bool)
 	return c
 }
 
+// see vectorSlicesInChunks
+func vectorRefsInMatrixChunks(vs VectorRefs, cs,stride int, wrap bool) chan Matrices {
+	c := make(chan Matrices, 2)  // 2 so that the next chunk is being calculated in parallel, here unlike other chunking it has a significant cost, although if all cores kept 100% busy, not beneficial.
+	go func(){
+		// need to special case last chunk; it might have to include the wrap-round's, but don't know its the last until channel closes, so handle previous loop cycle.
+		chunkChan :=vectorRefsInChunks(vs,cs)
+		firstChunk := <- chunkChan // keep first chunk for potential wrap-round
+		previousChunk := firstChunk
+		var i int
+		// TODO all array lengths could be precalculate instead of using append
+		for chunk:=range chunkChan{
+			var mssc Matrices
+			for ;i<len(previousChunk);i+=stride {
+				mssc=append(mssc,Matrix{*previousChunk[i],*previousChunk[i+1],*previousChunk[i+2]})
+			}
+			c <- mssc
+			i%=len(previousChunk)  // reset start index, allowing for stride continuation across chunks
+			previousChunk=chunk
+		}
+		// now handle the last (previous) chunk
+		if wrap {
+			var mssc Matrices
+			for ;i<len(previousChunk)-2;i+=stride {
+				mssc=append(mssc,Matrix{*previousChunk[i],*previousChunk[i+1],*previousChunk[i+2]})
+			}
+			// add the beginning Vectors
+			for ;i<len(previousChunk);i+=stride {
+				if i==len(previousChunk)-1{
+					mssc=append(mssc,Matrix{*previousChunk[i],*firstChunk[1],*firstChunk[2]})
+				}else{
+					mssc=append(mssc,Matrix{*previousChunk[i-1],*firstChunk[i],*firstChunk[1]})
+				}
+			}			
+			c <- mssc
+		}else{
+			// not wrapping so its just shortened
+			var mssc Matrices
+			for ;i<len(previousChunk)-2;i+=stride {
+				mssc=append(mssc,Matrix{*previousChunk[i],*previousChunk[i+1],*previousChunk[i+2]})
+			}
+			c <- mssc
+		}
+		close(c)
+	}()
+	return c
+}
+
+// see vectorSlicesInChunks
+func vectorsInMatrixChunks(vs Vectors, cs,stride int, wrap bool) chan Matrices {
+	c := make(chan Matrices, 2)  // 2 so that the next chunk is being calculated in parallel, here unlike other chunking it has a significant cost, although if all cores kept 100% busy, not beneficial.
+	go func(){
+		// need to special case last chunk; it might have to include the wrap-round's, but don't know its the last until channel closes, so handle previous loop cycle.
+		chunkChan :=vectorsInChunks(vs,cs)
+		firstChunk := <- chunkChan // keep first chunk for potential wrap-round
+		previousChunk := firstChunk
+		var i int
+		// TODO all array lengths could be precalculate instead of using append
+		for chunk:=range chunkChan{
+			var mssc Matrices
+			for ;i<len(previousChunk);i+=stride {
+				mssc=append(mssc,Matrix{previousChunk[i],previousChunk[i+1],previousChunk[i+2]})
+			}
+			c <- mssc
+			i%=len(previousChunk)  // reset start index, allowing for stride continuation across chunks
+			previousChunk=chunk
+		}
+		// now handle the last (previous) chunk
+		if wrap {
+			var mssc Matrices
+			for ;i<len(previousChunk)-2;i+=stride {
+				mssc=append(mssc,Matrix{previousChunk[i],previousChunk[i+1],previousChunk[i+2]})
+			}
+			// add the beginning Vectors
+			for ;i<len(previousChunk);i+=stride {
+				if i==len(previousChunk)-1{
+					mssc=append(mssc,Matrix{previousChunk[i],firstChunk[1],firstChunk[2]})
+				}else{
+					mssc=append(mssc,Matrix{previousChunk[i-1],firstChunk[i],firstChunk[1]})
+				}
+			}			
+			c <- mssc
+		}else{
+			// not wrapping so its just shortened
+			var mssc Matrices
+			for ;i<len(previousChunk)-2;i+=stride {
+				mssc=append(mssc,Matrix{previousChunk[i],previousChunk[i+1],previousChunk[i+2]})
+			}
+			c <- mssc
+		}
+		close(c)
+	}()
+	return c
+}
 
 // return a channel of VectorRefs that are chunks of the passed VectorRefs.
 // as an optimisation, which some functions might benefit from, the VectorRefs are split so that each chunk contains all/only the VectorRefs within a spacial region, meaning nearby points are MUCH more likely to be in the same chunk.

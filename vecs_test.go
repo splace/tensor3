@@ -389,7 +389,7 @@ func TestVecsSlicesStridingAndWrappingInChunks(t *testing.T) {
 }
 
 
-func TestSearchMin(t *testing.T) {
+func TestVecsSearchMin(t *testing.T) {
 	vs := Vectors{*New(1, 2, 3), *New(4, 5, 6), *New(7, 8, 9), *New(10, 11, 12), *New(13, 14, 15)}
 	i,j,_:=vs.SearchMin(
 		func(v1,v2 Vector) BaseType {
@@ -401,6 +401,7 @@ func TestSearchMin(t *testing.T) {
 	}
 
 }
+
 
 
 func BenchmarkVecsSum(b *testing.B) {
