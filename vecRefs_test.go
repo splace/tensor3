@@ -2,6 +2,7 @@ package tensor3
 
 import "testing"
 import "fmt"
+import "math"
 
 func TestVecRefsNewFromIndexes(t *testing.T) {
 	vr := NewVectorRefsFromIndexes(NewVectors(1, 2, 3, 4, 5, 6, 7), 1, 3, 2)
@@ -207,6 +208,33 @@ func TestVecRefsRegionalSlicesInChunks(t *testing.T) {
 		t.Error(fmt.Sprint(vrs2),fmt.Sprintf("[[%p %p] [] [] [] [] [] [] [%p %p %p]]",vrs[0],vrs[1],vrs[2],vrs[3],vrs[4]))
 	}
 	vrs2=vrs2[:0]
+}
+
+
+func TestVecRefsTriangleStripArea(t *testing.T) {
+	vs := VectorRefs{New(0, 0, 0), New(1, 0, 0), New(0, 2, 0), New(1, 2, 0)}
+	areax2:=make(chan float64)
+	go func(){
+		vs.ForEachInSlices(3,1,false,
+			func(tri VectorRefs) {
+				v1:=Vector{}
+				v1.Set(*tri[0])
+				v1.Subtract(*tri[1])
+				v2:=Vector{}
+				v2.Set(*tri[0])
+				v2.Subtract(*tri[2])
+				v1.Cross(v2)
+				areax2 <- math.Sqrt(float64(v1.LengthLength()))
+			})
+		close(areax2)
+	}()
+	var tAreax2 float64
+	for c:=range areax2{
+		tAreax2+=c
+	}
+	if tAreax2 != 4 {
+		t.Error(tAreax2)
+	}
 }
 
 func BenchmarkVecRefsProduct(b *testing.B) {

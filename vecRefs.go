@@ -428,3 +428,45 @@ func (vrs VectorRefs) Split(fn func(*Vector)uint) (ssvs []VectorRefs) {
 }
 
 
+// for each vector apply a function with no parameters
+func (vrs VectorRefs) ForEachInSlices(length,stride int,wrap bool,fn func(VectorRefs)) {
+	if !Parallel {
+		var i int
+		for ;i<len(vrs)-length+1;i+=stride{
+			fn(vrs[i:i+length])
+		}
+		if wrap{
+			joinSlice:=make(VectorRefs,length,length)
+			for ;i<len(vrs);i+=stride{
+				copy(joinSlice,vrs[i:])
+				copy(joinSlice[len(vrs)-i:],vrs)
+				fn(joinSlice)
+			}
+		}
+	} else {
+		vectorRefsInSlicesApplyChunked(vrs,length,stride,wrap, fn)
+	}
+}
+
+func vectorRefsInSlicesApply(vrss []VectorRefs,fn func(VectorRefs)) {
+	for _,vrs := range vrss {
+		fn(vrs)
+	}
+}
+
+func vectorRefsInSlicesApplyChunked(vrs VectorRefs,length,stride int,wrap bool, fn func(VectorRefs)) {
+	done := make(chan struct{}, 1)
+	var running uint
+	for chunk := range vectorRefsSlicesInChunks(vrs, chunkSize(len(vrs)),length,stride,wrap) {
+		running++
+		go func(c []VectorRefs) {
+			vectorRefsInSlicesApply(c, fn)
+			done <- struct{}{}
+		}(chunk)
+	}
+	for ; running > 0; running-- {
+		<-done
+	}
+}
+
+

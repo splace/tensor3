@@ -474,8 +474,9 @@ func TestVecsTriangleStripArea(t *testing.T) {
 	for c:=range areax2{
 		tAreax2+=c
 	}
-	fmt.Println(tAreax2/2)
-}
+	if tAreax2 != 4 {
+		t.Error(tAreax2)
+	}}
 
 
 func BenchmarkVecsSum(b *testing.B) {
