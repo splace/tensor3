@@ -2,6 +2,7 @@ package tensor3
 
 import "testing"
 import "fmt"
+import "math"
 
 func TestVecsPrint(t *testing.T) {
 	v := Vectors{*New(1, 2, 3)}
@@ -402,6 +403,79 @@ func TestVecsSearchMin(t *testing.T) {
 
 }
 
+
+
+func TestVecsForEachInSlices(t *testing.T) {
+	vs := Vectors{*New(0, 0, 0), *New(1, 0, 0), *New(1, 1, 0)}
+
+	var c float64
+	vs.ForEachInSlices(1,1,false,
+		func(vss Vectors){
+			vss[0]=*New(c,c+1,c+2)
+			c+=3
+		})
+	if fmt.Sprint(vs) != "[{0 1 2} {3 4 5} {6 7 8}]" {
+		t.Error(fmt.Println(vs))
+	}	
+	vs.ForEachInSlices(2,1,false,
+		func(vss Vectors){
+			vss[0]=*New(c,c+1,c+2)
+			c+=3
+		})
+		
+	// doesn't attemp to update wrapped
+	if fmt.Sprint(vs) != "[{9 10 11} {12 13 14} {6 7 8}]" {
+		t.Error(fmt.Println(vs))
+	}	
+	
+	
+	vs.ForEachInSlices(2,1,true,
+		func(vss Vectors){
+			vss[0]=*New(c,c+1,c+2)
+			c+=3
+		})
+		
+	// cant update wrapped item
+	if fmt.Sprint(vs) != "[{15 16 17} {18 19 20} {6 7 8}]" {
+		t.Error(fmt.Println(vs))
+	}	
+
+	vs.ForEachInSlices(1,2,true,
+		func(vss Vectors){
+			vss[0]=*New(c,c+1,c+2)
+			c+=3
+		})
+		
+	// cant update wrapped item
+	if fmt.Sprint(vs) != "[{24 25 26} {18 19 20} {27 28 29}]" {
+		t.Error(fmt.Println(vs))
+	}	
+
+}
+
+func TestVecsTriangleStripArea(t *testing.T) {
+	vs := Vectors{*New(0, 0, 0), *New(1, 0, 0), *New(0, 2, 0), *New(1, 2, 0)}
+	areax2:=make(chan float64)
+	go func(){
+		vs.ForEachInSlices(3,1,false,
+			func(tri Vectors) {
+				v1:=Vector{}
+				v1.Set(tri[0])
+				v1.Subtract(tri[1])
+				v2:=Vector{}
+				v2.Set(tri[0])
+				v2.Subtract(tri[2])
+				v1.Cross(v2)
+				areax2 <- math.Sqrt(float64(v1.LengthLength()))
+			})
+		close(areax2)
+	}()
+	var tAreax2 float64
+	for c:=range areax2{
+		tAreax2+=c
+	}
+	fmt.Println(tAreax2/2)
+}
 
 
 func BenchmarkVecsSum(b *testing.B) {

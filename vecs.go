@@ -191,7 +191,83 @@ func (b *BaseType) Aggregate(vs Vectors,length,stride int, fn func(*BaseType, Ve
 	}
 }
 
-//func(vs Vectors) Vector
-//func(vs Vectors) BaseType
+// for each vector apply a function with no parameters
+func (vs Vectors) ForEachInSlices(length,stride int,wrap bool,fn func(Vectors)) {
+	if !Parallel {
+		var i int
+		for ;i<len(vs)-length+1;i+=stride{
+			fn(vs[i:i+length])
+		}
+		if wrap{
+			joinSlice:=make(Vectors,length,length)
+			for ;i<len(vs);i+=stride{
+				copy(joinSlice,vs[i:])
+				copy(joinSlice[len(vs)-i:],vs)
+				fn(joinSlice)
+			}
+		}
+	} else {
+		vectorsInSlicesApplyChunked(vs,length,stride,wrap, fn)
+	}
+}
 
+func vectorsInSlicesApply(vss []Vectors,fn func(Vectors)) {
+	for _,vs := range vss {
+		fn(vs)
+	}
+}
+
+func vectorsInSlicesApplyChunked(vs Vectors,length,stride int,wrap bool, fn func(Vectors)) {
+	done := make(chan struct{}, 1)
+	var running uint
+	for chunk := range vectorSlicesInChunks(vs, chunkSize(len(vs)),length,stride,wrap) {
+		running++
+		go func(c []Vectors) {
+			vectorsInSlicesApply(c, fn)
+			done <- struct{}{}
+		}(chunk)
+	}
+	for ; running > 0; running-- {
+		<-done
+	}
+}
+
+// return a VectorRefs with the Vector's from this that return true from the provided function.
+func (vs Vectors) Select(fn func(*Vector)bool) (svs VectorRefs) {
+	for i := range vs {
+		if fn(&vs[i]){
+			svs=append(svs,&vs[i])
+		}
+	}
+	return
+}
+
+// return a VectorRefs with the Vector's from this that are at equal spaced strides.
+func (vs Vectors) Stride(s uint) (svs VectorRefs) {
+	if s==0 {return}
+	is:=int(s)
+	svs=make(VectorRefs,len(vs)/is+1)
+	for i:= range(svs) {
+		svs[i]=&vs[i*is]
+	}
+	return
+}
+
+// return a slice of VectorRefs pointing to the Vector's from this that returned the slices index value from the provided function.
+// or put another way;
+// bin Vector's by the functions returned value.
+// bins start at 1, a function returning a value of 0 causes the VecRef not to be in any of the returned bins.
+func (vs Vectors) Split(fn func(*Vector)uint) (ssvs []VectorRefs) {
+	for i := range vs {
+		ind:= fn(&vs[i])
+		if ind>0 {
+			// pad, if needed, with a series of new VectorRefs to fill up to index. (max index not preknown)
+			if ind > uint(len(ssvs)){
+				ssvs=append(ssvs,make([]VectorRefs,ind-uint(len(ssvs)))...)
+			}
+			ssvs[ind-1]=append(ssvs[ind-1],&vs[i])
+		}
+	}
+	return
+}
 

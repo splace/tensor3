@@ -68,22 +68,28 @@ func ExampleSmallestSeparation(){
 }
 
 
-func ExampleTriangleStrinpArea() {
+func ExampleTriangleStripArea() {
 	vs := Vectors{*New(0, 0, 0), *New(1, 0, 0), *New(1, 1, 0), *New(0, 1, 0)}
-	area:=Base64(0)
-	area.Aggregate(vs, 3,1,
-		func(b *BaseType,vs Vectors) {
-			v1:=Vector{}
-			v1.Set(vs[0])
-			v1.Subtract(vs[1])
-			v2:=Vector{}
-			v2.Set(vs[0])
-			v2.Subtract(vs[2])
-			v1.Cross(v2)
-			*b=*b+BaseType(math.Sqrt(float64(v1.LengthLength())))
-		},
-	)
-	fmt.Println(area/2)
+	areas:=make(chan float64)
+	go func(){
+		vs.ForEachInSlices(3,1,false,
+			func(tri Vectors) {
+				v1:=Vector{}
+				v1.Set(tri[0])
+				v1.Subtract(tri[1])
+				v2:=Vector{}
+				v2.Set(tri[0])
+				v2.Subtract(tri[2])
+				v1.Cross(v2)
+				areas <- math.Sqrt(float64(v1.LengthLength()))
+			})
+		close(areas)
+	}()
+	var tArea float64
+	for c:=range areas{
+		tArea+=c
+	}
+	fmt.Println(tArea/2)
 	// Output:
 	// 1
 }

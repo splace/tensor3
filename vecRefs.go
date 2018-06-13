@@ -13,7 +13,7 @@ func NewVectorRefs(cs ...BaseType) (vs VectorRefs) {
 
 
 // make a new VectorRefs that references Vector's at the provided indexes in the provided Vectors.  
-// (Notice: when index is encoded, not an internal slice index, its a uint, 1 is used for the first item, o is a side-channel, possibly used for an error value.)
+// Notice: indexes are uint and considered out-of-context, not an internal slice index, 1 is used for the first item, 0 used as a side-channel. (possibly for an error indicator).
 func NewVectorRefsFromIndexes(cs Vectors, indexes ...uint) (vs VectorRefs) {
 	if len(indexes) == 0 {
 		vs = make(VectorRefs, len(cs))
