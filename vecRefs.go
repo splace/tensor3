@@ -158,45 +158,6 @@ func (vs VectorRefs) Interpolate(v Vector, f BaseType) {
 	vs.ForEach(interpolate, v)
 }
 
-// return a VectorRefs with the VectorRef's from this that return true from the provided function.
-func (vs VectorRefs) Select(fn func(*Vector)bool) (svs VectorRefs) {
-	for _, v2 := range vs {
-		if fn(v2){
-			svs=append(svs,v2)
-		}
-	}
-	return
-}
-
-// return a VectorRefs with the VectorRef's from this that are at equal spaced strides.
-func (vs VectorRefs) Stride(s uint) (svs VectorRefs) {
-	if s==0 {return}
-	is:=int(s)
-	svs=make(VectorRefs,len(vs)/is+1)
-	for i:= range(svs) {
-		svs[i]=vs[i*is]
-	}
-	return
-}
-
-// return a slice of VectorRefs with the VectorRef's from this that returned the slices index value from the provided function.
-// or put another way;
-// bin the VecRef by the functions returned value.
-// bins start at 1, a function returning a value of 0 causes the VecRef not to be in any of the returned bins.
-func (vs VectorRefs) Split(fn func(*Vector)uint) (ssvs []VectorRefs) {
-	for _, v2 := range vs {
-		i:= fn(v2)
-		if i>0 {
-			// pad, if needed, with a series of new VectorRefs to fill up to index. (max index not preknown)
-			if i> uint(len(ssvs)){
-				ssvs=append(ssvs,make([]VectorRefs,i-uint(len(ssvs)))...)
-			}
-			ssvs[i-1]=append(ssvs[i-1],v2)
-		}
-	}
-	return
-}
-
 
 // apply a function repeatedly to the vector reference, parameterised by its current value and each vector in the supplied vectors in order.
 func (v *Vector) AggregateRefs(vs VectorRefs, fn func(*Vector, Vector)) {
@@ -426,5 +387,44 @@ func vectorRefsApplyAllChunked(vrs VectorRefs, fn func(*Vector, Vector), vs2 Vec
 	}
 }
 
+
+// return a VectorRefs with the Vector's from this that return true from the provided function.
+func (vrs VectorRefs) Select(fn func(*Vector)bool) (svs VectorRefs) {
+	for _,vr := range vrs {
+		if fn(vr){
+			svs=append(svs,vr)
+		}
+	}
+	return
+}
+
+// return a VectorRefs with the Vector's from this that are at equal spaced strides.
+func (vrs VectorRefs) Stride(s uint) (svs VectorRefs) {
+	if s==0 {return}
+	is:=int(s)
+	svs=make(VectorRefs,len(vrs)/is+1)
+	for i:= range(svs) {
+		svs[i]=vrs[i*is]
+	}
+	return
+}
+
+// return a slice of VectorRefs pointing to the Vector's from this that returned the slices index value from the provided function.
+// or put another way;
+// bin Vector's by the functions returned value.
+// bins start at 1, a function returning a value of 0 causes the VecRef not to be in any of the returned bins.
+func (vrs VectorRefs) Split(fn func(*Vector)uint) (ssvs []VectorRefs) {
+	for _,vr := range vrs {
+		ind:= fn(vr)
+		if ind>0 {
+			// pad, if needed, with a series of new VectorRefs to fill up to index. (max index not preknown)
+			if ind > uint(len(ssvs)){
+				ssvs=append(ssvs,make([]VectorRefs,ind-uint(len(ssvs)))...)
+			}
+			ssvs[ind-1]=append(ssvs[ind-1],vr)
+		}
+	}
+	return
+}
 
 
