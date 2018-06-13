@@ -453,6 +453,8 @@ func TestVecsForEachInSlices(t *testing.T) {
 
 }
 
+//TODO parallel strip area
+
 func TestVecsTriangleStripArea(t *testing.T) {
 	vs := Vectors{*New(0, 0, 0), *New(1, 0, 0), *New(0, 2, 0), *New(1, 2, 0)}
 	areax2:=make(chan float64)

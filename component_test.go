@@ -67,6 +67,8 @@ func ExampleSmallestSeparation(){
 	// 3159 8069 0.5642342569708744
 }
 
+//TODO smallest area regional spliting
+
 
 func ExampleTriangleStripArea() {
 	vs := Vectors{*New(0, 0, 0), *New(1, 0, 0), *New(1, 1, 0), *New(0, 1, 0)}
