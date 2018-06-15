@@ -232,7 +232,7 @@ func vectorsInSlicesApplyChunked(vs Vectors,length,stride int,wrap bool, fn func
 	}
 }
 
-// return a VectorRefs with the Vector's from this that return true from the provided function.
+// return a VectorRefs referencing in Vectors those that return true from the provided function.
 func (vs Vectors) Select(fn func(*Vector)bool) (svs VectorRefs) {
 	for i := range vs {
 		if fn(&vs[i]){
@@ -242,7 +242,7 @@ func (vs Vectors) Select(fn func(*Vector)bool) (svs VectorRefs) {
 	return
 }
 
-// return a VectorRefs with the Vector's from this that are at equal spaced strides.
+// return a VectorRefs referecing in Vectors those that are at equal spaced strides.
 func (vs Vectors) Stride(s uint) (svs VectorRefs) {
 	if s==0 {return}
 	is:=int(s)
@@ -253,7 +253,7 @@ func (vs Vectors) Stride(s uint) (svs VectorRefs) {
 	return
 }
 
-// return a slice of VectorRefs pointing to the Vector's from this that returned the slices index value from the provided function.
+// return a slice of VectorRefs each referencing in Vectors those that returned the slices index value from the provided function.
 // or put another way;
 // bin Vector's by the functions returned value.
 // bins start at 1, a function returning a value of 0 causes the VecRef not to be in any of the returned bins.

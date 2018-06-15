@@ -70,30 +70,31 @@ func ExampleSmallestSeparation(){
 //TODO smallest area regional spliting
 
 
-func ExampleTriangleStripArea() {
-	vs := Vectors{*New(0, 0, 0), *New(1, 0, 0), *New(1, 1, 0), *New(0, 1, 0)}
-	areas:=make(chan float64)
+func ExampleBoxArea() {
+	boxVertices:=NewVectors(1, 1, 1, 1, -1, 1,-1, 1, 1,-1, -1, 1,1, 1, -1,1, -1, -1,-1, 1, -1,-1, -1, -1)
+	boxTriStrip := NewVectorRefsFromIndexes(boxVertices,1,2,3,4,7,8,5,6,6,8,8,4,6,2,5,1,7,3)
+	areax2:=make(chan float64)
 	go func(){
-		vs.ForEachInSlices(3,1,false,
-			func(tri Vectors) {
+		boxTriStrip.ForEachInSlices(3,1,false,
+			func(tri VectorRefs) {
 				v1:=Vector{}
-				v1.Set(tri[0])
-				v1.Subtract(tri[1])
+				v1.Set(*tri[0])
+				v1.Subtract(*tri[1])
 				v2:=Vector{}
-				v2.Set(tri[0])
-				v2.Subtract(tri[2])
+				v2.Set(*tri[0])
+				v2.Subtract(*tri[2])
 				v1.Cross(v2)
-				areas <- math.Sqrt(float64(v1.LengthLength()))
+				areax2 <- math.Sqrt(float64(v1.LengthLength()))
 			})
-		close(areas)
+		close(areax2)
 	}()
-	var tArea float64
-	for c:=range areas{
-		tArea+=c
+	var tAreax2 float64
+	for c:=range areax2{
+		tAreax2+=c
 	}
-	fmt.Println(tArea/2)
+	fmt.Println(tAreax2/2)
 	// Output:
-	// 1
+	// 24
 }
 
 
