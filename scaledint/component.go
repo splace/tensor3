@@ -39,11 +39,11 @@ func vectorUnscale(v *Vector){
 
 
 func (v BaseType) String()string{
-	return fmt.Sprint(float64(v)/float64(scale))
+	return fmt.Sprint(float32(v)/float32(scale))
 }
 
 func (v Vector) String()string{
-	return fmt.Sprintf("{%v %v %v}",v.x,v.y,v.z)
+	return fmt.Sprintf("{%s %s %s}",v.x,v.y,v.z)
 }
 
 // TODO scan scaled?

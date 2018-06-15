@@ -57,10 +57,10 @@ func (v *Vector) Multiply(s BaseType) {
 
 // components independently divided
 func (v *Vector) Divide(s BaseType) {
+	vectorScale(v)
 	v.x /= s
 	v.y /= s
 	v.z /= s
-	vectorUnscale(v)
 }
 
 func (v Vector) Dot(v2 Vector) BaseType {

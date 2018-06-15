@@ -44,7 +44,7 @@ func TestMatrixInvert(t *testing.T) {
 	m2.Invert()
 	m.Product(m2)
 	if m != Identity {
-		t.Error(m,m2)
+		t.Error(m)
 	}
 }
 
@@ -63,7 +63,7 @@ func TestMatrixProductDet(t *testing.T) {
 	d2 := m2.Determinant()
 	m1.Product(m2)
 	dp := m1.Determinant()
-	if d1*d2 != dp {
+	if baseUnscale(d1*d2) != dp {
 		t.Error("The determinant of a matrix product of square matrices did NOT equal the product of their determinants:")
 	}
 }
@@ -73,9 +73,8 @@ func TestMatrixInvertDet(t *testing.T) {
 	d := m.Determinant()
 	m.Invert()
 	di := m.Determinant()
-	if float32(d*di) != 1 {
-		//fmt.Println(d,di,d*di)
-		t.Error(d,di,d*di,"The determinant of the inverse of an invertible matrix should be the inverse of the determinant.")
+	if float32(d) != float32(1/di) {  // float32 so rounding error ignored (when basetype float32)
+		t.Error("The determinant of the inverse of an invertible matrix should be the inverse of the determinant.")
 	}
 }
 
