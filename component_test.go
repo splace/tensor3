@@ -72,10 +72,10 @@ func ExampleSmallestSeparation(){
 
 func ExampleBoxArea() {
 	boxVertices:=NewVectors(1, 1, 1, 1, -1, 1,-1, 1, 1,-1, -1, 1,1, 1, -1,1, -1, -1,-1, 1, -1,-1, -1, -1)
-	boxTriStrip := NewVectorRefsFromIndexes(boxVertices,1,2,3,4,7,8,5,6,6,8,8,4,6,2,5,1,7,3)
+	boxSurfaceTriStrip := NewVectorRefsFromIndexes(boxVertices,1,2,3,4,7,8,5,6,6,8,8,4,6,2,5,1,7,3)
 	areax2:=make(chan float64)
 	go func(){
-		boxTriStrip.ForEachInSlices(3,1,false,
+		boxSurfaceTriStrip.ForEachInSlices(3,1,false,
 			func(tri VectorRefs) {
 				v1:=Vector{}
 				v1.Set(*tri[0])

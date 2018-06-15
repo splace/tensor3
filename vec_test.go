@@ -26,8 +26,8 @@ func TestNewVectorPrint(t *testing.T) {
 
 func TestVecDot(t *testing.T) {
 	v :=*New(1, 2, 3)
-	if v.Dot(*New(4, 5, 6)) != 32 {
-		t.Error(v)
+	if fmt.Sprint(v.Dot(*New(4, 5, 6))) != "32" {
+		t.Error(v.Dot(*New(4, 5, 6)))
 	}
 }
 
@@ -57,14 +57,14 @@ func TestVecCross(t *testing.T) {
 
 func TestVecLengthLength(t *testing.T) {
 	v := New(1, 2, 3)
-	if v.LengthLength() != 14 {
+	if fmt.Sprint(v.LengthLength()) != "14" {
 		t.Error(v.LengthLength())
 	}
 }
 
 func TestVecDistDist(t *testing.T) {
 	v := New(3, 2, 4)
-	if v.DistDist(*New(-3, 2, -4)) != 100 {
+	if fmt.Sprint(v.DistDist(*New(-3, 2, -4))) != "100" {
 		t.Error(v.DistDist(*New(-3, 2, -4)))
 	}
 }

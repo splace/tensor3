@@ -44,7 +44,7 @@ func TestMatrixInvert(t *testing.T) {
 	m2.Invert()
 	m.Product(m2)
 	if m != Identity {
-		t.Error(m)
+		t.Error(m,m2)
 	}
 }
 
@@ -57,8 +57,8 @@ func TestMatrixProduct(t *testing.T) {
 }
 
 func TestMatrixProductDet(t *testing.T) {
-	m1 := NewMatrix(1, 2, 3, 4, 5, 6, 7, 8, 9)
-	m2 := NewMatrix(9, 8, 7, 6, 5, 4, 3, 2, 1)
+	m1 := NewMatrix(2, 2, 3, 4, 5, 6, 7, 8, 9)
+	m2 := NewMatrix(9, 8, 7, 6, 5, 4, 3, 2, 2)
 	d1 := m1.Determinant()
 	d2 := m2.Determinant()
 	m1.Product(m2)
@@ -75,7 +75,7 @@ func TestMatrixInvertDet(t *testing.T) {
 	di := m.Determinant()
 	if float32(d*di) != 1 {
 		//fmt.Println(d,di,d*di)
-		t.Error("The determinant of the inverse of an invertible matrix should be the inverse of the determinant.")
+		t.Error(d,di,d*di,"The determinant of the inverse of an invertible matrix should be the inverse of the determinant.")
 	}
 }
 
@@ -89,7 +89,7 @@ func TestMatrixProductIndentity(t *testing.T) {
 
 func TestMatrixMultiply(t *testing.T) {
 	m := NewMatrix(1, 2, 3, 4, 5, 6, 7, 8, 9)
-	m.Multiply(2)
+	m.Multiply(Base32(2))
 	if fmt.Sprint(m) != "[{2 4 6} {8 10 12} {14 16 18}]" {
 		t.Error(m)
 	}

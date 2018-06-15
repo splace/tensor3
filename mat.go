@@ -75,7 +75,7 @@ func (m *Matrix) Invert() {
 	det := m.Determinant()
 	var det2x2 func(BaseType, BaseType, BaseType, BaseType) BaseType
 	det2x2 = func(a, b, c, d BaseType) BaseType {
-		return a*d - b*c
+		return baseUnscale(a*d - b*c)
 	}
 	m[0].x, m[0].y, m[0].z, m[1].x, m[1].y, m[1].z, m[2].x, m[2].y, m[2].z =
 		det2x2(m[1].y, m[1].z, m[2].y, m[2].z), det2x2(m[0].z, m[0].y, m[2].z, m[2].y), det2x2(m[0].y, m[0].z, m[1].y, m[1].z),

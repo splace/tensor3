@@ -31,7 +31,7 @@ func vectorUnscale(v *Vector) {
 }
 
 // new vector reference from float32's 
-func New(x,y,z float32) *Vector{
+func New(x,y,z float64) *Vector{
 	return &Vector{BaseType(x),BaseType(y),BaseType(z)}
 }
 

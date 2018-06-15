@@ -41,10 +41,10 @@ func ExampleUnitify(){
 
 func ExampleForEachVector(){
 	vs:=NewVectors(1,0,-3)
-	vs.ForEachNoParameter(func(v *Vector){v.Multiply(2)})
+	vs.ForEachNoParameter(func(v *Vector){v.Multiply(Base32(2))})
 	fmt.Printf("%+v",vs)
 	// Output:
-	// [{x:2 y:0 z:-6}]
+	// [{2 0 -6}]
 }
 
 
