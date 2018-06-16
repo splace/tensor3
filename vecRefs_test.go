@@ -168,6 +168,18 @@ func TestVecRefsStride(t *testing.T) {
 	}
 }
 
+func TestVecRefsSearchMin(t *testing.T) {
+	vs := VectorRefs{New(1, 2, 3),New(4, 5, 6), New(7, 8, 9), New(10, 11, 12), New(13, 14, 15)}
+	i,j,_:=vs.SearchMin(
+		func(v1,v2 Vector) BaseType {
+			return -v1.x-v2.x
+		},
+	)
+	if i != 3 || j != 4 {
+		t.Error(i,j)
+	}
+}
+
 
 func TestVecRefsSplit(t *testing.T) {
 	vs := VectorRefs{New(1,2,3), New(4,5,6), New(7,8,9)}
@@ -189,7 +201,7 @@ func TestVecRefsSplit(t *testing.T) {
 	}
 }
 
-func TestVecRefsRegionalSlicesInChunks(t *testing.T) {
+func TestVecRefsRegionalSlices(t *testing.T) {
 	Hints.ChunkSizeFixed = true
 	defer func(dcs int) {
 		Hints.ChunkSizeFixed = false
@@ -200,7 +212,7 @@ func TestVecRefsRegionalSlicesInChunks(t *testing.T) {
 	vrs := VectorRefs{New(1, 2, 3), New(4, 5, 6), New(7, 8, 9), New(10, 11, 12), New(13, 14, 15)}
 	var vrs2 []VectorRefs
 	
-	for vrss:=range vectorRefsInRegionalChunks(vrs,vrs.Middle(),4){
+	for vrss:=range vectorRefsSplitRegionally(vrs,vrs.Middle()){
 		vrs2=append(vrs2,vrss)
 	}
 	
@@ -209,6 +221,8 @@ func TestVecRefsRegionalSlicesInChunks(t *testing.T) {
 	}
 	vrs2=vrs2[:0]
 }
+
+
 
 
 func TestVecRefsTriangleStripArea(t *testing.T) {

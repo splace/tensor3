@@ -271,14 +271,38 @@ func vectorsInMatrixChunks(vs Vectors, cs,stride int, wrap bool) chan Matrices {
 
 // return a channel of VectorRefs that are chunks of the passed VectorRefs.
 // as an optimisation, which some functions might benefit from, the VectorRefs are split so that each chunk contains all/only the VectorRefs within a spacial region, meaning nearby points are MUCH more likely to be in the same chunk.
-func vectorRefsInRegionalChunks(vs VectorRefs, centre Vector, cs int) chan VectorRefs {
+func vectorRefsSplitRegionally(vrs VectorRefs, centre Vector) chan VectorRefs {
+	// TODO continue to subdivide if exceed chunk size?
+	// TODO return, another channel?, boundingbox of chunk? 
+	cvr := make(chan VectorRefs,8)  // non blocking since a max on 8 VectorRefs from this split function
+	// range over a slice of VectorRefs, returned by the Split function, using a function that splits into 8 regions using which side of the origin Vector, by axis alignment, the point is on.
+	for _,s:=range func() []VectorRefs {
+		return vrs.Split(
+			func(v *Vector)(i uint){
+				i++   // index never zero, since for this all points go somewhere
+				if v.x>=centre.x {i++}
+				if v.y>=centre.y {i+=2} 
+				if v.z>=centre.z {i+=4}
+				return
+			},
+		)
+	}(){
+		cvr <- s
+	}
+	close(cvr)
+	return cvr
+}
+
+// return a channel of VectorRefs that are chunks of the passed Vectors.
+// as an optimisation, which some functions might benefit from, the Vectors are split so that each chunk contains all/only the VectorRefs within a spacial region, meaning nearby points are MUCH more likely to be in the same chunk.
+func vectorsSplitRegionally(vs Vectors, centre Vector) chan VectorRefs {
 	// TODO continue to subdivide if exceed chunk size?
 	// TODO return, another channel?, boundingbox of chunk? 
 	cvr := make(chan VectorRefs,8)  // non blocking since a max on 8 VectorRefs from this split function
 	// range over a slice of VectorRefs, returned by the Split function, using a function that splits into 8 regions using which side of the origin Vector, by axis alignment, the point is on.
 	for _,s:=range func() []VectorRefs {
 		return vs.Split(
-			func(v *Vector)(i uint){
+			func(v Vector)(i uint){
 				i++   // index never zero, since for this all points go somewhere
 				if v.x>=centre.x {i++}
 				if v.y>=centre.y {i+=2} 

@@ -57,7 +57,7 @@ func (v *Vector) Multiply(s BaseType) {
 
 // components independently divided
 func (v *Vector) Divide(s BaseType) {
-	vectorScale(v)
+	vectorScale(v)  //TODO half scale?
 	v.x /= s
 	v.y /= s
 	v.z /= s

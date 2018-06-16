@@ -468,7 +468,7 @@ func TestVecsTriangleStripArea(t *testing.T) {
 				v2.Set(tri[0])
 				v2.Subtract(tri[2])
 				v1.Cross(v2)
-				areax2 <- math.Sqrt(float64(baseUnscale(v1.LengthLength())))
+				areax2 <- math.Sqrt(float64(v1.LengthLength()))
 			})
 		close(areax2)
 	}()
@@ -476,7 +476,7 @@ func TestVecsTriangleStripArea(t *testing.T) {
 	for c:=range areax2{
 		tAreax2+=c
 	}
-	if tAreax2 != 4 {
+	if tAreax2/math.Sqrt(scale) != 4 {
 		t.Error(tAreax2)
 	}}
 

@@ -469,4 +469,28 @@ func vectorRefsInSlicesApplyChunked(vrs VectorRefs,length,stride int,wrap bool, 
 	}
 }
 
+// search VectorRefs for the two Vector's that return the minimum value from the provided function
+func (vrs VectorRefs) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int, value BaseType) {
+	// TODO search in chunks
+	value = toMin(*vrs[0], *vrs[1])
+	var v1, v2 *Vector
+	var il, jl int = 0, 1
+	for jl, v2 = range vrs[2:] {
+		nl := toMin(*vrs[0], *v2)
+		if nl < value {
+			value, j = nl, jl+2
+		}
+	}
+
+	for il, v1 = range vrs[1:] {
+		for jl, v2 = range vrs[il+2:] {
+			nl := toMin(*v1, *v2)
+			if nl < value {
+				value, i, j = nl, il+1, jl+il+2
+			}
+		}
+	}
+	return
+}
+
 

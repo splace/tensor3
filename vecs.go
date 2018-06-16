@@ -259,9 +259,9 @@ func (vs Vectors) Stride(s uint) (svs VectorRefs) {
 // or put another way;
 // bin Vector's by the functions returned value.
 // bins start at 1, a function returning a value of 0 causes the VecRef not to be in any of the returned bins.
-func (vs Vectors) Split(fn func(*Vector)uint) (ssvs []VectorRefs) {
+func (vs Vectors) Split(fn func(Vector)uint) (ssvs []VectorRefs) {
 	for i := range vs {
-		ind:= fn(&vs[i])
+		ind:= fn(vs[i])
 		if ind>0 {
 			// pad, if needed, with a series of new VectorRefs to fill up to index. (max index not preknown)
 			if ind > uint(len(ssvs)){

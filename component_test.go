@@ -49,9 +49,9 @@ func ExampleForEachVector() {
 
 func ExampleSmallestSeparation(){
 	var rnd = rand.New(rand.NewSource(0))
-	vrs:=make(Vectors,10000)
-	for i := range vrs{
-		vrs[i]=*New(rnd.NormFloat64()*100,rnd.NormFloat64()*100,rnd.NormFloat64()*100)
+	vs:=make(Vectors,10000)
+	for i := range vs{
+		vs[i]=*New(rnd.NormFloat64()*100,rnd.NormFloat64()*100,rnd.NormFloat64()*100)
 	}
 
 	separation:=func(v1,v2 Vector) BaseType{
@@ -60,14 +60,40 @@ func ExampleSmallestSeparation(){
 	}
 
 	//start:=time.Now()
-	i1,i2,ll:=vrs.SearchMin(separation)
+	i1,i2,ll:=vs.SearchMin(separation)
 	//fmt.Printf("%v %v %v %v %v %v %v",il,jl,math.Sqrt(float64(ll)),len(vrs),vrs[il],vrs[jl],time.Since(start))
 	fmt.Printf("%v %v %v",i1,i2,math.Sqrt(float64(ll)))
 	// Output:
 	// 3159 8069 0.5642342569708744
 }
 
-//TODO smallest area regional spliting
+func ExampleSmallestSeparationRegional(){
+	var rnd = rand.New(rand.NewSource(0))
+	vs:=make(Vectors,10000)
+	for i := range vs{
+		vs[i]=*New(rnd.NormFloat64()*100,rnd.NormFloat64()*100,rnd.NormFloat64()*100)
+	}
+
+	
+	separation:=func(v1,v2 Vector) BaseType{
+		v1.Subtract(v2)
+		return v1.LengthLength()
+	}
+
+	//start:=time.Now()
+	splitPoint:=vs.Middle()
+	for vrss:=range vectorsSplitRegionally(vs,splitPoint){
+		i1,i2,ll:=vrss.SearchMin(separation)
+	}
+
+	//fmt.Printf("%v %v %v %v %v %v %v",il,jl,math.Sqrt(float64(ll)),len(vrs),vrs[il],vrs[jl],time.Since(start))
+	fmt.Printf("%v %v %v",i1,i2,math.Sqrt(float64(ll)))
+	// Output:
+	// 3159 8069 0.5642342569708744
+}
+
+
+//TODO smallest separation regional spliting
 
 
 func ExampleBoxArea() {
