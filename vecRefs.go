@@ -493,4 +493,8 @@ func (vrs VectorRefs) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int, 
 	return
 }
 
+func (vrs VectorRefs) SearchMinRegionally(toMin func(Vector, Vector) BaseType) (i, j int, value BaseType) {
+	//	splitPoint:=vs.Middle()
+	return vrs.SearchMin(toMin)
+}
 

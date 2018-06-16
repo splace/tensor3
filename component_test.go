@@ -81,10 +81,8 @@ func ExampleSmallestSeparationRegional(){
 	}
 
 	//start:=time.Now()
-	splitPoint:=vs.Middle()
-	for vrss:=range vectorsSplitRegionally(vs,splitPoint){
-		i1,i2,ll:=vrss.SearchMin(separation)
-	}
+
+	i1,i2,ll:=vs.SearchMinRegionally(separation)
 
 	//fmt.Printf("%v %v %v %v %v %v %v",il,jl,math.Sqrt(float64(ll)),len(vrs),vrs[il],vrs[jl],time.Since(start))
 	fmt.Printf("%v %v %v",i1,i2,math.Sqrt(float64(ll)))

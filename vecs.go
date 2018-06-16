@@ -182,7 +182,9 @@ func (vs Vectors) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int, valu
 	return
 }
 
-
+func (vs Vectors) SearchMinregionally(toMin func(Vector, Vector) BaseType) (i, j int, value BaseType) {
+	return vs.SearchMin(toMin)
+}
 /*
 func (b *BaseType) Aggregate(vs Vectors,length,stride int, fn func(*BaseType, Vectors)) {
 	for vsc := range vectorSlicesInChunks(vs,chunkSize(len(vs)),length,stride,false) {
