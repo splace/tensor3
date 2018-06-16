@@ -182,7 +182,7 @@ func (vs Vectors) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int, valu
 	return
 }
 
-func (vs Vectors) SearchMinregionally(toMin func(Vector, Vector) BaseType) (i, j int, value BaseType) {
+func (vs Vectors) SearchMinRegionally(toMin func(Vector, Vector) BaseType) (i, j int, value BaseType) {
 	return vs.SearchMin(toMin)
 }
 /*
