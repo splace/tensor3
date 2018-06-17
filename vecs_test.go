@@ -4,6 +4,8 @@ import "testing"
 import "fmt"
 import "math"
 
+import "math/rand"
+
 func TestVecsPrint(t *testing.T) {
 	v := Vectors{*New(1, 2, 3)}
 	if fmt.Sprint(v) != "[{1 2 3}]" {
@@ -403,7 +405,26 @@ func TestVecsSearchMin(t *testing.T) {
 
 }
 
+func TestVecsSearchMinRegionally(t *testing.T) {
+	var rnd = rand.New(rand.NewSource(0))
+	vs:=make(Vectors,10000)
+	for i := range vs{
+		vs[i]=*New(rnd.NormFloat64()*100,rnd.NormFloat64()*100,rnd.NormFloat64()*100)
+	}
 
+	separation:=func(v1,v2 Vector) BaseType{
+		v1.Subtract(v2)
+		return v1.LengthLength()
+	}
+
+	i,j:=vs.SearchMinRegionally(separation)
+	
+	vrs:=VectorRefs{i,j}.Indexes(vs)
+	
+	if vrs[0]-1 != 3159 || vrs[1]-1 != 8069 || math.Sqrt(float64(separation(*i,*j)))!=0.5642342569708744{
+		t.Error(vrs,math.Sqrt(float64(separation(*i,*j))))
+	}
+}
 
 func TestVecsForEachInSlices(t *testing.T) {
 	vs := Vectors{*New(0, 0, 0), *New(1, 0, 0), *New(1, 1, 0)}

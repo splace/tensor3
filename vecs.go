@@ -10,6 +10,15 @@ func NewVectors(cs ...BaseType) (vs Vectors) {
 	return
 }
 
+func (vs Vectors) Index(vr *Vector) (i uint) {
+	for j := range vs {
+		if &vs[j] == vr {
+			return uint(j+1)
+		}
+	}
+	return 0
+}
+
 func (vs Vectors) Cross(v Vector) {
 	vs.ForEach((*Vector).Cross, v)
 }
@@ -161,9 +170,10 @@ func vectorsApplyAllChunked(vs Vectors, fn func(*Vector, Vector), vs2 Vectors) {
 // search Vectors for the two Vector's that return the minimum value from the provided function
 func (vs Vectors) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int, value BaseType) {
 	// TODO search in chunks
+	j=1
 	value = toMin(vs[0], vs[1])
 	var v1, v2 Vector
-	var il, jl int = 0, 1
+	var il, jl int
 	for jl, v2 = range vs[2:] {
 		nl := toMin(vs[0], v2)
 		if nl < value {
@@ -182,8 +192,20 @@ func (vs Vectors) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int, valu
 	return
 }
 
-func (vs Vectors) SearchMinRegionally(toMin func(Vector, Vector) BaseType) (i, j int, value BaseType) {
-	return vs.SearchMin(toMin)
+func (vs Vectors) SearchMinRegionally(toMin func(Vector, Vector) BaseType) (i, j *Vector) {
+	splitPoint:=vs.Middle()
+	var notFirst bool
+	for vrss:= range vectorsSplitRegionally(vs, splitPoint) {
+		if len(vrss)<2 {continue} // rare single point still needs so be checked with 3 region edge points
+		// TODO use go routine and channel for results.
+		 is,js,vs:=vrss.SearchMin(toMin)
+		 if !notFirst || vs<toMin(*vrss[is],*vrss[js]) {
+		 	i,j=vrss[is],vrss[js]
+		 	notFirst=true
+		 }
+		 // TODO region perimeter crossing match, if either match point is more min with any of its 3 region edge projected points, then another SearchMin, with the appropriate vrss, is needed.
+	}
+	return 
 }
 /*
 func (b *BaseType) Aggregate(vs Vectors,length,stride int, fn func(*BaseType, Vectors)) {

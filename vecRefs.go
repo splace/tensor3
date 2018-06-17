@@ -51,21 +51,16 @@ func NewVectorsFromVectorRefs(vss ...VectorRefs) Vectors {
 	return nv
 }
 
-// return a slice of indexes, the same length as the VectorRefs, to the items it references in the provided Vectors. 
-// an index will be zero if the corresponding VectorRef is not referencing an item in the Vectors.
+// return a slice of indexes, the same length as the VectorRefs, to the items this references in the provided Vectors. 
 // (Notice: this package uses 1 for the first item.)
+// an index of zero indicates reference not found.
 func (vsr VectorRefs) Indexes(vs Vectors) (is []uint) {
-	// TODO find index using unsafe pointer offset, would be much faster?
+	// TODO find index using unsafe pointer offset, massively faster.
 	is = make([]uint, len(vsr))
-	for ir, r := range vsr {
-		for i := range vs {
-			if &vs[i] == r {
-				is[ir] = uint(i + 1)
-				break
-			}
-		}
+	for ir, vr := range vsr {
+		is[ir]=vs.Index(vr)
 	}
-	return is
+	return
 }
 
 // make a slice of Vectors from the values referenced by this VectorRefs. 
@@ -77,7 +72,7 @@ func (vsr VectorRefs) Dereference() (vs Vectors) {
 	return
 }
 
-// overwrite the references in a VectorRefs to refer to the elements of this Vectors. 
+// overwrite the references in a VectorRefs to refer to the Vector's. 
 // for upto the greater length of the two slices.
 func (vs Vectors) Reference(vsr VectorRefs) {
 	if len(vs) > len(vsr) {
@@ -472,9 +467,10 @@ func vectorRefsInSlicesApplyChunked(vrs VectorRefs,length,stride int,wrap bool, 
 // search VectorRefs for the two Vector's that return the minimum value from the provided function
 func (vrs VectorRefs) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int, value BaseType) {
 	// TODO search in chunks
+	j=1
 	value = toMin(*vrs[0], *vrs[1])
 	var v1, v2 *Vector
-	var il, jl int = 0, 1
+	var il, jl int
 	for jl, v2 = range vrs[2:] {
 		nl := toMin(*vrs[0], *v2)
 		if nl < value {
