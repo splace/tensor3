@@ -196,7 +196,7 @@ func (vs Vectors) SearchMinRegionally(toMin func(Vector, Vector) BaseType) (i, j
 	splitPoint:=vs.Middle()
 	var notFirst bool
 	for vrss:= range vectorsSplitRegionally(vs, splitPoint) {
-		if len(vrss)<2 {continue} // rare single point still needs so be checked with 3 region edge points
+		if len(vrss)<2 {continue} // rare, when used usefully, single point still needs so be checked with 3 region edge points
 		// TODO use go routine and channel for results.
 		 is,js,vs:=vrss.SearchMin(toMin)
 		 if !notFirst || vs<toMin(*vrss[is],*vrss[js]) {
