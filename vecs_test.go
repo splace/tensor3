@@ -402,13 +402,13 @@ func TestVecsvectorsFindMin(t *testing.T) {
 }
 
 func TestVecsSearchMin(t *testing.T) {
-	vs := Vectors{*New(1, 2, 3), *New(4, 5, 6), *New(7, 8, 9), *New(10, 11, 12), *New(13, 14, 15)}
-	i,j,_:=vs.SearchMin(
+	vs := Vectors{*New(1, 2, 3), *New(4, 5, 6), *New(9, 8, 9), *New(10, 11, 12), *New(13, 14, 15)}
+	i,j:=vs.SearchMin(
 		func(v1,v2 Vector) BaseType {
-			return -v1.x-v2.x
+			return v1.x-v2.x
 		},
 	)
-	if i != 3 || j != 4 {
+	if i != 3 || j != 2 {
 		t.Error(i,j)
 	}
 

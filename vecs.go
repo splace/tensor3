@@ -213,20 +213,18 @@ func vectorsFindMinChunked(vs Vectors, toMin func(Vector) BaseType) (i int) {
 
 
 // search Vectors for the pair of Vector's that return the lowest value from the provided function.
-func (vs Vectors) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int, value BaseType) {
+func (vs Vectors) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int) {
 	// TODO search in chunks?
 	// TODO could be done with each vec mined with the slice before it and after it.
 	
 	// find the index of the min value for the first item with the rest of them. 
-	j=vs[1:].FindMin(func(v Vector) BaseType {return toMin(vs[0],v)})
-	j++
-	for i=range(vs[1:len(vs)-1]){
-		jp:=vs[i+1:].FindMin(func(v Vector) BaseType {return toMin(vs[i],v)})
-		if toMin(vs[jp+1],vs[i+1])< toMin(vs[j],vs[i+1]){
-			j=jp+1
+	j=vs[1:].FindMin(func(v Vector) BaseType {return toMin(vs[0],v)})+1
+	for ip:=range(vs[1:len(vs)-1]){
+		jp:=vs[ip+1:].FindMin(func(v Vector) BaseType {return toMin(vs[i],v)})+1
+		if toMin(vs[jp],vs[i]) < toMin(vs[j],vs[i]){
+			j,i=jp,ip+1
 		}
-	}	
-	i++
+	}
 	return
 /*	
 	j=1
