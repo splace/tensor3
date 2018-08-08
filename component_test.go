@@ -49,22 +49,30 @@ func ExampleForEachVector() {
 
 func ExampleSmallestSeparation(){
 	var rnd = rand.New(rand.NewSource(0))
-	vs:=make(Vectors,10000)
+	// vs:=make(Vectors,10000)  	// 3159 8069 0.5642342569708744
+	//vs:=make(Vectors,100000)  	// 3159 8069 0.5642342569708744
+	vs:=make(Vectors,20000)  	//  10233 18996 0.41657537780113923
 	for i := range vs{
 		vs[i]=*New(rnd.NormFloat64()*100,rnd.NormFloat64()*100,rnd.NormFloat64()*100)
 	}
 
+	// separation squared, still matches with smallest
 	separation:=func(v1,v2 Vector) BaseType{
 		v1.Subtract(v2)
 		return v1.LengthLength()
 	}
 
+	
+	// find the two points that are closest together
 	//start:=time.Now()
-	i1,i2,ll:=vs.SearchMin(separation)
+	//i1,i2,ll:=vs.SearchMin(separation)
+	Parallel=true
+	i1,i2,_:=vs.SearchMin(separation)
+	Parallel=false
 	//fmt.Printf("%v %v %v %v %v %v %v",il,jl,math.Sqrt(float64(ll)),len(vrs),vrs[il],vrs[jl],time.Since(start))
-	fmt.Printf("%v %v %v",i1,i2,math.Sqrt(float64(ll)))
+	fmt.Printf("%v %v %v",i1,i2,math.Sqrt(float64(separation(vs[i1],vs[i2]))))
 	// Output:
-	// 3159 8069 0.5642342569708744
+	// 10233 18996 0.41657537780113923
 }
 
 func ExampleSmallestSeparationRegional(){
@@ -82,19 +90,21 @@ func ExampleSmallestSeparationRegional(){
 
 	//start:=time.Now()
 
-	i1,i2,ll:=vs.SearchMinRegionally(separation)
+	i1,i2,_:=vs.SearchMinRegionally(separation)
+	//i1,i2,_:=vs.SearchMinRegionallyCentered(Vector{},separation)
 
 	//fmt.Printf("%v %v %v %v %v %v %v",il,jl,math.Sqrt(float64(ll)),len(vrs),vrs[il],vrs[jl],time.Since(start))
-	fmt.Printf("%v %v %v",i1,i2,math.Sqrt(float64(ll)))
+	fmt.Printf("%v %v %v",i1,i2,math.Sqrt(float64(separation(vs[i1],vs[i2]))))
 	// Output:
 	// 3159 8069 0.5642342569708744
 }
 
 
-//TODO smallest separation regional spliting
+//TODO smallest separation regional splitting
 
 
 func ExampleBoxArea() {
+	// find surface area of triangle strip set
 	boxVertices:=NewVectors(1, 1, 1, 1, -1, 1,-1, 1, 1,-1, -1, 1,1, 1, -1,1, -1, -1,-1, 1, -1,-1, -1, -1)
 	boxSurfaceTriStrip := NewVectorRefsFromIndexes(boxVertices,1,2,3,4,7,8,5,6,6,8,8,4,6,2,5,1,7,3)
 	areax2:=make(chan float64)
@@ -112,6 +122,7 @@ func ExampleBoxArea() {
 			})
 		close(areax2)
 	}()
+	// add together the areas (doubled) arriving on the channel
 	var tAreax2 float64
 	for c:=range areax2{
 		tAreax2+=c
@@ -121,4 +132,16 @@ func ExampleBoxArea() {
 	// 24
 }
 
+/*  Hal3 Tue 19 Jun 21:32:41 BST 2018 go version go1.6.2 linux/amd64
+FAIL	_/home/simon/Dropbox/github/working/tensor3 [build failed]
+Tue 19 Jun 21:32:42 BST 2018
+*/
+/*  Hal3 Tue 19 Jun 21:34:35 BST 2018 go version go1.6.2 linux/amd64
+FAIL	_/home/simon/Dropbox/github/working/tensor3 [build failed]
+Tue 19 Jun 21:34:37 BST 2018
+*/
+/*  Hal3 Tue 19 Jun 21:34:50 BST 2018 go version go1.6.2 linux/amd64
+FAIL	_/home/simon/Dropbox/github/working/tensor3 [build failed]
+Tue 19 Jun 21:34:51 BST 2018
+*/
 

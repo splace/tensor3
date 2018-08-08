@@ -24,7 +24,10 @@ var ParallelComponents bool
 // use hints to calc a good chunk size
 func chunkSize(l int) int {
 	if !Hints.ChunkSizeFixed {
-		if cs := l / Hints.Threads; cs > Hints.DefaultChunkSize {
+		if l< 2* Hints.DefaultChunkSize{
+			return l
+		}
+		if cs := l / Hints.Threads; cs > Hints.DefaultChunkSize { 
 			return cs
 		}
 	}

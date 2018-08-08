@@ -1,7 +1,10 @@
 package tensor3
 import "fmt"
 
-// component type
+// this file contains what is different between typed versions of this package
+// other files can/are just copies,(symlinks) they are generic.
+
+// base component type for this version of the package.
 type BaseType int
 
 const scaleShift=10
@@ -37,7 +40,7 @@ func vectorUnscale(v *Vector){
 	return
 }
 
-
+// this base type needs to be scaled for printing 
 func (v BaseType) String()string{
 	return fmt.Sprint(float32(v)/float32(scale))
 }

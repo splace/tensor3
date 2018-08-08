@@ -1,6 +1,10 @@
 package tensor3
+// this file contains what is different between typed versions of this package
+// other files can/are just copies,(symlinks) they are generic.
 
-// component type
+// notice in this, float64, base type version, scaling is a nop op, inlined/removed by all but the most basic compiler. 
+
+// base component type for this version of the package.
 type BaseType float64
 
 const scale = 1

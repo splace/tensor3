@@ -1,5 +1,7 @@
 package tensor3
 
+//import "fmt"
+
 type Vectors []Vector
 
 func NewVectors(cs ...BaseType) (vs Vectors) {
@@ -167,9 +169,66 @@ func vectorsApplyAllChunked(vs Vectors, fn func(*Vector, Vector), vs2 Vectors) {
 	}
 }
 
-// search Vectors for the two Vector's that return the minimum value from the provided function
+// find the index in the Vectors that produces the lowest value from the functio.
+func (vs Vectors) FindMin(toMin func(Vector) BaseType) int {
+	if !Parallel || len(vs)<chunkSize(len(vs)){
+		return vectorsFindMin(vs,toMin)
+	} else {
+		return vectorsFindMinChunked(vs,toMin)
+	}
+}
+
+func vectorsFindMin(vs Vectors, toMin func(Vector) BaseType) (i int) {
+	value := toMin(vs[0])
+	var imv BaseType
+	for j,jv:=range(vs[1:]){
+		imv=toMin(jv)
+		if imv < value {
+			value, i = imv, j+1
+		}
+	}
+	return
+}
+
+func vectorsFindMinChunked(vs Vectors, toMin func(Vector) BaseType) (i int) {
+	done := make(chan int, 1)
+	var running uint
+	for chunk := range vectorsInChunks(vs, chunkSize(len(vs))) {
+		running++
+		go func(c Vectors) {
+			done <- vectorsFindMin(c,toMin)
+		}(chunk)
+	}
+	i = <-done
+	var j int
+	for ; running > 0; running-- {
+		j = <-done
+		if toMin(vs[j])< toMin(vs[i]){
+			i=j
+		}
+	}
+	return
+//	return vectorsFindMin(vs,toMin) // TODO complete
+}
+
+
+// search Vectors for the pair of Vector's that return the lowest value from the provided function.
 func (vs Vectors) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int, value BaseType) {
-	// TODO search in chunks
+	// TODO search in chunks?
+	// TODO could be done with each vec mined with the slice before it and after it.
+	
+	// find the index of the min value for the first item with the rest of them. 
+	j=vs[1:].FindMin(func(v Vector) BaseType {return toMin(vs[0],v)})
+	j++
+	for i=range(vs[1:len(vs)-1]){
+		jp:=vs[i+1:].FindMin(func(v Vector) BaseType {return toMin(vs[i],v)})
+		if toMin(vs[jp+1],vs[i+1])< toMin(vs[j],vs[i+1]){
+			j=jp-1
+		}
+	}	
+	i++
+	return
+/*	
 	j=1
 	value = toMin(vs[0], vs[1])
 	var v1, v2 Vector
@@ -190,23 +249,30 @@ func (vs Vectors) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int, valu
 		}
 	}
 	return
+*/
 }
 
 func (vs Vectors) SearchMinRegionally(toMin func(Vector, Vector) BaseType) (i, j *Vector) {
-	splitPoint:=vs.Middle()
+	return vs.SearchMinRegionallyCentered(vs.Middle(),toMin)
+}
+
+func (vs Vectors) SearchMinRegionallyCentered(splitPoint Vector, toMin func(Vector, Vector) BaseType) (i, j *Vector) {
 	var notFirst bool
 	for vrss:= range vectorsSplitRegionally(vs, splitPoint) {
-		if len(vrss)<2 {continue} // rare, when used usefully, single point still needs so be checked with 3 region edge points
+		if len(vrss)<2 {continue} // rare, when used usefully, but single point still needs so be checked with 3 region edge points, and potentially needs perimeter crossing match test
 		// TODO use go routine and channel for results.
 		 is,js,vs:=vrss.SearchMin(toMin)
 		 if !notFirst || vs<toMin(*vrss[is],*vrss[js]) {
 		 	i,j=vrss[is],vrss[js]
 		 	notFirst=true
 		 }
-		 // TODO region perimeter crossing match, if either match point is more min with any of its 3 region edge projected points, then another SearchMin, with the appropriate vrss, is needed.
+		 // TODO region perimeter crossing match test, if either match point has lower toMin with any of its 3 region edge projected points, then another SearchMin, with the appropriate vrss, is needed.
+		 // TODO 
 	}
 	return 
 }
+
+
 /*
 func (b *BaseType) Aggregate(vs Vectors,length,stride int, fn func(*BaseType, Vectors)) {
 	for vsc := range vectorSlicesInChunks(vs,chunkSize(len(vs)),length,stride,false) {
@@ -281,7 +347,7 @@ func (vs Vectors) Stride(s uint) (svs VectorRefs) {
 
 // return a slice of VectorRefs each referencing those Vector's that returned the slices index value from the provided function.
 // or put another way;
-// bin Vector's by the functions returned value.
+// bin Vector's by the value returned by the provided function.
 // bins start at 1, a function returning a value of 0 causes the VecRef not to be in any of the returned bins.
 func (vs Vectors) Split(fn func(Vector)uint) (ssvs []VectorRefs) {
 	for i := range vs {

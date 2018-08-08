@@ -89,6 +89,8 @@ func (v *Vector) Set(v2 Vector) {
 	v.z = v2.z
 }
 
+// Max sets the referenced Vector's components to being the greater of their original value and the presented Vector's.
+// (both vectors are inside a bounding box with the returned value as its upper bound.) 
 func (v *Vector) Max(v2 Vector) {
 	if v2.x > v.x {
 		v.x = v2.x
@@ -101,6 +103,8 @@ func (v *Vector) Max(v2 Vector) {
 	}
 }
 
+// Min sets the referenced Vector's components to being the lesser of their original value and the presented Vector's.
+// (both vectors are inside a bounding box with the returned value as its lower bound.) 
 func (v *Vector) Min(v2 Vector) {
 	if v2.x < v.x {
 		v.x = v2.x
