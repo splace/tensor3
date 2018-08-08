@@ -49,9 +49,8 @@ func ExampleForEachVector() {
 
 func ExampleSmallestSeparation(){
 	var rnd = rand.New(rand.NewSource(0))
-	// vs:=make(Vectors,10000)  	// 3159 8069 0.5642342569708744
-	//vs:=make(Vectors,100000)  	// 3159 8069 0.5642342569708744
-	vs:=make(Vectors,20000)  	//  10233 18996 0.41657537780113923
+	 vs:=make(Vectors,10000)  	// 3159 8069 0.5642342569708744
+	//vs:=make(Vectors,20000)  	//  10233 18996 0.41657537780113923
 	for i := range vs{
 		vs[i]=*New(rnd.NormFloat64()*100,rnd.NormFloat64()*100,rnd.NormFloat64()*100)
 	}
@@ -67,7 +66,7 @@ func ExampleSmallestSeparation(){
 	//start:=time.Now()
 	//i1,i2,ll:=vs.SearchMin(separation)
 	//Parallel=true
-	i1,i2,_:=vs.SearchMin(separation)
+	i1,i2:=vs.SearchMin(separation)
 	//Parallel=false
 	//fmt.Printf("%v %v %v %v %v %v %v",il,jl,math.Sqrt(float64(ll)),len(vrs),vrs[il],vrs[jl],time.Since(start))
 	fmt.Printf("%v %v %v",i1,i2,math.Sqrt(float64(separation(vs[i1],vs[i2]))))
@@ -143,5 +142,8 @@ Tue 19 Jun 21:34:37 BST 2018
 /*  Hal3 Tue 19 Jun 21:34:50 BST 2018 go version go1.6.2 linux/amd64
 FAIL	_/home/simon/Dropbox/github/working/tensor3 [build failed]
 Tue 19 Jun 21:34:51 BST 2018
+*/
+/* run: tags="" hal3 Wed 8 Aug 23:00:42 BST 2018 go version go1.10.3 linux/amd64
+Wed 8 Aug 23:00:42 BST 2018
 */
 

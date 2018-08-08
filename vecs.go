@@ -219,9 +219,10 @@ func (vs Vectors) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int) {
 	
 	// find the index of the min value for the first item with the rest of them. 
 	j=vs[1:].FindMin(func(v Vector) BaseType {return toMin(vs[0],v)})+1
-	for ip:=range(vs[1:len(vs)-1]){
-		jp:=vs[ip+1:].FindMin(func(v Vector) BaseType {return toMin(vs[i],v)})+1
-		if toMin(vs[jp],vs[i]) < toMin(vs[j],vs[i]){
+	var jp int
+	for ip,vip:=range(vs[1:len(vs)-1]){
+		jp=vs[ip+2:].FindMin(func(v Vector) BaseType {return toMin(vip,v)})+2+ip
+		if toMin(vip,vs[jp]) < toMin(vs[i],vs[j]){
 			j,i=jp,ip+1
 		}
 	}
