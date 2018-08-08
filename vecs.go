@@ -1,7 +1,5 @@
 package tensor3
 
-//import "fmt"
-
 type Vectors []Vector
 
 func NewVectors(cs ...BaseType) (vs Vectors) {
@@ -199,9 +197,10 @@ func vectorsFindMinChunked(vs Vectors, toMin func(Vector) BaseType) (i int) {
 			done <- vectorsFindMin(c,toMin)
 		}(chunk)
 	}
+	if running==0 {return}
 	i = <-done
 	var j int
-	for ; running > 0; running-- {
+	for ; running > 1; running-- {
 		j = <-done
 		if toMin(vs[j])< toMin(vs[i]){
 			i=j

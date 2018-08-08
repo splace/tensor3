@@ -401,6 +401,17 @@ func TestVecsvectorsFindMin(t *testing.T) {
 	
 }
 
+func TestVecsvectorsFindMinChunked(t *testing.T) {
+	index:=vectorsFindMinChunked(
+		Vectors{*New(1, 2, 3), *New(4, 5, 6), *New(7, 8, 9), *New(10, 11, 12), *New(13, 14, 15)},
+		func(v Vector) BaseType {return -v.x},	
+		)
+	if index!=4{
+		t.Error()
+	}
+	
+}
+
 func TestVecsSearchMin(t *testing.T) {
 	vs := Vectors{*New(1, 2, 3), *New(4, 5, 6), *New(9, 8, 9), *New(10, 11, 12), *New(13, 14, 15)}
 	i,j:=vs.SearchMin(
@@ -421,6 +432,9 @@ func TestVecsSearchMin(t *testing.T) {
 	}
 
 }
+
+
+
 
 func TestVecsSearchMinRegionally(t *testing.T) {
 	var rnd = rand.New(rand.NewSource(0))

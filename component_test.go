@@ -49,8 +49,8 @@ func ExampleForEachVector() {
 
 func ExampleSmallestSeparation(){
 	var rnd = rand.New(rand.NewSource(0))
-	 vs:=make(Vectors,10000)  	// 3159 8069 0.5642342569708744
-	//vs:=make(Vectors,20000)  	//  10233 18996 0.41657537780113923
+	// vs:=make(Vectors,10000)  	// 3159 8069 0.5642342569708744
+	vs:=make(Vectors,20000)  	//  10233 18996 0.41657537780113923
 	for i := range vs{
 		vs[i]=*New(rnd.NormFloat64()*100,rnd.NormFloat64()*100,rnd.NormFloat64()*100)
 	}
@@ -65,9 +65,9 @@ func ExampleSmallestSeparation(){
 	// find the two points that are closest together
 	//start:=time.Now()
 	//i1,i2,ll:=vs.SearchMin(separation)
-	//Parallel=true
+	Parallel=true
 	i1,i2:=vs.SearchMin(separation)
-	//Parallel=false
+	Parallel=false
 	//fmt.Printf("%v %v %v %v %v %v %v",il,jl,math.Sqrt(float64(ll)),len(vrs),vrs[il],vrs[jl],time.Since(start))
 	fmt.Printf("%v %v %v",i1,i2,math.Sqrt(float64(separation(vs[i1],vs[i2]))))
 	// Output:
