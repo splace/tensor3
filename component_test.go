@@ -66,9 +66,9 @@ func ExampleSmallestSeparation(){
 	// find the two points that are closest together
 	//start:=time.Now()
 	//i1,i2,ll:=vs.SearchMin(separation)
-	Parallel=true
+	//Parallel=true
 	i1,i2,_:=vs.SearchMin(separation)
-	Parallel=false
+	//Parallel=false
 	//fmt.Printf("%v %v %v %v %v %v %v",il,jl,math.Sqrt(float64(ll)),len(vrs),vrs[il],vrs[jl],time.Since(start))
 	fmt.Printf("%v %v %v",i1,i2,math.Sqrt(float64(separation(vs[i1],vs[i2]))))
 	// Output:
@@ -90,11 +90,11 @@ func ExampleSmallestSeparationRegional(){
 
 	//start:=time.Now()
 
-	i1,i2,_:=vs.SearchMinRegionally(separation)
+	v1,v2:=vs.SearchMinRegionally(separation)
 	//i1,i2,_:=vs.SearchMinRegionallyCentered(Vector{},separation)
 
 	//fmt.Printf("%v %v %v %v %v %v %v",il,jl,math.Sqrt(float64(ll)),len(vrs),vrs[il],vrs[jl],time.Since(start))
-	fmt.Printf("%v %v %v",i1,i2,math.Sqrt(float64(separation(vs[i1],vs[i2]))))
+	fmt.Printf("%v %v %v",v1,v2,math.Sqrt(float64(separation(*v1,*v2))))
 	// Output:
 	// 3159 8069 0.5642342569708744
 }

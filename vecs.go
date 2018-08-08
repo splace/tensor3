@@ -223,7 +223,7 @@ func (vs Vectors) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int, valu
 	for i=range(vs[1:len(vs)-1]){
 		jp:=vs[i+1:].FindMin(func(v Vector) BaseType {return toMin(vs[i],v)})
 		if toMin(vs[jp+1],vs[i+1])< toMin(vs[j],vs[i+1]){
-			j=jp-1
+			j=jp+1
 		}
 	}	
 	i++
