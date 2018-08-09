@@ -50,7 +50,8 @@ func ExampleForEachVector() {
 func ExampleSmallestSeparation(){
 	var rnd = rand.New(rand.NewSource(0))
 	// vs:=make(Vectors,10000)  	// 3159 8069 0.5642342569708744
-	vs:=make(Vectors,20000)  	//  10233 18996 0.41657537780113923
+	// vs:=make(Vectors,100000)  	//  61008 63498 0.14127070120538512
+	vs:=make(Vectors,20000)  	//  10233 18996 0.41657537780113923 61008 63498 0.14127070120538512
 	for i := range vs{
 		vs[i]=*New(rnd.NormFloat64()*100,rnd.NormFloat64()*100,rnd.NormFloat64()*100)
 	}
@@ -130,20 +131,4 @@ func ExampleBoxArea() {
 	// Output:
 	// 24
 }
-
-/*  Hal3 Tue 19 Jun 21:32:41 BST 2018 go version go1.6.2 linux/amd64
-FAIL	_/home/simon/Dropbox/github/working/tensor3 [build failed]
-Tue 19 Jun 21:32:42 BST 2018
-*/
-/*  Hal3 Tue 19 Jun 21:34:35 BST 2018 go version go1.6.2 linux/amd64
-FAIL	_/home/simon/Dropbox/github/working/tensor3 [build failed]
-Tue 19 Jun 21:34:37 BST 2018
-*/
-/*  Hal3 Tue 19 Jun 21:34:50 BST 2018 go version go1.6.2 linux/amd64
-FAIL	_/home/simon/Dropbox/github/working/tensor3 [build failed]
-Tue 19 Jun 21:34:51 BST 2018
-*/
-/* run: tags="" hal3 Wed 8 Aug 23:00:42 BST 2018 go version go1.10.3 linux/amd64
-Wed 8 Aug 23:00:42 BST 2018
-*/
 

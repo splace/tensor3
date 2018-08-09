@@ -464,32 +464,64 @@ func vectorRefsInSlicesApplyChunked(vrs VectorRefs,length,stride int,wrap bool, 
 	}
 }
 
-// search VectorRefs for the two Vector's that return the minimum value from the provided function
-func (vrs VectorRefs) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int, value BaseType) {
-	// TODO search in chunks
-	j=1
-	value = toMin(*vrs[0], *vrs[1])
-	var v1, v2 *Vector
-	var il, jl int
-	for jl, v2 = range vrs[2:] {
-		nl := toMin(*vrs[0], *v2)
-		if nl < value {
-			value, j = nl, jl+2
-		}
-	}
 
-	for il, v1 = range vrs[1:] {
-		for jl, v2 = range vrs[il+2:] {
-			nl := toMin(*v1, *v2)
-			if nl < value {
-				value, i, j = nl, il+1, jl+il+2
-			}
+// find the index in the Vectors that produces the lowest value from the functio.
+func (vrs VectorRefs) FindMin(toMin func(Vector) BaseType) int {
+	if !Parallel || len(vrs)<chunkSize(len(vrs)){
+		return vectorrefsFindMin(vrs,toMin)
+	} else {
+		return vectorrefsFindMinChunked(vrs,toMin)
+	}
+}
+
+func vectorrefsFindMin(vrs VectorRefs, toMin func(Vector) BaseType) (i int) {
+	value := toMin(*vrs[0])
+	var imv BaseType
+	for j,jv:=range(vrs[1:]){
+		imv=toMin(*jv)
+		if imv < value {
+			value, i = imv, j+1
 		}
 	}
 	return
 }
 
-func (vrs VectorRefs) SearchMinRegionally(toMin func(Vector, Vector) BaseType) (i, j int, value BaseType) {
+func vectorrefsFindMinChunked(vrs VectorRefs, toMin func(Vector) BaseType) (i int) {
+	done := make(chan int, 1)
+	var running uint
+	for chunk := range vectorRefsInChunks(vrs, chunkSize(len(vrs))) {
+		running++
+		go func(c VectorRefs) {
+			done <- vectorrefsFindMin(c,toMin)
+		}(chunk)
+	}
+//	if running==0 {return}
+	i = <-done
+	var j int
+	for ; running > 1; running-- {
+		j = <-done
+		if toMin(*vrs[j])< toMin(*vrs[i]){
+			i=j
+		}
+	}
+	return
+}
+
+
+// search VectorRefs for the two Vector's that return the minimum value from the provided function
+func (vrs VectorRefs) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int,) {
+	j=vrs[1:].FindMin(func(v Vector) BaseType {return toMin(*vrs[0],v)})+1
+	var jp int
+	for ip,vip:=range(vrs[1:len(vrs)-1]){
+		jp=vrs[ip+2:].FindMin(func(v Vector) BaseType {return toMin(*vip,v)})+2+ip
+		if toMin(*vip,*vrs[jp]) < toMin(*vrs[i],*vrs[j]){
+			j,i=jp,ip+1
+		}
+	}
+	return
+}
+
+func (vrs VectorRefs) SearchMinRegionally(toMin func(Vector, Vector) BaseType) (i, j int) {
 	//	splitPoint:=vs.Middle()
 	return vrs.SearchMin(toMin)
 }

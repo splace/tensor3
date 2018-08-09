@@ -390,6 +390,7 @@ func TestVecsSlicesStridingAndWrappingInChunks(t *testing.T) {
 
 
 }
+
 func TestVecsvectorsFindMin(t *testing.T) {
 	index:=vectorsFindMin(
 		Vectors{*New(1, 2, 3), *New(4, 5, 6), *New(7, 8, 9), *New(10, 11, 12), *New(13, 14, 15)},
@@ -434,8 +435,6 @@ func TestVecsSearchMin(t *testing.T) {
 }
 
 
-
-
 func TestVecsSearchMinRegionally(t *testing.T) {
 	var rnd = rand.New(rand.NewSource(0))
 	vs:=make(Vectors,10000)
@@ -450,10 +449,8 @@ func TestVecsSearchMinRegionally(t *testing.T) {
 
 	i,j:=vs.SearchMinRegionally(separation)
 	
-	vrs:=VectorRefs{i,j}.Indexes(vs)
-	
-	if vrs[0]-1 != 3159 || vrs[1]-1 != 8069 || math.Sqrt(float64(separation(*i,*j)))!=0.5642342569708744{
-		t.Error(vrs,math.Sqrt(float64(separation(*i,*j))))
+	if i != 3159 || j != 8069 || math.Sqrt(float64(separation(vs[i],vs[j])))!=0.5642342569708744{
+		t.Error(i,j,math.Sqrt(float64(separation(vs[i],vs[j]))))
 	}
 }
 

@@ -197,7 +197,7 @@ func vectorsFindMinChunked(vs Vectors, toMin func(Vector) BaseType) (i int) {
 			done <- vectorsFindMin(c,toMin)
 		}(chunk)
 	}
-	if running==0 {return}
+//	if running==0 {return}
 	i = <-done
 	var j int
 	for ; running > 1; running-- {
@@ -207,16 +207,11 @@ func vectorsFindMinChunked(vs Vectors, toMin func(Vector) BaseType) (i int) {
 		}
 	}
 	return
-//	return vectorsFindMin(vs,toMin) // TODO complete
 }
 
 
 // search Vectors for the pair of Vector's that return the lowest value from the provided function.
 func (vs Vectors) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int) {
-	// TODO search in chunks?
-	// TODO could be done with each vec mined with the slice before it and after it.
-	
-	// find the index of the min value for the first item with the rest of them. 
 	j=vs[1:].FindMin(func(v Vector) BaseType {return toMin(vs[0],v)})+1
 	var jp int
 	for ip,vip:=range(vs[1:len(vs)-1]){
@@ -250,20 +245,17 @@ func (vs Vectors) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int) {
 */
 }
 
-func (vs Vectors) SearchMinRegionally(toMin func(Vector, Vector) BaseType) (i, j *Vector) {
+func (vs Vectors) SearchMinRegionally(toMin func(Vector, Vector) BaseType) (i, j int) {
 	return vs.SearchMinRegionallyCentered(vs.Middle(),toMin)
 }
 
-func (vs Vectors) SearchMinRegionallyCentered(splitPoint Vector, toMin func(Vector, Vector) BaseType) (i, j *Vector) {
-	var notFirst bool
+func (vs Vectors) SearchMinRegionallyCentered(splitPoint Vector, toMin func(Vector, Vector) BaseType) (i, j int) {
+	//var notFirst bool
 	for vrss:= range vectorsSplitRegionally(vs, splitPoint) {
 		if len(vrss)<2 {continue} // rare, when used usefully, but single point still needs so be checked with 3 region edge points, and potentially needs perimeter crossing match test
 		// TODO use go routine and channel for results.
-		 is,js,vs:=vrss.SearchMin(toMin)
-		 if !notFirst || vs<toMin(*vrss[is],*vrss[js]) {
-		 	i,j=vrss[is],vrss[js]
-		 	notFirst=true
-		 }
+		 _,_=vrss.SearchMin(toMin)
+
 		 // TODO region perimeter crossing match test, if either match point has lower toMin with any of its 3 region edge projected points, then another SearchMin, with the appropriate vrss, is needed.
 		 // TODO 
 	}

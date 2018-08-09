@@ -168,17 +168,49 @@ func TestVecRefsStride(t *testing.T) {
 	}
 }
 
+func TestVecRefsvectorsFindMin(t *testing.T) {
+	index:=vectorrefsFindMin(
+		VectorRefs{New(1, 2, 3), New(4, 5, 6), New(7, 8, 9), New(10, 11, 12), New(13, 14, 15)},
+		func(v Vector) BaseType {return -v.x},	
+		)
+	if index!=4{
+		t.Error()
+	}
+	
+}
+
+func TestVecRefsvectorsFindMinChunked(t *testing.T) {
+	index:=vectorrefsFindMinChunked(
+		VectorRefs{New(1, 2, 3), New(4, 5, 6), New(7, 8, 9), New(10, 11, 12), New(13, 14, 15)},
+		func(v Vector) BaseType {return -v.x},	
+		)
+	if index!=4{
+		t.Error()
+	}
+	
+}
+
 func TestVecRefsSearchMin(t *testing.T) {
-	vs := VectorRefs{New(1, 2, 3),New(4, 5, 6), New(7, 8, 9), New(10, 11, 12), New(13, 14, 15)}
-	i,j,_:=vs.SearchMin(
+	vrs := VectorRefs{New(1, 2, 3), New(4, 5, 6), New(9, 8, 9), New(10, 11, 12), New(13, 14, 15)}
+	i,j:=vrs.SearchMin(
 		func(v1,v2 Vector) BaseType {
-			return -v1.x-v2.x
+			return v2.x-v1.x
 		},
 	)
-	if i != 3 || j != 4 {
+	if i != 2 || j != 3 {
 		t.Error(i,j)
 	}
+	i,j=vrs.SearchMin(
+		func(v1,v2 Vector) BaseType {
+			return v1.x-v2.x
+		},
+	)
+	if i != 0 || j != 4 {
+		t.Error(i,j)
+	}
+
 }
+
 
 
 func TestVecRefsSplit(t *testing.T) {
