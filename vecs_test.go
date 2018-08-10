@@ -484,8 +484,7 @@ func TestVecsForEachInSlices(t *testing.T) {
 			c+=3
 		})
 		
-	// cant update wrapped item
-	if fmt.Sprint(vs) != "[{15 16 17} {18 19 20} {6 7 8}]" {
+	if fmt.Sprint(vs) != "[{15 16 17} {18 19 20} {21 22 23}]" {
 		t.Error(fmt.Println(vs))
 	}	
 
@@ -495,8 +494,29 @@ func TestVecsForEachInSlices(t *testing.T) {
 			c+=3
 		})
 		
-	// cant update wrapped item
 	if fmt.Sprint(vs) != "[{24 25 26} {18 19 20} {27 28 29}]" {
+		t.Error(fmt.Println(vs))
+	}	
+
+	vs.ForEachInSlices(2,2,true,
+		func(vss Vectors){
+			vss[0]=*New(c,c+1,c+2)
+			vss[1]=*New(c+3,c+4,c+5)
+			c+=6
+		})
+		
+	if fmt.Sprint(vs) != "[{39 40 41} {33 34 35} {36 37 38}]" {
+		t.Error(fmt.Println(vs))
+	}	
+	
+	vs.ForEachInSlices(2,3,false,
+		func(vss Vectors){
+			vss[0]=*New(c,c+1,c+2)
+			vss[1]=*New(c+3,c+4,c+5)
+			c+=6
+		})
+		
+	if fmt.Sprint(vs) != "[{42 43 44} {45 46 47} {36 37 38}]" {
 		t.Error(fmt.Println(vs))
 	}	
 

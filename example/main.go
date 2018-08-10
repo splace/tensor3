@@ -62,7 +62,7 @@ func main(){
 		mssi.Product(msi)
 	}
 	t=time.Since(start)
-	fmt.Printf("int(%d core)\t %v\n",runtime.NumCPU(),t/size/repts)	
+	fmt.Printf("int\t %v\n",t/size/repts)	
 
 	sit.Parallel=true
 	start=time.Now()
@@ -91,5 +91,14 @@ Parallel 32bit(2 core)	 27ns
 int(2 core)	 43ns
 Parallel int(2 core)	 43ns
 Thu 26 Apr 01:45:26 BST 2018
+*/
+/* run: tags="" hal3 Thu 9 Aug 18:19:06 BST 2018 go version go1.10.3 linux/amd64
+64bit.	43ns
+64bit parallel(2 core).	43ns
+32bit.	 29ns.
+Parallel 32bit(2 core)	 27ns
+int(2 core)	 45ns
+Parallel int(2 core)	 45ns
+Thu 9 Aug 18:19:33 BST 2018
 */
 

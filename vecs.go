@@ -167,7 +167,7 @@ func vectorsApplyAllChunked(vs Vectors, fn func(*Vector, Vector), vs2 Vectors) {
 	}
 }
 
-// find the index in the Vectors that produces the lowest value from the functio.
+// find the index in the Vectors that produces the lowest value from the provided function.
 func (vs Vectors) FindMin(toMin func(Vector) BaseType) int {
 	if !Parallel || len(vs)<chunkSize(len(vs)){
 		return vectorsFindMin(vs,toMin)
@@ -210,7 +210,7 @@ func vectorsFindMinChunked(vs Vectors, toMin func(Vector) BaseType) (i int) {
 }
 
 
-// search Vectors for the pair of Vector's that return the lowest value from the provided function.
+// find the pair of indexes, from Vectors, that return the lowest value from the provided function.
 func (vs Vectors) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int) {
 	j=vs[1:].FindMin(func(v Vector) BaseType {return toMin(vs[0],v)})+1
 	var jp int
@@ -273,7 +273,7 @@ func (b *BaseType) Aggregate(vs Vectors,length,stride int, fn func(*BaseType, Ve
 }
 */
 
-// for each vector apply a function with no parameters
+// for each subsection of Vectors, obtained using the provided length and at the provided strides, apply a function.
 func (vs Vectors) ForEachInSlices(length,stride int,wrap bool,fn func(Vectors)) {
 	if !Parallel {
 		var i int
@@ -286,6 +286,8 @@ func (vs Vectors) ForEachInSlices(length,stride int,wrap bool,fn func(Vectors)) 
 				copy(joinSlice,vs[i:])
 				copy(joinSlice[len(vs)-i:],vs)
 				fn(joinSlice)
+				copy(vs[i:],joinSlice)
+				copy(vs,joinSlice[len(vs)-i:])
 			}
 		}
 	} else {
@@ -314,7 +316,7 @@ func vectorsInSlicesApplyChunked(vs Vectors,length,stride int,wrap bool, fn func
 	}
 }
 
-// return a VectorRefs referencing those Vector's that return true from the provided function.
+// return a VectorRefs, with references from Vectors, that return true from the provided function.
 func (vs Vectors) Select(fn func(*Vector)bool) (svs VectorRefs) {
 	for i := range vs {
 		if fn(&vs[i]){
@@ -324,7 +326,7 @@ func (vs Vectors) Select(fn func(*Vector)bool) (svs VectorRefs) {
 	return
 }
 
-// return a VectorRefs referecing in Vectors those that are at equal spaced strides.
+// return a VectorRefs, with references from Vectors, that are at equal spaced strides.
 func (vs Vectors) Stride(s uint) (svs VectorRefs) {
 	if s==0 {return}
 	is:=int(s)
