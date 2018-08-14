@@ -181,6 +181,19 @@ func (v *Vector) Project(axis Vector) {
 	vectorUnscale(v)
 }
 
+// 2D projection, to axis aligned plane, functions.
+func(v Vector) ProjectX() (BaseType,BaseType) {
+	return v.y,v.z
+}
+
+func(v Vector) ProjectY() (BaseType,BaseType) {
+	return v.z,v.x
+}
+
+func(v Vector) ProjectZ() (BaseType,BaseType) {
+	return v.x,v.y
+}
+
 // axis which vector is most aligned with.
 func (v Vector) LongestAxis() Axis {
 	v.Project(v)

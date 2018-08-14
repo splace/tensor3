@@ -274,6 +274,7 @@ func (b *BaseType) Aggregate(vs Vectors,length,stride int, fn func(*BaseType, Ve
 */
 
 // for each subsection of Vectors, obtained using the provided length and at the provided strides, apply a function.
+// Note: when used in parallel, function application order isn't deterministic, so when used with overlapping subsections results are likewise non-deterministic.
 func (vs Vectors) ForEachInSlices(length,stride int,wrap bool,fn func(Vectors)) {
 	if !Parallel {
 		var i int
