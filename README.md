@@ -1,14 +1,14 @@
 /*
 
-Vector, (3-component x,y,z), and Matrix, (3-Vector array) Types.
+**Vector**, (3-component x,y,z), and **Matrix**, (3-Vector array) Types.
 
 Useful methods on same, operating in-place (no returned reference, meaning no single line method chaining.)
 
-Arrays of both, (called Vectors and Matrices), with their useful methods.
+Arrays of both, (called **Vectors** and **Matrices**), with their useful methods.
 
 single and parallel threaded, transparently, switched with a global var.
 
-VectorRefs; array of Vector pointers, with methods to convert to/from Vectors.
+**VectorRefs**; array of Vector pointers, with methods to convert to/from Vectors.
 
 all in typed versions, 64bit float, 32bit float, or fixed precision (int scaled for 3dp) component value types (separate packages).
 

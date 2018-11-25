@@ -194,6 +194,12 @@ func(v Vector) ProjectZ() (BaseType,BaseType) {
 	return v.x,v.y
 }
 
+func(v *Vector) AddNewell(v1,v2 Vector) {
+	v.x += (v1.y+v2.y)*(v1.z-v2.z)
+	v.y += (v1.z+v2.z)*(v1.x-v2.x)
+	v.z += (v1.x+v2.x)*(v1.y-v2.y)
+}
+
 // axis which vector is most aligned with.
 func (v Vector) LongestAxis() Axis {
 	v.Project(v)
