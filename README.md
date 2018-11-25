@@ -10,7 +10,7 @@ single and parallel threaded, transparently, switched with a global var.
 
 **VectorRefs**; array of Vector pointers, with methods to convert to/from Vectors.
 
-all in typed versions, 64bit float, 32bit float, or fixed precision (int scaled for 3dp) component value types (separate packages).
+all five types available (in separate packages) with components typed as 64bit float, 32bit float, or fixed precision (int scaled for 3dp)
 
 methods that accept a function and apply in to all etc. (in parallel).
 
@@ -65,7 +65,7 @@ Example:  100 x 1 million matrix multiplications, single threaded then parallel.
 
 */
 
-package tensor3    note: there are a lot of methods for common operations on the 4 main types, and comments are missing on methods that appear unambiguous, to me, from their name, or i havent got round to yet.
+package tensor3    note: there are a lot of methods for common operations on the 5 main types, and documentation comments are often missing on methods that appear unambiguous to me, (from their name) or i havent got round to yet.
 
 // Overview/docs: [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3)
 
