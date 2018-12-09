@@ -383,7 +383,7 @@ func vectorRefsApplyAllChunked(vrs VectorRefs, fn func(*Vector, Vector), vs2 Vec
 }
 
 
-// return a VectorRefs with the Vector's from this that return true from the provided function.
+// return a sub selection of a VectorRefs with only refeences to Vector's that return true from the provided function.
 func (vrs VectorRefs) Select(fn func(*Vector)bool) (svs VectorRefs) {
 	for _,vr := range vrs {
 		if fn(vr){
@@ -393,7 +393,7 @@ func (vrs VectorRefs) Select(fn func(*Vector)bool) (svs VectorRefs) {
 	return
 }
 
-// return a VectorRefs with the Vector's from this that are at equal spaced strides.
+// return a sub selection of a VectorRefs with only references at equal spaced strides.
 func (vrs VectorRefs) Stride(s uint) (svs VectorRefs) {
 	if s==0 {return}
 	is:=int(s)
@@ -465,7 +465,7 @@ func vectorRefsInSlicesApplyChunked(vrs VectorRefs,length,stride int,wrap bool, 
 }
 
 
-// find the index in the Vectors that produces the lowest value from the functio.
+// find the index in the Vectors that produces the lowest value from the function.
 func (vrs VectorRefs) FindMin(toMin func(Vector) BaseType) int {
 	if !Parallel || len(vrs)<chunkSize(len(vrs)){
 		return vectorrefsFindMin(vrs,toMin)
@@ -509,7 +509,7 @@ func vectorrefsFindMinChunked(vrs VectorRefs, toMin func(Vector) BaseType) (i in
 
 
 // search VectorRefs for the two Vector's that return the minimum value from the provided function
-func (vrs VectorRefs) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int,) {
+func (vrs VectorRefs) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int) {
 	j=vrs[1:].FindMin(func(v Vector) BaseType {return toMin(*vrs[0],v)})+1
 	var jp int
 	for ip,vip:=range(vrs[1:len(vrs)-1]){

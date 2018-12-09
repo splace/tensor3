@@ -44,4 +44,9 @@ Sun 9 Apr 18:53:55 BST 2017
 2.705235734s
 Thu 26 Apr 01:49:52 BST 2018
 */
+/* run: tags="" hal3 Mon 26 Nov 18:12:03 GMT 2018 go version go1.11.2 linux/amd64
+2.758846688s
+2.6791964s
+Mon 26 Nov 18:12:09 GMT 2018
+*/
 
