@@ -56,7 +56,7 @@ func ExampleSmallestSeparation(){
 		vs[i]=*New(rnd.NormFloat64()*100,rnd.NormFloat64()*100,rnd.NormFloat64()*100)
 	}
 
-	separation:=func(v1,v2 Vector) BaseType{
+	separation:=func(v1,v2 Vector) Scalar{
 		v1.Subtract(v2)
 		return v1.LengthLength()
 	}

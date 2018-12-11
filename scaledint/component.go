@@ -5,24 +5,24 @@ import "fmt"
 // other files can/are just copies,(symlinks) they are generic.
 
 // base component type for this version of the package.
-type BaseType int
+type Scalar int
 
 const scaleShift=10
 const scale = 1<<scaleShift
 
-func Base64(f float64) BaseType{
-	return BaseType(f*float64(scale))
+func Base64(f float64) Scalar{
+	return Scalar(f*float64(scale))
 }
 
-func Base32(f float32) BaseType{
-	return BaseType(f*float32(scale))
+func Base32(f float32) Scalar{
+	return Scalar(f*float32(scale))
 }
 
-func baseScale(v BaseType) BaseType{
+func baseScale(v Scalar) Scalar{
 	return v<<scaleShift
 }
 
-func baseUnscale(v BaseType) BaseType{
+func baseUnscale(v Scalar) Scalar{
 	return v>>scaleShift
 }
 
@@ -41,7 +41,7 @@ func vectorUnscale(v *Vector){
 }
 
 // this base type needs to be scaled for printing 
-func (v BaseType) String()string{
+func (v Scalar) String()string{
 	return fmt.Sprint(float32(v)/float32(scale))
 }
 
