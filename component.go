@@ -37,8 +37,6 @@ func vectorUnscale(v *Vector) {
 // new vector reference from float64's
 func New(x, y, z float64) *Vector {
 	return &Vector{Scalar(x), Scalar(y), Scalar(z)}
-}/* benchmark: "Component" hal3 Tue 11 Dec 16:20:49 GMT 2018 go version go1.11.2 linux/amd64
-FAIL	_/run/media/simon/6a5530c2-1442-4e9b-b35f-3db0c9a6984c/home/simon/Dropbox/github/working/tensor3 [build failed]
-Tue 11 Dec 16:20:49 GMT 2018
-*/
+}
+
 

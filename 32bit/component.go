@@ -5,24 +5,24 @@ package tensor3
 // notice in this, float32, base type version, scaling is a no-op, inlined/removed by all but the most basic compiler. 
 
 // base component type for this version of the package.
-type BaseType float32
+type Scalar float32
 
 const scale = 1
 
-func Base64(f float64) BaseType{
-	return BaseType(float32(f))
+func Base64(f float64) Scalar{
+	return Scalar(float32(f))
 }
 
-func Base32(f float32) BaseType{
-	return BaseType(f)
+func Base32(f float32) Scalar{
+	return Scalar(f)
 }
 
 
-func baseScale(v BaseType) BaseType {
+func baseScale(v Scalar) Scalar {
 	return v
 }
 
-func baseUnscale(v BaseType) BaseType {
+func baseUnscale(v Scalar) Scalar {
 	return v
 }
 
@@ -36,7 +36,7 @@ func vectorUnscale(v *Vector) {
 
 // new vector reference from float64's 
 func New(x,y,z float64) *Vector{
-	return &Vector{BaseType(x),BaseType(y),BaseType(z)}
+	return &Vector{Scalar(x),Scalar(y),Scalar(z)}
 }
 
 

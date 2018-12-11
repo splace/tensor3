@@ -31,7 +31,7 @@ func ExampleUnitify() {
 	vs := NewVectors(2, 0, 0, 0, -11, 0, 0, 0, 0.1)
 	vs.ForEachNoParameter(
 		func(v *Vector) {
-			v.Divide(BaseType(math.Sqrt(float64(v.LengthLength()))))
+			v.Divide(Scalar(math.Sqrt(float64(v.LengthLength()))))
 		},
 	)
 	fmt.Print(vs)
@@ -57,7 +57,7 @@ func ExampleSmallestSeparation(){
 	}
 
 	// separation squared, still matches with smallest
-	separation:=func(v1,v2 Vector) BaseType{
+	separation:=func(v1,v2 Vector) Scalar{
 		v1.Subtract(v2)
 		return v1.LengthLength()
 	}
@@ -83,7 +83,7 @@ func ExampleSmallestSeparationRegional(){
 	}
 
 	
-	separation:=func(v1,v2 Vector) BaseType{
+	separation:=func(v1,v2 Vector) Scalar{
 		v1.Subtract(v2)
 		return v1.LengthLength()
 	}
