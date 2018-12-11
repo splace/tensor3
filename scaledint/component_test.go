@@ -51,9 +51,9 @@ func ExampleForEachVector(){
 
 func ExampleSmallestSeparation(){
 	var rnd = rand.New(rand.NewSource(0))
-	vrs:=make(Vectors,10000)
-	for i := range vrs{
-		vrs[i]=*New(rnd.NormFloat64()*100,rnd.NormFloat64()*100,rnd.NormFloat64()*100)
+	vs:=make(Vectors,10000)
+	for i := range vs{
+		vs[i]=*New(rnd.NormFloat64()*100,rnd.NormFloat64()*100,rnd.NormFloat64()*100)
 	}
 
 	separation:=func(v1,v2 Vector) BaseType{
@@ -62,10 +62,11 @@ func ExampleSmallestSeparation(){
 	}
 
 	//start:=time.Now()
-	i1,i2,ll:=vrs.SearchMin(separation)
+	Parallel=true
+	i1,i2:=vs.SearchMin(separation)
+	Parallel=false
 	//fmt.Printf("%v %v %v %v %v %v %v",il,jl,math.Sqrt(float64(ll)),len(vrs),vrs[il],vrs[jl],time.Since(start))
-	fmt.Printf("%v %v %.5f",i1,i2,math.Sqrt(float64(ll)/float64(Base64(1))))
-	// Output:
+	fmt.Printf("%v %v %v",i1,i2,math.Sqrt(float64(separation(vs[i1],vs[i2]))))	// Output:
 	// 3159 8069 0.56423
 }
 

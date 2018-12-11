@@ -2,7 +2,7 @@ package tensor3
 // this file contains what is different between typed versions of this package
 // other files can/are just copies,(symlinks) they are generic.
 
-// notice in this, float32, base type version, scaling is a nop op, inlined/removed by all but the most basic compiler. 
+// notice in this, float32, base type version, scaling is a no-op, inlined/removed by all but the most basic compiler. 
 
 // base component type for this version of the package.
 type BaseType float32
@@ -34,7 +34,7 @@ func vectorUnscale(v *Vector) {
 	return
 }
 
-// new vector reference from float32's 
+// new vector reference from float64's 
 func New(x,y,z float64) *Vector{
 	return &Vector{BaseType(x),BaseType(y),BaseType(z)}
 }

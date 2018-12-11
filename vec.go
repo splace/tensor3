@@ -1,7 +1,7 @@
 package tensor3
 
 type Vector struct {
-	x, y, z BaseType
+	x, y, z Scalar
 }
 
 var xAxis, yAxis, zAxis = Vector{scale, 0, 0}, Vector{0, scale, 0}, Vector{0, 0, scale}
@@ -19,7 +19,7 @@ var Axes = [3]Vector{xAxis, yAxis, zAxis}
 var AxisPlanes = [3]Vector{yzPlane, zxPlane, xyPlane}
 
 // vector from component values, type BaseType, missing components default to zero, more than 3 are ignored
-func NewVector(cs ...BaseType) (v Vector) {
+func NewVector(cs ...Scalar) (v Vector) {
 	switch len(cs) {
 	default:
 		v.z = baseScale(cs[2])
@@ -48,7 +48,7 @@ func (v *Vector) Subtract(v2 Vector) {
 }
 
 // components independently multiplied, see Product for matrix multiplication
-func (v *Vector) Multiply(s BaseType) {
+func (v *Vector) Multiply(s Scalar) {
 	v.x *= s
 	v.y *= s
 	v.z *= s
@@ -56,14 +56,14 @@ func (v *Vector) Multiply(s BaseType) {
 }
 
 // components independently divided
-func (v *Vector) Divide(s BaseType) {
-	vectorScale(v)  //TODO half scale?
+func (v *Vector) Divide(s Scalar) {
+	vectorScale(v) //TODO half scale?
 	v.x /= s
 	v.y /= s
 	v.z /= s
 }
 
-func (v Vector) Dot(v2 Vector) BaseType {
+func (v Vector) Dot(v2 Vector) Scalar {
 	return baseUnscale(v.x*v2.x + v.y*v2.y + v.z*v2.z)
 }
 
@@ -73,12 +73,12 @@ func (v *Vector) Cross(v2 Vector) {
 }
 
 // length squared. (returning squared means this package is not dependent on math package.)
-func (v Vector) LengthLength() BaseType {
+func (v Vector) LengthLength() Scalar {
 	return baseUnscale(v.x*v.x + v.y*v.y + v.z*v.z)
 }
 
 // distance squared. (returning squared means this package is not dependent on math package.)
-func (v Vector) DistDist(v2 Vector) BaseType {
+func (v Vector) DistDist(v2 Vector) Scalar {
 	v.Subtract(v2)
 	return v.LengthLength()
 }
@@ -90,7 +90,7 @@ func (v *Vector) Set(v2 Vector) {
 }
 
 // Max sets the referenced Vector's components to being the greater of their original value and the presented Vector's.
-// (both vectors are inside a bounding box with the returned value as its upper bound.) 
+// (both vectors are inside a bounding box with the returned value as its upper bound.)
 func (v *Vector) Max(v2 Vector) {
 	if v2.x > v.x {
 		v.x = v2.x
@@ -104,7 +104,7 @@ func (v *Vector) Max(v2 Vector) {
 }
 
 // Min sets the referenced Vector's components to being the lesser of their original value and the presented Vector's.
-// (both vectors are inside a bounding box with the returned value as its lower bound.) 
+// (both vectors are inside a bounding box with the returned value as its lower bound.)
 func (v *Vector) Min(v2 Vector) {
 	if v2.x < v.x {
 		v.x = v2.x
@@ -129,11 +129,10 @@ func (v *Vector) Interpolate(v2 Vector, f float64) {
 	v.Add(v2)
 }
 
-// three points, the projections to axis planes. 
-func (v Vector) AxisProjections(o Vector) (Vector,Vector,Vector) {
-	return Vector{v.x,o.y,o.z},Vector{o.x,v.y,o.z},Vector{o.x,o.y,v.z}
+// three points, the projections to axis planes.
+func (v Vector) AxisProjections(o Vector) (Vector, Vector, Vector) {
+	return Vector{v.x, o.y, o.z}, Vector{o.x, v.y, o.z}, Vector{o.x, o.y, v.z}
 }
-
 
 // apply a function repeatedly to the vector, parameterised by its current value and each vector in the supplied vectors in order.
 func (v *Vector) Aggregate(vs Vectors, fn func(*Vector, Vector)) {
@@ -160,7 +159,7 @@ func vectorApplyAll(v *Vector, fn func(*Vector, Vector), vs Vectors) {
 func vectorApplyAllChunked(v *Vector, fn func(*Vector, Vector), vs Vectors) {
 	done := make(chan Vector, 1)
 	var running uint
-	for chunk := range vectorsInChunks(vs,chunkSize(len(vs))) {
+	for chunk := range vectorsInChunks(vs, chunkSize(len(vs))) {
 		running++
 		go func(cvs Vectors) {
 			var nv Vector
@@ -182,22 +181,22 @@ func (v *Vector) Project(axis Vector) {
 }
 
 // 2D projection, to axis aligned plane, functions.
-func(v Vector) ProjectX() (BaseType,BaseType) {
-	return v.y,v.z
+func (v Vector) ProjectX() (Scalar, Scalar) {
+	return v.y, v.z
 }
 
-func(v Vector) ProjectY() (BaseType,BaseType) {
-	return v.z,v.x
+func (v Vector) ProjectY() (Scalar, Scalar) {
+	return v.z, v.x
 }
 
-func(v Vector) ProjectZ() (BaseType,BaseType) {
-	return v.x,v.y
+func (v Vector) ProjectZ() (Scalar, Scalar) {
+	return v.x, v.y
 }
 
-func(v *Vector) AddNewell(v1,v2 Vector) {
-	v.x += (v1.y+v2.y)*(v1.z-v2.z)
-	v.y += (v1.z+v2.z)*(v1.x-v2.x)
-	v.z += (v1.x+v2.x)*(v1.y-v2.y)
+func (v *Vector) AddNewell(v1, v2 Vector) {
+	v.x += (v1.y + v2.y) * (v1.z - v2.z)
+	v.y += (v1.z + v2.z) * (v1.x - v2.x)
+	v.z += (v1.x + v2.x) * (v1.y - v2.y)
 }
 
 // axis which vector is most aligned with.

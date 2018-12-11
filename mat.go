@@ -3,7 +3,7 @@ package tensor3
 type Matrix [3]Vector
 
 // missing parameters default to zero, more than 9 are ignored
-func NewMatrix(cs ...BaseType) (m Matrix) {
+func NewMatrix(cs ...Scalar) (m Matrix) {
 	switch len(cs) {
 	default:
 		m[2].z = baseScale(cs[8])
@@ -67,14 +67,14 @@ func (m Matrix) Dot(v2 Vector) (v Vector) {
 	return
 }
 
-func (m Matrix) Determinant() BaseType {
+func (m Matrix) Determinant() Scalar {
 	return baseUnscale(baseUnscale(m[0].x*m[1].y*m[2].z - m[0].x*m[1].z*m[2].y + m[0].y*m[1].z*m[2].x - m[0].y*m[1].x*m[2].z + m[0].z*m[1].x*m[2].y - m[0].z*m[1].y*m[2].x))
 }
 
 func (m *Matrix) Invert() {
 	det := m.Determinant()
-	var det2x2 func(BaseType, BaseType, BaseType, BaseType) BaseType
-	det2x2 = func(a, b, c, d BaseType) BaseType {
+	var det2x2 func(Scalar, Scalar, Scalar, Scalar) Scalar
+	det2x2 = func(a, b, c, d Scalar) Scalar {
 		return baseUnscale(a*d - b*c)
 	}
 	m[0].x, m[0].y, m[0].z, m[1].x, m[1].y, m[1].z, m[2].x, m[2].y, m[2].z =
@@ -84,13 +84,13 @@ func (m *Matrix) Invert() {
 	m.Divide(det)
 }
 
-func (m *Matrix) Multiply(s BaseType) {
+func (m *Matrix) Multiply(s Scalar) {
 	m[0].Multiply(s)
 	m[1].Multiply(s)
 	m[2].Multiply(s)
 }
 
-func (m *Matrix) Divide(s BaseType) {
+func (m *Matrix) Divide(s Scalar) {
 	m[0].Divide(s)
 	m[1].Divide(s)
 	m[2].Divide(s)
@@ -171,7 +171,7 @@ func matrixApply(vs Vectors, fn func(*Vector, Matrix), m Matrix) {
 func matrixApplyChunked(vs Vectors, fn func(*Vector, Matrix), m Matrix) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range vectorsInChunks(vs,chunkSize(len(vs))) {
+	for chunk := range vectorsInChunks(vs, chunkSize(len(vs))) {
 		running++
 		go func(c Vectors) {
 			matrixApply(c, fn, m)
@@ -254,4 +254,3 @@ func (m *Matrix) applyY(fn func(*Vector, Vector), v Vector) {
 func (m *Matrix) applyZ(fn func(*Vector, Vector), v Vector) {
 	fn(&m[2], v)
 }
-

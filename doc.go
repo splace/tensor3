@@ -1,6 +1,6 @@
 /*
 
-Vector, (3-component), and Matrix, (3-Vector) Types.
+Vector, (3-Scalar), and Matrix, (3-Vector) Types.
 
 Useful methods on same, operating in-place ( not returning reference, meaning no single line chained functions.)
 
@@ -21,7 +21,6 @@ with array types selectively broken into chunks for better parallel performance.
 */
 
 package tensor3
-
 
 // some benchmarking
 
@@ -57,7 +56,7 @@ BenchmarkVecsCrossParallel-2        	    1000	   1456007 ns/op
 BenchmarkVecsProduct-2              	    1000	   1989979 ns/op
 BenchmarkVecsProductParallel-2      	    1000	   1980549 ns/op
 PASS
-ok  	
+ok
 Sat 28 Apr 20:56:37 BST 2018
 */
 
@@ -85,7 +84,7 @@ BenchmarkVecsCrossParallel-2     	    1000	   1160309 ns/op
 BenchmarkVecsProduct-2           	    1000	   1882070 ns/op
 BenchmarkVecsProductParallel-2   	    1000	   1418380 ns/op
 PASS
-ok  	
+ok
 Wed 25 Apr 21:45:05 BST 2018
 */
 
@@ -104,7 +103,7 @@ BenchmarkVecsCrossParallel-2        	    2000	   1041651 ns/op
 BenchmarkVecsProduct-2              	    1000	   1850390 ns/op
 BenchmarkVecsProductParallel-2      	    1000	   1193208 ns/op
 PASS
-ok  	
+ok
 Sat 28 Apr 21:11:19 BST 2018
 */
 /* benchmark: "Vecs" hal3 Sat 19 May 20:51:24 BST 2018 go version go1.10.2 linux/amd64
@@ -120,7 +119,6 @@ PASS
 ok  	_/run/media/simon/6a5530c2-1442-4e9b-b35f-3db0c9a6984c/home/simon/Dropbox/github/working/tensor3	11.104s
 Sat 19 May 20:51:36 BST 2018
 */
-
 
 /* benchmark: "Vecs" hal3 Wed 16 May 23:29:56 BST 2018 go version go1.10 linux/amd64
 goos: linux
@@ -149,4 +147,16 @@ PASS
 ok  	_/home/simon/Dropbox/github/working/tensor3	10.834s
 Sat 19 May 21:45:20 BST 2018
 */
-
+/* benchmark: "Vecs" hal3 Sun 9 Dec 01:22:10 GMT 2018 go version go1.11.2 linux/amd64
+goos: linux
+goarch: amd64
+BenchmarkVecsSum-2               	    2000	    919650 ns/op
+BenchmarkVecsSumParallel-2       	    2000	    876863 ns/op
+BenchmarkVecsCross-2             	    1000	   1299940 ns/op
+BenchmarkVecsCrossParallel-2     	    1000	   1316202 ns/op
+BenchmarkVecsProduct-2           	    1000	   1708294 ns/op
+BenchmarkVecsProductParallel-2   	    1000	   1750193 ns/op
+PASS
+ok  	_/run/media/simon/6a5530c2-1442-4e9b-b35f-3db0c9a6984c/home/simon/Dropbox/github/working/tensor3	10.548s
+Sun 9 Dec 01:22:22 GMT 2018
+*/

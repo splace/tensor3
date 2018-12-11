@@ -25,7 +25,7 @@ func TestNewVectorPrint(t *testing.T) {
 }
 
 func TestVecDot(t *testing.T) {
-	v :=*New(1, 2, 3)
+	v := *New(1, 2, 3)
 	if fmt.Sprint(v.Dot(*New(4, 5, 6))) != "32" {
 		t.Error(v.Dot(*New(4, 5, 6)))
 	}
@@ -102,16 +102,16 @@ func TestVecProject(t *testing.T) {
 
 func TestVecProjectXYZ(t *testing.T) {
 	v := New(1, 2, 3)
-	x,y:=v.ProjectX()
-	if x!=2 || y!=3 {
+	x, y := v.ProjectX()
+	if x != 2 || y != 3 {
 		t.Error()
 	}
-	x,y=v.ProjectY()
-	if x!=3 || y!=1 {
+	x, y = v.ProjectY()
+	if x != 3 || y != 1 {
 		t.Error()
 	}
-	x,y=v.ProjectZ()
-	if x!=1 || y!=2 {
+	x, y = v.ProjectZ()
+	if x != 1 || y != 2 {
 		t.Error()
 	}
 }

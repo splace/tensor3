@@ -83,5 +83,3 @@ func BenchmarkMatsProductParallel(b *testing.B) {
 	}
 
 }
-
-

@@ -2,7 +2,7 @@ package tensor3
 
 type VectorRefs []*Vector
 
-func NewVectorRefs(cs ...BaseType) (vs VectorRefs) {
+func NewVectorRefs(cs ...Scalar) (vs VectorRefs) {
 	vs = make(VectorRefs, (len(cs)+2)/3)
 	for i := range vs {
 		v := NewVector(cs[i*3:]...)
@@ -11,8 +11,7 @@ func NewVectorRefs(cs ...BaseType) (vs VectorRefs) {
 	return
 }
 
-
-// make a new VectorRefs that references Vector's at the provided indexes in the provided Vectors.  
+// make a new VectorRefs that references Vector's at the provided indexes in the provided Vectors.
 // Notice: indexes are uint and considered out-of-context, not an internal slice index, 1 is used for the first item, 0 used as a side-channel. (possibly for an error indicator).
 func NewVectorRefsFromIndexes(cs Vectors, indexes ...uint) (vs VectorRefs) {
 	if len(indexes) == 0 {
@@ -51,19 +50,19 @@ func NewVectorsFromVectorRefs(vss ...VectorRefs) Vectors {
 	return nv
 }
 
-// return a slice of indexes, the same length as the VectorRefs, to the items this references in the provided Vectors. 
+// return a slice of indexes, the same length as the VectorRefs, to the items this references in the provided Vectors.
 // (Notice: this package uses 1 for the first item.)
 // an index of zero indicates reference not found.
 func (vsr VectorRefs) Indexes(vs Vectors) (is []uint) {
 	// TODO find index using unsafe pointer offset, massively faster.
 	is = make([]uint, len(vsr))
 	for ir, vr := range vsr {
-		is[ir]=vs.Index(vr)
+		is[ir] = vs.Index(vr)
 	}
 	return
 }
 
-// make a slice of Vectors from the values referenced by this VectorRefs. 
+// make a slice of Vectors from the values referenced by this VectorRefs.
 func (vsr VectorRefs) Dereference() (vs Vectors) {
 	vs = make(Vectors, len(vsr))
 	for i := range vs {
@@ -72,7 +71,7 @@ func (vsr VectorRefs) Dereference() (vs Vectors) {
 	return
 }
 
-// overwrite the references in a VectorRefs to refer to the Vector's. 
+// overwrite the references in a VectorRefs to refer to the Vector's.
 // for upto the greater length of the two slices.
 func (vs Vectors) Reference(vsr VectorRefs) {
 	if len(vs) > len(vsr) {
@@ -116,7 +115,7 @@ func (vs VectorRefs) Sum() (v Vector) {
 	return
 }
 
-func (vs VectorRefs) Multiply(s BaseType) {
+func (vs VectorRefs) Multiply(s Scalar) {
 	var multiply func(*Vector)
 	multiply = func(v *Vector) {
 		v.Multiply(s)
@@ -137,12 +136,12 @@ func (vs VectorRefs) Min() (v Vector) {
 }
 
 func (vs VectorRefs) Middle() (v Vector) {
-	v=vs.Max()
+	v = vs.Max()
 	v.Mid(vs.Min())
 	return
 }
 
-func (vs VectorRefs) Interpolate(v Vector, f BaseType) {
+func (vs VectorRefs) Interpolate(v Vector, f Scalar) {
 	f2 := 1 - f
 	var interpolate func(*Vector, Vector)
 	interpolate = func(v *Vector, v2 Vector) {
@@ -152,7 +151,6 @@ func (vs VectorRefs) Interpolate(v Vector, f BaseType) {
 	}
 	vs.ForEach(interpolate, v)
 }
-
 
 // apply a function repeatedly to the vector reference, parameterised by its current value and each vector in the supplied vectors in order.
 func (v *Vector) AggregateRefs(vs VectorRefs, fn func(*Vector, Vector)) {
@@ -178,7 +176,7 @@ func vectorRefsApply(vs VectorRefs, fn func(*Vector, Vector), v Vector) {
 func vectorRefsApplyChunked(vs VectorRefs, fn func(*Vector, Vector), v Vector) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range vectorRefsInChunks(vs,chunkSize(len(vs))) {
+	for chunk := range vectorRefsInChunks(vs, chunkSize(len(vs))) {
 		running++
 		go func(c VectorRefs) {
 			vectorRefsApply(c, fn, v)
@@ -189,7 +187,6 @@ func vectorRefsApplyChunked(vs VectorRefs, fn func(*Vector, Vector), v Vector) {
 		<-done
 	}
 }
-
 
 func (m Matrix) ForEachRef(fn func(*Vector, Matrix), vs VectorRefs) {
 	if !Parallel {
@@ -208,7 +205,7 @@ func matrixApplyRef(vs VectorRefs, fn func(*Vector, Matrix), m Matrix) {
 func matrixApplyRefChunked(vs VectorRefs, fn func(*Vector, Matrix), m Matrix) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range vectorRefsInChunks(vs,chunkSize(len(vs))) {
+	for chunk := range vectorRefsInChunks(vs, chunkSize(len(vs))) {
 		running++
 		go func(c VectorRefs) {
 			matrixApplyRef(c, fn, m)
@@ -263,12 +260,12 @@ func vectorsApplyAllRefsChunked(vs Vectors, fn func(*Vector, Vector), vrs Vector
 	done := make(chan struct{}, 1)
 	var running uint
 	// shorten vs to use only what we have in vs2rs
-	if len(vs)>len(vrs){
-		vs=vs[:len(vrs)]
+	if len(vs) > len(vrs) {
+		vs = vs[:len(vrs)]
 	}
-	cs:=chunkSize(len(vs))
-	chunks2 := vectorRefsInChunks(vrs,cs)
-	for chunk := range vectorsInChunks(vs,cs) {
+	cs := chunkSize(len(vs))
+	chunks2 := vectorRefsInChunks(vrs, cs)
+	for chunk := range vectorsInChunks(vs, cs) {
 		running++
 		go func(c Vectors) {
 			vectorsApplyAllRefs(c, fn, <-chunks2)
@@ -314,12 +311,12 @@ func vectorRefsApplyAllChunkedRefs(vrs VectorRefs, fn func(*Vector, Vector), vrs
 	done := make(chan struct{}, 1)
 	var running uint
 	// shorten vs to use only what we have in vs2
-	if len(vrs)>len(vrs2){
-		vrs=vrs[:len(vrs2)]
+	if len(vrs) > len(vrs2) {
+		vrs = vrs[:len(vrs2)]
 	}
-	cs:=chunkSize(len(vrs))
-	chunks2 := vectorRefsInChunks(vrs2,cs)
-	for chunk := range vectorRefsInChunks(vrs,cs) {
+	cs := chunkSize(len(vrs))
+	chunks2 := vectorRefsInChunks(vrs2, cs)
+	for chunk := range vectorRefsInChunks(vrs, cs) {
 		running++
 		go func(c VectorRefs) {
 			vectorRefsApplyAllRefs(c, fn, <-chunks2)
@@ -365,12 +362,12 @@ func vectorRefsApplyAllChunked(vrs VectorRefs, fn func(*Vector, Vector), vs2 Vec
 	done := make(chan struct{}, 1)
 	var running uint
 	// shorten vrs to use only what we have in vs2
-	if len(vrs)>len(vs2){
-		vrs=vrs[:len(vs2)]
+	if len(vrs) > len(vs2) {
+		vrs = vrs[:len(vs2)]
 	}
-	cs:=chunkSize(len(vrs))
-	chunks2 := vectorsInChunks(vs2,cs)
-	for chunk := range vectorRefsInChunks(vrs,cs) {
+	cs := chunkSize(len(vrs))
+	chunks2 := vectorsInChunks(vs2, cs)
+	for chunk := range vectorRefsInChunks(vrs, cs) {
 		running++
 		go func(c VectorRefs) {
 			vectorRefsApplyAll(c, fn, <-chunks2)
@@ -382,12 +379,11 @@ func vectorRefsApplyAllChunked(vrs VectorRefs, fn func(*Vector, Vector), vs2 Vec
 	}
 }
 
-
 // return a sub selection of a VectorRefs with only refeences to Vector's that return true from the provided function.
-func (vrs VectorRefs) Select(fn func(*Vector)bool) (svs VectorRefs) {
-	for _,vr := range vrs {
-		if fn(vr){
-			svs=append(svs,vr)
+func (vrs VectorRefs) Select(fn func(*Vector) bool) (svs VectorRefs) {
+	for _, vr := range vrs {
+		if fn(vr) {
+			svs = append(svs, vr)
 		}
 	}
 	return
@@ -395,11 +391,13 @@ func (vrs VectorRefs) Select(fn func(*Vector)bool) (svs VectorRefs) {
 
 // return a sub selection of a VectorRefs with only references at equal spaced strides.
 func (vrs VectorRefs) Stride(s uint) (svs VectorRefs) {
-	if s==0 {return}
-	is:=int(s)
-	svs=make(VectorRefs,len(vrs)/is+1)
-	for i:= range(svs) {
-		svs[i]=vrs[i*is]
+	if s == 0 {
+		return
+	}
+	is := int(s)
+	svs = make(VectorRefs, len(vrs)/is+1)
+	for i := range svs {
+		svs[i] = vrs[i*is]
 	}
 	return
 }
@@ -408,51 +406,50 @@ func (vrs VectorRefs) Stride(s uint) (svs VectorRefs) {
 // or put another way;
 // bin Vector's by the functions returned value.
 // bins start at 1, a function returning a value of 0 causes the VecRef not to be in any of the returned bins.
-func (vrs VectorRefs) Split(fn func(*Vector)uint) (ssvs []VectorRefs) {
-	for _,vr := range vrs {
-		ind:= fn(vr)
-		if ind>0 {
+func (vrs VectorRefs) Split(fn func(*Vector) uint) (ssvs []VectorRefs) {
+	for _, vr := range vrs {
+		ind := fn(vr)
+		if ind > 0 {
 			// pad, if needed, with a series of new VectorRefs to fill up to index. (max index not preknown)
-			if ind > uint(len(ssvs)){
-				ssvs=append(ssvs,make([]VectorRefs,ind-uint(len(ssvs)))...)
+			if ind > uint(len(ssvs)) {
+				ssvs = append(ssvs, make([]VectorRefs, ind-uint(len(ssvs)))...)
 			}
-			ssvs[ind-1]=append(ssvs[ind-1],vr)
+			ssvs[ind-1] = append(ssvs[ind-1], vr)
 		}
 	}
 	return
 }
 
-
 // for each vector apply a function with no parameters
-func (vrs VectorRefs) ForEachInSlices(length,stride int,wrap bool,fn func(VectorRefs)) {
+func (vrs VectorRefs) ForEachInSlices(length, stride int, wrap bool, fn func(VectorRefs)) {
 	if !Parallel {
 		var i int
-		for ;i<len(vrs)-length+1;i+=stride{
-			fn(vrs[i:i+length])
+		for ; i < len(vrs)-length+1; i += stride {
+			fn(vrs[i : i+length])
 		}
-		if wrap{
-			joinSlice:=make(VectorRefs,length,length)
-			for ;i<len(vrs);i+=stride{
-				copy(joinSlice,vrs[i:])
-				copy(joinSlice[len(vrs)-i:],vrs)
+		if wrap {
+			joinSlice := make(VectorRefs, length, length)
+			for ; i < len(vrs); i += stride {
+				copy(joinSlice, vrs[i:])
+				copy(joinSlice[len(vrs)-i:], vrs)
 				fn(joinSlice)
 			}
 		}
 	} else {
-		vectorRefsInSlicesApplyChunked(vrs,length,stride,wrap, fn)
+		vectorRefsInSlicesApplyChunked(vrs, length, stride, wrap, fn)
 	}
 }
 
-func vectorRefsInSlicesApply(vrss []VectorRefs,fn func(VectorRefs)) {
-	for _,vrs := range vrss {
+func vectorRefsInSlicesApply(vrss []VectorRefs, fn func(VectorRefs)) {
+	for _, vrs := range vrss {
 		fn(vrs)
 	}
 }
 
-func vectorRefsInSlicesApplyChunked(vrs VectorRefs,length,stride int,wrap bool, fn func(VectorRefs)) {
+func vectorRefsInSlicesApplyChunked(vrs VectorRefs, length, stride int, wrap bool, fn func(VectorRefs)) {
 	done := make(chan struct{}, 1)
 	var running uint
-	for chunk := range vectorRefsSlicesInChunks(vrs, chunkSize(len(vrs)),length,stride,wrap) {
+	for chunk := range vectorRefsSlicesInChunks(vrs, chunkSize(len(vrs)), length, stride, wrap) {
 		running++
 		go func(c []VectorRefs) {
 			vectorRefsInSlicesApply(c, fn)
@@ -464,21 +461,20 @@ func vectorRefsInSlicesApplyChunked(vrs VectorRefs,length,stride int,wrap bool, 
 	}
 }
 
-
 // find the index in the Vectors that produces the lowest value from the function.
-func (vrs VectorRefs) FindMin(toMin func(Vector) BaseType) int {
-	if !Parallel || len(vrs)<chunkSize(len(vrs)){
-		return vectorrefsFindMin(vrs,toMin)
+func (vrs VectorRefs) FindMin(toMin func(Vector) Scalar) int {
+	if !Parallel || len(vrs) < chunkSize(len(vrs)) {
+		return vectorrefsFindMin(vrs, toMin)
 	} else {
-		return vectorrefsFindMinChunked(vrs,toMin)
+		return vectorrefsFindMinChunked(vrs, toMin)
 	}
 }
 
-func vectorrefsFindMin(vrs VectorRefs, toMin func(Vector) BaseType) (i int) {
+func vectorrefsFindMin(vrs VectorRefs, toMin func(Vector) Scalar) (i int) {
 	value := toMin(*vrs[0])
-	var imv BaseType
-	for j,jv:=range(vrs[1:]){
-		imv=toMin(*jv)
+	var imv Scalar
+	for j, jv := range vrs[1:] {
+		imv = toMin(*jv)
 		if imv < value {
 			value, i = imv, j+1
 		}
@@ -486,43 +482,41 @@ func vectorrefsFindMin(vrs VectorRefs, toMin func(Vector) BaseType) (i int) {
 	return
 }
 
-func vectorrefsFindMinChunked(vrs VectorRefs, toMin func(Vector) BaseType) (i int) {
+func vectorrefsFindMinChunked(vrs VectorRefs, toMin func(Vector) Scalar) (i int) {
 	done := make(chan int, 1)
 	var running uint
 	for chunk := range vectorRefsInChunks(vrs, chunkSize(len(vrs))) {
 		running++
 		go func(c VectorRefs) {
-			done <- vectorrefsFindMin(c,toMin)
+			done <- vectorrefsFindMin(c, toMin)
 		}(chunk)
 	}
-//	if running==0 {return}
+	//	if running==0 {return}
 	i = <-done
 	var j int
 	for ; running > 1; running-- {
 		j = <-done
-		if toMin(*vrs[j])< toMin(*vrs[i]){
-			i=j
+		if toMin(*vrs[j]) < toMin(*vrs[i]) {
+			i = j
 		}
 	}
 	return
 }
-
 
 // search VectorRefs for the two Vector's that return the minimum value from the provided function
-func (vrs VectorRefs) SearchMin(toMin func(Vector, Vector) BaseType) (i, j int) {
-	j=vrs[1:].FindMin(func(v Vector) BaseType {return toMin(*vrs[0],v)})+1
+func (vrs VectorRefs) SearchMin(toMin func(Vector, Vector) Scalar) (i, j int) {
+	j = vrs[1:].FindMin(func(v Vector) Scalar { return toMin(*vrs[0], v) }) + 1
 	var jp int
-	for ip,vip:=range(vrs[1:len(vrs)-1]){
-		jp=vrs[ip+2:].FindMin(func(v Vector) BaseType {return toMin(*vip,v)})+2+ip
-		if toMin(*vip,*vrs[jp]) < toMin(*vrs[i],*vrs[j]){
-			j,i=jp,ip+1
+	for ip, vip := range vrs[1 : len(vrs)-1] {
+		jp = vrs[ip+2:].FindMin(func(v Vector) Scalar { return toMin(*vip, v) }) + 2 + ip
+		if toMin(*vip, *vrs[jp]) < toMin(*vrs[i], *vrs[j]) {
+			j, i = jp, ip+1
 		}
 	}
 	return
 }
 
-func (vrs VectorRefs) SearchMinRegionally(toMin func(Vector, Vector) BaseType) (i, j int) {
+func (vrs VectorRefs) SearchMinRegionally(toMin func(Vector, Vector) Scalar) (i, j int) {
 	//	splitPoint:=vs.Middle()
 	return vrs.SearchMin(toMin)
 }
-

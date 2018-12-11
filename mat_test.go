@@ -73,7 +73,7 @@ func TestMatrixInvertDet(t *testing.T) {
 	d := m.Determinant()
 	m.Invert()
 	di := m.Determinant()
-	if float32(d) != float32(1/di) {  // float32 so rounding error ignored (when basetype float32)
+	if float32(d) != float32(1/di) { // float32 so rounding error ignored (when basetype float32)
 		t.Error("The determinant of the inverse of an invertible matrix should be the inverse of the determinant.")
 	}
 }
@@ -144,5 +144,3 @@ func BenchmarkMatrixProduct(b *testing.B) {
 		m.Product(m2)
 	}
 }
-
-

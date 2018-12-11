@@ -64,22 +64,22 @@ func TestVecsIndexesFromVectorRefs(t *testing.T) {
 }
 
 func TestVecRefsPrint(t *testing.T) {
-	vr := VectorRefs{New(1,2,3)}
+	vr := VectorRefs{New(1, 2, 3)}
 	if fmt.Sprint(*vr[0]) != "{1 2 3}" {
 		t.Error(fmt.Sprint(*vr[0]))
 	}
 }
 
 func TestVecRefsSum(t *testing.T) {
-	vs := VectorRefs{New(7,8,9), New(7,8,9), New(7,8,9)}
+	vs := VectorRefs{New(7, 8, 9), New(7, 8, 9), New(7, 8, 9)}
 	if fmt.Sprint(vs.Sum()) != "{21 24 27}" {
 		t.Error(vs.Sum())
 	}
 }
 
 func TestVecRefsAddRefs(t *testing.T) {
-	vs := VectorRefs{New(1,2,3), New(4,5,6), New(7,8,9)}
-	vs2 := VectorRefs{New(9,8,7), New(6,5,4), New(3,2,1)}
+	vs := VectorRefs{New(1, 2, 3), New(4, 5, 6), New(7, 8, 9)}
+	vs2 := VectorRefs{New(9, 8, 7), New(6, 5, 4), New(3, 2, 1)}
 	vs.AddAllRefs(vs2)
 	if fmt.Sprint(*vs[0], *vs[1], *vs[2]) != "{10 10 10} {10 10 10} {10 10 10}" {
 		t.Error(fmt.Sprint(*vs[0], *vs[1], *vs[2]))
@@ -87,8 +87,8 @@ func TestVecRefsAddRefs(t *testing.T) {
 }
 
 func TestVecRefsCrossRefs(t *testing.T) {
-	vs := VectorRefs{New(1,2,3), New(4,5,6), New(7,8,9)}
-	vs2 := VectorRefs{New(9,8,7), New(6,5,4), New(3,2,1)}
+	vs := VectorRefs{New(1, 2, 3), New(4, 5, 6), New(7, 8, 9)}
+	vs2 := VectorRefs{New(9, 8, 7), New(6, 5, 4), New(3, 2, 1)}
 	vs.CrossAllRefs(vs2)
 	if fmt.Sprint(*vs[0], *vs[1], *vs[2]) != "{-10 20 -10} {-10 20 -10} {-10 20 -10}" {
 		t.Error(fmt.Sprint(*vs[0], *vs[1], *vs[2]))
@@ -97,7 +97,7 @@ func TestVecRefsCrossRefs(t *testing.T) {
 
 func TestVecsAddVecRefs(t *testing.T) {
 	vs := Vectors{NewVector(1, 2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9)}
-	vs2 := VectorRefs{New(9,8,7), New(6,5,4), New(3,2,1)}
+	vs2 := VectorRefs{New(9, 8, 7), New(6, 5, 4), New(3, 2, 1)}
 	vs.AddAllRefs(vs2)
 	if fmt.Sprint(vs[0], vs[1], vs[2]) != "{10 10 10} {10 10 10} {10 10 10}" {
 		t.Error(fmt.Sprint(vs[0], vs[1], vs[2]))
@@ -106,14 +106,14 @@ func TestVecsAddVecRefs(t *testing.T) {
 
 func TestVecsCrossVecRefs(t *testing.T) {
 	vs := Vectors{NewVector(1, 2, 3), NewVector(4, 5, 6), NewVector(7, 8, 9)}
-	vs2 := VectorRefs{New(9,8,7), New(6,5,4), New(3,2,1)}
+	vs2 := VectorRefs{New(9, 8, 7), New(6, 5, 4), New(3, 2, 1)}
 	vs.CrossAllRefs(vs2)
 	if fmt.Sprint(vs[0], vs[1], vs[2]) != "{-10 20 -10} {-10 20 -10} {-10 20 -10}" {
 		t.Error(fmt.Sprint(vs[0], vs[1], vs[2]))
 	}
 }
 func TestVecsRefsAddVecs(t *testing.T) {
-	vs := VectorRefs{New(1,2,3), New(4,5,6), New(7,8,9)}
+	vs := VectorRefs{New(1, 2, 3), New(4, 5, 6), New(7, 8, 9)}
 	vs2 := Vectors{NewVector(9, 8, 7), NewVector(6, 5, 4), NewVector(3, 2, 1)}
 	vs.AddAll(vs2)
 	if fmt.Sprint(*vs[0], *vs[1], *vs[2]) != "{10 10 10} {10 10 10} {10 10 10}" {
@@ -122,7 +122,7 @@ func TestVecsRefsAddVecs(t *testing.T) {
 }
 
 func TestVecRefsCrossVecs(t *testing.T) {
-	vs := VectorRefs{New(1,2,3), New(4,5,6), New(7,8,9)}
+	vs := VectorRefs{New(1, 2, 3), New(4, 5, 6), New(7, 8, 9)}
 	vs2 := Vectors{NewVector(9, 8, 7), NewVector(6, 5, 4), NewVector(3, 2, 1)}
 	vs.CrossAll(vs2)
 	if fmt.Sprint(*vs[0], *vs[1], *vs[2]) != "{-10 20 -10} {-10 20 -10} {-10 20 -10}" {
@@ -131,8 +131,8 @@ func TestVecRefsCrossVecs(t *testing.T) {
 }
 
 func TestVecsRefsAddVecRefs(t *testing.T) {
-	vs := VectorRefs{New(1,2,3), New(4,5,6), New(7,8,9)}
-	vs2 := VectorRefs{New(9,8,7), New(6,5,4), New(3,2,1)}
+	vs := VectorRefs{New(1, 2, 3), New(4, 5, 6), New(7, 8, 9)}
+	vs2 := VectorRefs{New(9, 8, 7), New(6, 5, 4), New(3, 2, 1)}
 	vs.AddAllRefs(vs2)
 	if fmt.Sprint(*vs[0], *vs[1], *vs[2]) != "{10 10 10} {10 10 10} {10 10 10}" {
 		t.Error(fmt.Sprint(*vs[0], *vs[1], *vs[2]))
@@ -140,8 +140,8 @@ func TestVecsRefsAddVecRefs(t *testing.T) {
 }
 
 func TestVecRefsCrossVecRefs(t *testing.T) {
-	vs := VectorRefs{New(1,2,3), New(4,5,6), New(7,8,9)}
-	vs2 := VectorRefs{New(9,8,7), New(6,5,4), New(3,2,1)}
+	vs := VectorRefs{New(1, 2, 3), New(4, 5, 6), New(7, 8, 9)}
+	vs2 := VectorRefs{New(9, 8, 7), New(6, 5, 4), New(3, 2, 1)}
 	vs.CrossAllRefs(vs2)
 	if fmt.Sprint(*vs[0], *vs[1], *vs[2]) != "{-10 20 -10} {-10 20 -10} {-10 20 -10}" {
 		t.Error(fmt.Sprint(*vs[0], *vs[1], *vs[2]))
@@ -149,87 +149,85 @@ func TestVecRefsCrossVecRefs(t *testing.T) {
 }
 
 func TestVecRefsSelect(t *testing.T) {
-	vs := VectorRefs{New(1,2,3), New(4,5,6), New(7,8,9)}
-	vs2:= vs.Select(
-		func(vr *Vector)bool{
-			return vr.y==baseScale(5)
+	vs := VectorRefs{New(1, 2, 3), New(4, 5, 6), New(7, 8, 9)}
+	vs2 := vs.Select(
+		func(vr *Vector) bool {
+			return vr.y == baseScale(5)
 		},
 	)
 	if vs2[0] != vs[1] {
-		t.Error(vs2[0],vs[1])
+		t.Error(vs2[0], vs[1])
 	}
 }
 
 func TestVecRefsStride(t *testing.T) {
-	vs := VectorRefs{New(1,2,3), New(4,5,6), New(7,8,9)}
-	vs2:=vs.Stride(2)
+	vs := VectorRefs{New(1, 2, 3), New(4, 5, 6), New(7, 8, 9)}
+	vs2 := vs.Stride(2)
 	if fmt.Sprint(vs2.Dereference()) != "[{1 2 3} {7 8 9}]" {
 		t.Error(fmt.Sprint(vs2.Dereference()))
 	}
 }
 
 func TestVecRefsvectorsFindMin(t *testing.T) {
-	index:=vectorrefsFindMin(
+	index := vectorrefsFindMin(
 		VectorRefs{New(1, 2, 3), New(4, 5, 6), New(7, 8, 9), New(10, 11, 12), New(13, 14, 15)},
-		func(v Vector) BaseType {return -v.x},	
-		)
-	if index!=4{
+		func(v Vector) Scalar { return -v.x },
+	)
+	if index != 4 {
 		t.Error()
 	}
-	
+
 }
 
 func TestVecRefsvectorsFindMinChunked(t *testing.T) {
-	index:=vectorrefsFindMinChunked(
+	index := vectorrefsFindMinChunked(
 		VectorRefs{New(1, 2, 3), New(4, 5, 6), New(7, 8, 9), New(10, 11, 12), New(13, 14, 15)},
-		func(v Vector) BaseType {return -v.x},	
-		)
-	if index!=4{
+		func(v Vector) Scalar { return -v.x },
+	)
+	if index != 4 {
 		t.Error()
 	}
-	
+
 }
 
 func TestVecRefsSearchMin(t *testing.T) {
 	vrs := VectorRefs{New(1, 2, 3), New(4, 5, 6), New(9, 8, 9), New(10, 11, 12), New(13, 14, 15)}
-	i,j:=vrs.SearchMin(
-		func(v1,v2 Vector) BaseType {
-			return v2.x-v1.x
+	i, j := vrs.SearchMin(
+		func(v1, v2 Vector) Scalar {
+			return v2.x - v1.x
 		},
 	)
 	if i != 2 || j != 3 {
-		t.Error(i,j)
+		t.Error(i, j)
 	}
-	i,j=vrs.SearchMin(
-		func(v1,v2 Vector) BaseType {
-			return v1.x-v2.x
+	i, j = vrs.SearchMin(
+		func(v1, v2 Vector) Scalar {
+			return v1.x - v2.x
 		},
 	)
 	if i != 0 || j != 4 {
-		t.Error(i,j)
+		t.Error(i, j)
 	}
 
 }
 
-
-
 func TestVecRefsSplit(t *testing.T) {
-	vs := VectorRefs{New(1,2,3), New(4,5,6), New(7,8,9)}
-	vs2:= vs.Split(
-		func(vr *Vector)uint{
-			return uint(baseUnscale(vr.y)-2)
+	vs := VectorRefs{New(1, 2, 3), New(4, 5, 6), New(7, 8, 9)}
+	vs2 := vs.Split(
+		func(vr *Vector) uint {
+			return uint(baseUnscale(vr.y) - 2)
 		},
 	)
-	if fmt.Sprint(vs2) != fmt.Sprint([]VectorRefs{nil,nil,VectorRefs{vs[1]},nil,nil,VectorRefs{vs[2]}}) {
-		t.Error(vs2,vs)
+	if fmt.Sprint(vs2) != fmt.Sprint([]VectorRefs{nil, nil, VectorRefs{vs[1]}, nil, nil, VectorRefs{vs[2]}}) {
+		t.Error(vs2, vs)
 	}
-	vs3:= vs.Split(
-		func(vr *Vector)uint{
-			return uint(baseUnscale(vr.z-vr.x)-1)
+	vs3 := vs.Split(
+		func(vr *Vector) uint {
+			return uint(baseUnscale(vr.z-vr.x) - 1)
 		},
 	)
 	if fmt.Sprint(vs3[0]) != fmt.Sprint(vs) {
-		t.Error(vs3,vs)
+		t.Error(vs3, vs)
 	}
 }
 
@@ -237,36 +235,33 @@ func TestVecRefsRegionalSlices(t *testing.T) {
 	Hints.ChunkSizeFixed = true
 	defer func(dcs int) {
 		Hints.ChunkSizeFixed = false
-		Hints.DefaultChunkSize = dcs 
+		Hints.DefaultChunkSize = dcs
 	}(Hints.DefaultChunkSize)
 	Hints.DefaultChunkSize = 2
 
 	vrs := VectorRefs{New(1, 2, 3), New(4, 5, 6), New(7, 8, 9), New(10, 11, 12), New(13, 14, 15)}
 	var vrs2 []VectorRefs
-	
-	for vrss:=range vectorRefsSplitRegionally(vrs,vrs.Middle()){
-		vrs2=append(vrs2,vrss)
+
+	for vrss := range vectorRefsSplitRegionally(vrs, vrs.Middle()) {
+		vrs2 = append(vrs2, vrss)
 	}
-	
-	if fmt.Sprint(vrs2) != fmt.Sprintf("[[%p %p] [] [] [] [] [] [] [%p %p %p]]",vrs[0],vrs[1],vrs[2],vrs[3],vrs[4]) {
-		t.Error(fmt.Sprint(vrs2),fmt.Sprintf("[[%p %p] [] [] [] [] [] [] [%p %p %p]]",vrs[0],vrs[1],vrs[2],vrs[3],vrs[4]))
+
+	if fmt.Sprint(vrs2) != fmt.Sprintf("[[%p %p] [] [] [] [] [] [] [%p %p %p]]", vrs[0], vrs[1], vrs[2], vrs[3], vrs[4]) {
+		t.Error(fmt.Sprint(vrs2), fmt.Sprintf("[[%p %p] [] [] [] [] [] [] [%p %p %p]]", vrs[0], vrs[1], vrs[2], vrs[3], vrs[4]))
 	}
-	vrs2=vrs2[:0]
+	vrs2 = vrs2[:0]
 }
-
-
-
 
 func TestVecRefsTriangleStripArea(t *testing.T) {
 	vs := Vectors{*New(0, 0, 0), *New(1, 0, 0), *New(1, 1, 0), *New(0, 1, 0)}
-	areasx2:=make(chan float64)
-	go func(){
-		vs.ForEachInSlices(3,1,false,
+	areasx2 := make(chan float64)
+	go func() {
+		vs.ForEachInSlices(3, 1, false,
 			func(tri Vectors) {
-				v1:=Vector{}
+				v1 := Vector{}
 				v1.Set(tri[0])
 				v1.Subtract(tri[1])
-				v2:=Vector{}
+				v2 := Vector{}
 				v2.Set(tri[0])
 				v2.Subtract(tri[2])
 				v1.Cross(v2)
@@ -275,10 +270,10 @@ func TestVecRefsTriangleStripArea(t *testing.T) {
 		close(areasx2)
 	}()
 	var tAreax2 float64
-	for c:=range areasx2{
-		tAreax2+=c
+	for c := range areasx2 {
+		tAreax2 += c
 	}
-	if tAreax2 != 2 {  
+	if tAreax2 != 2 {
 		t.Error(tAreax2)
 	}
 }
@@ -287,7 +282,7 @@ func BenchmarkVecRefsProduct(b *testing.B) {
 	b.StopTimer()
 	vrs := make(VectorRefs, 100000)
 	for i := range vrs {
-		vrs[i] = New(1,2,3)
+		vrs[i] = New(1, 2, 3)
 	}
 	m := Matrix{}
 	b.StartTimer()
@@ -300,7 +295,7 @@ func BenchmarkVecRefsProductParallel(b *testing.B) {
 	b.StopTimer()
 	vrs := make(VectorRefs, 100000)
 	for i := range vrs {
-		vrs[i] = New(1,2,3)
+		vrs[i] = New(1, 2, 3)
 	}
 	m := Matrix{}
 	Parallel = true
@@ -313,4 +308,3 @@ func BenchmarkVecRefsProductParallel(b *testing.B) {
 		vrs.Product(m)
 	}
 }
-
