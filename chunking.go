@@ -275,7 +275,7 @@ func vectorsInMatrixChunks(vs Vectors, cs, stride int, wrap bool) chan Matrices 
 func vectorRefsSplitRegionally(vrs VectorRefs, centre Vector) chan VectorRefs {
 	// TODO continue to subdivide if exceed chunk size?
 	// TODO return, another channel?, boundingbox of chunk?
-	cvr := make(chan VectorRefs, 8) // non blocking since a max on 8 VectorRefs from this split function
+	cvr := make(chan VectorRefs, 8) // wont block since a max of 8 VectorRefs from this split function
 	// range over a slice of VectorRefs, returned by the Split function, using a function that splits into 8 regions using which side of the origin Vector, by axis alignment, the point is on.
 	for _, s := range func() []VectorRefs {
 		return vrs.Split(
@@ -301,16 +301,16 @@ func vectorRefsSplitRegionally(vrs VectorRefs, centre Vector) chan VectorRefs {
 }
 
 // return a channel of VectorRefs that are chunks of the passed Vectors.
-// as an optimisation, which some functions might benefit from, the Vectors are split so that each chunk contains all/only the VectorRefs within a spacial region, meaning nearby points are MUCH more likely to be in the same chunk.
+// used as an optimisation, which some functions might benefit from, Vectors are split into VectorRefs each containing only refs to Vectors within a spacial region, thereby making nearby points MUCH more likely to be in the same chunk.
 func vectorsSplitRegionally(vs Vectors, centre Vector) chan VectorRefs {
 	// TODO continue to subdivide if exceed chunk size?
 	// TODO return, another channel?, boundingbox of chunk?
 	cvr := make(chan VectorRefs, 8) // non blocking since a max on 8 VectorRefs from this split function
-	// range over a slice of VectorRefs, returned by the Split function, using a function that splits into 8 regions using which side of the origin Vector, by axis alignment, the point is on.
+	// range over a slice of VectorRefs, returned by the Split function, using a function that splits into 8 regions using which side, axis aligned, of the origin Vector, the point is on.
 	for _, s := range func() []VectorRefs {
 		return vs.Split(
 			func(v Vector) (i uint) {
-				i++ // index never zero, since for this all points go somewhere
+				i++ // index never zero, since, for this, all points go somewhere
 				if v.x >= centre.x {
 					i++
 				}

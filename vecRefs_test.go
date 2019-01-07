@@ -151,7 +151,7 @@ func TestVecRefsCrossVecRefs(t *testing.T) {
 func TestVecRefsSelect(t *testing.T) {
 	vs := VectorRefs{New(1, 2, 3), New(4, 5, 6), New(7, 8, 9)}
 	vs2 := vs.Select(
-		func(vr *Vector) bool {
+		func(vr Vector) bool {
 			return vr.y == baseScale(5)
 		},
 	)

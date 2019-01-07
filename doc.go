@@ -160,3 +160,92 @@ PASS
 ok  	_/run/media/simon/6a5530c2-1442-4e9b-b35f-3db0c9a6984c/home/simon/Dropbox/github/working/tensor3	10.548s
 Sun 9 Dec 01:22:22 GMT 2018
 */
+/*
+goos: windows
+goarch: amd64
+BenchmarkMatsProduct                	     500	   3248661 ns/op
+BenchmarkMatsProduct-2              	     500	   3190975 ns/op
+BenchmarkMatsProduct-4              	     500	   3204826 ns/op
+BenchmarkMatsProductParallel        	     500	   3224823 ns/op
+BenchmarkMatsProductParallel-2      	     500	   2550652 ns/op
+BenchmarkMatsProductParallel-4      	    1000	   2320618 ns/op
+BenchmarkMatrixProduct              	100000000	        18.2 ns/op
+BenchmarkMatrixProduct-2            	100000000	        18.3 ns/op
+BenchmarkMatrixProduct-4            	100000000	        18.2 ns/op
+BenchmarkVecRefsProduct             	    1000	   1554318 ns/op
+BenchmarkVecRefsProduct-2           	    1000	   1496378 ns/op
+BenchmarkVecRefsProduct-4           	    1000	   1298330 ns/op
+BenchmarkVecRefsProductParallel     	    1000	   1222316 ns/op
+BenchmarkVecRefsProductParallel-2   	    2000	    831713 ns/op
+BenchmarkVecRefsProductParallel-4   	    2000	    696680 ns/op
+BenchmarkVecsSum                    	    2000	    887726 ns/op
+BenchmarkVecsSum-2                  	    2000	    914732 ns/op
+BenchmarkVecsSum-4                  	    2000	    908229 ns/op
+BenchmarkVecsSumParallel            	    2000	    905729 ns/op
+BenchmarkVecsSumParallel-2          	    3000	    575506 ns/op
+BenchmarkVecsSumParallel-4          	    5000	    399101 ns/op
+BenchmarkVecsCross                  	    2000	    924775 ns/op
+BenchmarkVecsCross-2                	    2000	    904292 ns/op
+BenchmarkVecsCross-4                	    2000	    896726 ns/op
+BenchmarkVecsCrossParallel          	    2000	    949780 ns/op
+BenchmarkVecsCrossParallel-2        	    2000	    690675 ns/op
+BenchmarkVecsCrossParallel-4        	    3000	    530802 ns/op
+BenchmarkVecsProduct                	    1000	   1229315 ns/op
+BenchmarkVecsProduct-2              	    2000	   1155794 ns/op
+BenchmarkVecsProduct-4              	    2000	   1172296 ns/op
+BenchmarkVecsProductParallel        	    1000	   1238307 ns/op
+BenchmarkVecsProductParallel-2      	    2000	    888688 ns/op
+BenchmarkVecsProductParallel-4      	    2000	    687639 ns/op
+PASS
+*/
+
+/* benchmark: "." hal3 Mon 31 Dec 22:31:36 GMT 2018 go version go1.11.4 linux/amd64
+goos: linux
+goarch: amd64
+BenchmarkMatrixProduct              	50000000	        24.1 ns/op
+BenchmarkMatrixProduct-2            	50000000	        24.3 ns/op
+BenchmarkMatsProduct                	     300	   4513350 ns/op
+BenchmarkMatsProduct-2              	     300	   4520161 ns/op
+BenchmarkMatsProductParallel        	     300	   4528445 ns/op
+BenchmarkMatsProductParallel-2      	     300	   4678347 ns/op
+BenchmarkVecRefsProduct             	    1000	   2161834 ns/op
+BenchmarkVecRefsProduct-2           	    1000	   2137820 ns/op
+BenchmarkVecRefsProductParallel     	    1000	   2228517 ns/op
+BenchmarkVecRefsProductParallel-2   	    1000	   2189679 ns/op
+BenchmarkVecsSum                    	    2000	    955081 ns/op
+BenchmarkVecsSum-2                  	    2000	    951417 ns/op
+BenchmarkVecsSumParallel            	    2000	    975744 ns/op
+BenchmarkVecsSumParallel-2          	    2000	    885654 ns/op
+BenchmarkVecsCross                  	    1000	   1333085 ns/op
+BenchmarkVecsCross-2                	    1000	   1343820 ns/op
+BenchmarkVecsCrossParallel          	   20000	     93123 ns/op
+BenchmarkVecsCrossParallel-2        	   10000	    106036 ns/op
+BenchmarkVecsProduct/100            	 1000000	      1617 ns/op
+BenchmarkVecsProduct/100-2          	 1000000	      1620 ns/op
+BenchmarkVecsProduct/10000          	   10000	    162212 ns/op
+BenchmarkVecsProduct/10000-2        	   10000	    164243 ns/op
+BenchmarkVecsProduct/40000000       	       2	 710262528 ns/op
+BenchmarkVecsProduct/40000000-2     	       2	 706344689 ns/op
+BenchmarkVecsProduct/100_Parallel   	  500000	      4071 ns/op
+BenchmarkVecsProduct/100_Parallel-2 	  500000	      4059 ns/op
+BenchmarkVecsProduct/10000_Parallel           	   10000	    162319 ns/op
+BenchmarkVecsProduct/10000_Parallel-2         	   10000	    176854 ns/op
+BenchmarkVecsProduct/40000000_Parallel        	       2	 756703664 ns/op
+BenchmarkVecsProduct/40000000_Parallel-2      	       2	 656509871 ns/op
+BenchmarkVecsFindNearest/100                  	 2000000	       958 ns/op
+BenchmarkVecsFindNearest/100-2                	 2000000	       924 ns/op
+BenchmarkVecsFindNearest/10000                	   20000	     90606 ns/op
+BenchmarkVecsFindNearest/10000-2              	   20000	     90877 ns/op
+BenchmarkVecsFindNearest/40000000             	       3	 403270754 ns/op
+BenchmarkVecsFindNearest/40000000-2           	       3	 404207765 ns/op
+BenchmarkVecsFindNearest/100_Parallel         	 2000000	       925 ns/op
+BenchmarkVecsFindNearest/100_Parallel-2       	 2000000	       922 ns/op
+BenchmarkVecsFindNearest/10000_Parallel       	   20000	     92883 ns/op
+BenchmarkVecsFindNearest/10000_Parallel-2     	   10000	    107317 ns/op
+BenchmarkVecsFindNearest/40000000_Parallel    	       3	 436411858 ns/op
+BenchmarkVecsFindNearest/40000000_Parallel-2  	       5	 327502446 ns/op
+PASS
+ok  	_/run/media/simon/6a5530c2-1442-4e9b-b35f-3db0c9a6984c/home/simon/Dropbox/github/working/tensor3	93.765s
+Mon 31 Dec 22:33:11 GMT 2018
+*/
+

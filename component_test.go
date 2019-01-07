@@ -119,7 +119,7 @@ func ExampleBoxArea() {
 			})
 		close(areax2)
 	}()
-	// add together the areas (doubled) arriving on the channel
+	// add together the (doubled) areas that appear on the channel
 	var tAreax2 float64
 	for c := range areax2 {
 		tAreax2 += c

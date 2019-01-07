@@ -1,8 +1,8 @@
 /*
 
-**Vector**, (3-component x,y,z), and **Matrix**, (3-Vector array) Types.
+**Vector**, (3-**Scalar** x,y,z), and **Matrix**, (3-Vector array) Types.
 
-Useful methods on same, operating in-place (no returned reference, meaning no single line method chaining.)
+Useful methods on these, mostly operating in-place (with no returned reference no single line method chaining.)
 
 Arrays of both, (called **Vectors** and **Matrices**), with their useful methods.
 
@@ -65,7 +65,7 @@ Example:  100 x 1 million matrix multiplications, single threaded then parallel.
 
 */
 
-package tensor3    note: there are a lot of methods for common operations on the 5 main types, and documentation comments are often missing on methods that appear unambiguous to me, (from their name) or i havent got round to yet.
+package tensor3    note: there are a lot of methods for common operations on the 6 main types, and documentation comments are often missing on methods that appear unambiguous to me, (from their name) or i havent got round to yet.
 
 // Overview/docs: [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3)
 

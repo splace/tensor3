@@ -167,6 +167,9 @@ func vectorsApplyAllChunked(vs Vectors, fn func(*Vector, Vector), vs2 Vectors) {
 	}
 }
 
+
+
+
 // find the index in the Vectors that produces the lowest value from the provided function.
 func (vs Vectors) FindMin(toMin func(Vector) Scalar) int {
 	if !Parallel || len(vs) < chunkSize(len(vs)) {
@@ -209,6 +212,7 @@ func vectorsFindMinChunked(vs Vectors, toMin func(Vector) Scalar) (i int) {
 	return
 }
 
+
 // find the pair of indexes, from Vectors, that return the lowest value from the provided function.
 func (vs Vectors) SearchMin(toMin func(Vector, Vector) Scalar) (i, j int) {
 	j = vs[1:].FindMin(func(v Vector) Scalar { return toMin(vs[0], v) }) + 1
@@ -244,21 +248,90 @@ func (vs Vectors) SearchMin(toMin func(Vector, Vector) Scalar) (i, j int) {
 	*/
 }
 
-func (vs Vectors) SearchMinRegionally(toMin func(Vector, Vector) Scalar) (i, j int) {
+func (vs Vectors) SearchMinRegionally(toMin func(Vector, Vector) Scalar) (iv, jv *Vector) {
 	return vs.SearchMinRegionallyCentered(vs.Middle(), toMin)
 }
 
-func (vs Vectors) SearchMinRegionallyCentered(splitPoint Vector, toMin func(Vector, Vector) Scalar) (i, j int) {
-	//var notFirst bool
-	for vrss := range vectorsSplitRegionally(vs, splitPoint) {
-		if len(vrss) < 2 {
-			continue
-		} // rare, when used usefully, but single point still needs so be checked with 3 region edge points, and potentially needs perimeter crossing match test
-		// TODO use go routine and channel for results.
-		_, _ = vrss.SearchMin(toMin)
+func (vs Vectors) SearchMinRegionallyCentered(splitPoint Vector, toMin func(Vector, Vector) Scalar) (iv, jv *Vector) {
+	// separate search 8 ways, split by point axis separated, regions. then search regions along joins where a min might have been missed. 
+	// if not more than 8 then could have situation where no region has a pair to search, so do non-split search on whole set.
+	if len(vs)<9{
+		k, l := vs.SearchMin(toMin) 
+		iv,jv = &vs[k],&vs[l]
+		return
+	}
+	axisSplitRegionChan:=vectorsSplitRegionally(vs, splitPoint)
+	var min Scalar
+	// separate the first search to set min, which could be below zero.
+	for vrs := range axisSplitRegionChan { 
+		if len(vrs)>1{
+			var kv,lv *Vector
+			if len(vrs) > chunkSize(len(vrs)) {
+				kv, lv = vrs.SearchMinRegionally(toMin) 
+				}else{
+				k, l := vrs.SearchMin(toMin) 
+				kv,lv = vrs[k],vrs[l]
+			}
+			min=toMin(*kv,*lv)
+			iv,jv=kv,lv
+			break
+		}
+	}
 
-		// TODO region perimeter crossing match test, if either match point has lower toMin with any of its 3 region edge projected points, then another SearchMin, with the appropriate vrss, is needed.
-		// TODO
+	for vrs := range axisSplitRegionChan { 
+		if len(vrs)>1{
+			var kv,lv *Vector
+			if len(vrs) > chunkSize(len(vrs)) {
+				kv, lv = vrs.SearchMinRegionally(toMin) 
+				}else{
+				k, l := vrs.SearchMin(toMin) 
+				kv,lv = vrs[k],vrs[l]
+			}
+			if 	klMin := toMin(*kv,*lv);klMin<min{
+				min=klMin
+				iv,jv=kv,lv
+			}
+		}
+	}
+	// also search 3 regions along joins
+	// join regions width depends on the separation of min points already found
+	dvx:=iv.x-jv.x
+	if dvx<0 {dvx=-dvx}
+	dvx+=splitPoint.x
+	vrs:=vs.Select(func(v Vector) bool {return v.x < dvx && v.x > -dvx})
+	if len(vrs)>1 {
+		k, l := vrs.SearchMin(toMin) 
+		kv,lv := vrs[k],vrs[l]
+		if 	klMin := toMin(*kv,*lv);klMin<min{
+			min=klMin
+			iv,jv=kv,lv 
+		}
+	}
+	
+	dvy:=iv.y-jv.y
+	if dvy<0 {dvy=-dvy}
+	dvy+=splitPoint.y
+	vrs=vs.Select(func(v Vector) bool {return v.y < dvy && v.y > -dvy})
+	if len(vrs)>1 {
+		k, l := vrs.SearchMin(toMin) 
+		kv,lv := vrs[k],vrs[l]
+		if 	klMin := toMin(*kv,*lv);klMin<min{
+			min=klMin
+			iv,jv=kv,lv
+		}
+	}	
+	
+	dvz:=iv.z-jv.z
+	if dvz<0 {dvz=-dvz}
+	dvz+=splitPoint.z
+	vrs=vs.Select(func(v Vector) bool {return v.z < dvz && v.z > -dvz})
+	if len(vrs)>1 {
+		k, l := vrs.SearchMin(toMin) 
+		kv,lv := vrs[k],vrs[l]
+		if 	klMin := toMin(*kv,*lv);klMin<min{
+			min=klMin
+			iv,jv=kv,lv
+		}
 	}
 	return
 }
@@ -317,10 +390,10 @@ func vectorsInSlicesApplyChunked(vs Vectors, length, stride int, wrap bool, fn f
 	}
 }
 
-// return a VectorRefs, with references from Vectors, that return true from the provided function.
-func (vs Vectors) Select(fn func(*Vector) bool) (svs VectorRefs) {
+// return a VectorRefs, with references into Vectors, from which the provided function returned true.
+func (vs Vectors) Select(fn func(Vector) bool) (svs VectorRefs) {
 	for i := range vs {
-		if fn(&vs[i]) {
+		if fn(vs[i]) {
 			svs = append(svs, &vs[i])
 		}
 	}
@@ -343,12 +416,14 @@ func (vs Vectors) Stride(s uint) (svs VectorRefs) {
 // return a slice of VectorRefs each referencing those Vector's that returned the slices index value from the provided function.
 // or put another way;
 // bin Vector's by the value returned by the provided function.
-// bins start at 1, a function returning a value of 0 causes the VecRef not to be in any of the returned bins.
+// the first bin contains *Vector for which the function returns 1, etc.
+// a function returning a value of 0 causes the *Vector not to be in any of the returned bins.
+// Vector's appear in only one bin.
 func (vs Vectors) Split(fn func(Vector) uint) (ssvs []VectorRefs) {
 	for i := range vs {
 		ind := fn(vs[i])
 		if ind > 0 {
-			// pad, if needed, with a series of new VectorRefs to fill up to index. (max index not preknown)
+			// extend VectorRefs if needed.
 			if ind > uint(len(ssvs)) {
 				ssvs = append(ssvs, make([]VectorRefs, ind-uint(len(ssvs)))...)
 			}

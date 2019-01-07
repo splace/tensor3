@@ -380,9 +380,9 @@ func vectorRefsApplyAllChunked(vrs VectorRefs, fn func(*Vector, Vector), vs2 Vec
 }
 
 // return a sub selection of a VectorRefs with only refeences to Vector's that return true from the provided function.
-func (vrs VectorRefs) Select(fn func(*Vector) bool) (svs VectorRefs) {
+func (vrs VectorRefs) Select(fn func(Vector) bool) (svs VectorRefs) {
 	for _, vr := range vrs {
-		if fn(vr) {
+		if fn(*vr) {
 			svs = append(svs, vr)
 		}
 	}
@@ -516,7 +516,99 @@ func (vrs VectorRefs) SearchMin(toMin func(Vector, Vector) Scalar) (i, j int) {
 	return
 }
 
-func (vrs VectorRefs) SearchMinRegionally(toMin func(Vector, Vector) Scalar) (i, j int) {
-	//	splitPoint:=vs.Middle()
-	return vrs.SearchMin(toMin)
+//func (vrs VectorRefs) ApproxMiddle() Vector {
+	// same nuber all sides?
+//	for i:=0; i<len(vrs); i=+len(vrs)/20{
+	 	
+//	}
+//}
+
+
+func (vrs VectorRefs) SearchMinRegionally(toMin func(Vector, Vector) Scalar) (iv, jv *Vector) {
+	return vrs.SearchMinRegionallyCentered(vrs.Middle(), toMin)
 }
+
+func (vrs VectorRefs) SearchMinRegionallyCentered(splitPoint Vector, toMin func(Vector, Vector) Scalar) (iv, jv *Vector) {
+	// separate search 8 ways, split by point axis separated, regions. then search regions along joins where a min might have been missed. 
+	// if not more than 8 then could have situation where no region has a pair to search, so do non-split search on whole set.
+	if len(vrs)<9{
+		k, l := vrs.SearchMin(toMin) 
+		iv,jv = vrs[k],vrs[l]
+		return
+	}
+	axisSplitRegionChan:=vectorRefsSplitRegionally(vrs, splitPoint)
+	var min Scalar
+	// separate the first search to set min, which could be below zero.
+	for vrss := range axisSplitRegionChan { 
+		if len(vrss)>1{
+			var kv,lv *Vector
+			if len(vrss) > chunkSize(len(vrss)) {
+				kv, lv = vrss.SearchMinRegionally(toMin) 
+				}else{
+				k, l := vrss.SearchMin(toMin) 
+				kv,lv = vrss[k],vrss[l]
+			}
+			min=toMin(*kv,*lv)
+			iv,jv=kv,lv
+			break
+		}
+	}
+
+	for vrss := range axisSplitRegionChan { 
+		if len(vrss)>1{
+			var kv,lv *Vector
+			if len(vrss) > chunkSize(len(vrss)) {
+				kv, lv = vrss.SearchMinRegionally(toMin) 
+				}else{
+				k, l := vrss.SearchMin(toMin) 
+				kv,lv = vrss[k],vrss[l]
+			}
+			if 	klMin := toMin(*kv,*lv);klMin<min{
+				min=klMin
+				iv,jv=kv,lv
+			}
+		}
+	}
+	// also search 3 regions along joins
+	// join regions width depends on the separation of min points already found
+	dvx:=iv.x-jv.x
+	if dvx<0 {dvx=-dvx}
+	dvx+=splitPoint.x
+	vrss:=vrs.Select(func(v Vector) bool {return v.x < dvx && v.x > -dvx})
+	if len(vrss)>1 {
+		k, l := vrss.SearchMin(toMin) 
+		kv,lv := vrss[k],vrss[l]
+		if 	klMin := toMin(*kv,*lv);klMin<min{
+			min=klMin
+			iv,jv=kv,lv 
+		}
+	}
+	
+	dvy:=iv.y-jv.y
+	if dvy<0 {dvy=-dvy}
+	dvy+=splitPoint.y
+	vrss=vrs.Select(func(v Vector) bool {return v.y < dvy && v.y > -dvy})
+	if len(vrss)>1 {
+		k, l := vrss.SearchMin(toMin) 
+		kv,lv := vrss[k],vrss[l]
+		if 	klMin := toMin(*kv,*lv);klMin<min{
+			min=klMin
+			iv,jv=kv,lv
+		}
+	}	
+	
+	dvz:=iv.z-jv.z
+	if dvz<0 {dvz=-dvz}
+	dvz+=splitPoint.z
+	vrss=vrs.Select(func(v Vector) bool {return v.z < dvz && v.z > -dvz})
+	if len(vrss)>1 {
+		k, l := vrss.SearchMin(toMin) 
+		kv,lv := vrss[k],vrss[l]
+		if 	klMin := toMin(*kv,*lv);klMin<min{
+			min=klMin
+			iv,jv=kv,lv
+		}
+	}
+	return
+}
+
