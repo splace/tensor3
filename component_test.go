@@ -87,13 +87,10 @@ func ExampleSmallestSeparationRegional() {
 		return v1.LengthLength()
 	}
 
-	//start:=time.Now()
-
-	i1, i2 := vs.SearchMinRegionally(separation)
-	//i1,i2,_:=vs.SearchMinRegionallyCentered(Vector{},separation)
-
-	//fmt.Printf("%v %v %v %v %v %v %v",il,jl,math.Sqrt(float64(ll)),len(vrs),vrs[il],vrs[jl],time.Since(start))
-	fmt.Printf("%v %v %v", i1, i2, math.Sqrt(float64(separation(vs[i1], vs[i2]))))
+	r1, r2 := vs.SearchMinRegionally(separation)
+	if r1 == &vs[3159] || r2 == &vs[8069] {
+		fmt.Printf("%v %v %v", 3159, 8069, math.Sqrt(float64(separation(*r1, *r2))))
+	}
 	// Output:
 	// 3159 8069 0.5642342569708744
 }
