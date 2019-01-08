@@ -224,37 +224,17 @@ func (vs Vectors) SearchMin(toMin func(Vector, Vector) Scalar) (i, j int) {
 		}
 	}
 	return
-	/*
-		j=1
-		value = toMin(vs[0], vs[1])
-		var v1, v2 Vector
-		var il, jl int
-		for jl, v2 = range vs[2:] {
-			nl := toMin(vs[0], v2)
-			if nl < value {
-				value, j = nl, jl+2
-			}
-		}
-
-		for il, v1 = range vs[1:] {
-			for jl, v2 = range vs[il+2:] {
-				nl := toMin(v1, v2)
-				if nl < value {
-					value, i, j = nl, il+1, jl+il+2
-				}
-			}
-		}
-		return
-	*/
 }
 
+// algorithm used only works when the function always returns a bigger value when points are further apart.
 func (vs Vectors) SearchMinRegionally(toMin func(Vector, Vector) Scalar) (iv, jv *Vector) {
 	return vs.SearchMinRegionallyCentered(vs.Middle(), toMin)
 }
 
+// algorithm used only works when the function always returns a bigger value when points are further apart.
 func (vs Vectors) SearchMinRegionallyCentered(splitPoint Vector, toMin func(Vector, Vector) Scalar) (iv, jv *Vector) {
-	// separate search 8 ways, split by point axis separated, regions. then search regions along joins where a min might have been missed. 
-	// if not more than 8 then could have situation where no region has a pair to search, so do non-split search on whole set.
+	// separate search into 8 regions, split by supplied points axes. then search regions along joins where the minimum  might have been missed due to crossing regions. 
+	// if not more than 8 then could have situation where no region has a pair to search, so do non-split search on whole set, in this case.
 	if len(vs)<9{
 		k, l := vs.SearchMin(toMin) 
 		iv,jv = &vs[k],&vs[l]

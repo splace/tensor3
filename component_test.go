@@ -88,22 +88,23 @@ func ExampleSmallestSeparationRegional() {
 	}
 
 	r1, r2 := vs.SearchMinRegionally(separation)
-	if r1 == &vs[3159] || r2 == &vs[8069] {
+	if r1 == &vs[3159] || r2 == &vs[8069] {   // returned references not indexes
 		fmt.Printf("%v %v %v", 3159, 8069, math.Sqrt(float64(separation(*r1, *r2))))
 	}
 	// Output:
 	// 3159 8069 0.5642342569708744
 }
 
-//TODO smallest separation regional splitting
-
 func ExampleBoxArea() {
-	// find surface area of triangle strip set
+	// cubic box indexed triangle strip set
 	boxVertices := NewVectors(1, 1, 1, 1, -1, 1, -1, 1, 1, -1, -1, 1, 1, 1, -1, 1, -1, -1, -1, 1, -1, -1, -1, -1)
 	boxSurfaceTriStrip := NewVectorRefsFromIndexes(boxVertices, 1, 2, 3, 4, 7, 8, 5, 6, 6, 8, 8, 4, 6, 2, 5, 1, 7, 3)
+	// find surface area of triangle strip set
 	areax2 := make(chan float64)
 	go func() {
+		// apply function to groups of three vectors
 		boxSurfaceTriStrip.ForEachInSlices(3, 1, false,
+			// calculate area (doubled so essentially both sides.) of the triangle made from the first three vectors of a VectorRefs.
 			func(tri VectorRefs) {
 				v1 := Vector{}
 				v1.Set(*tri[0])
@@ -116,11 +117,12 @@ func ExampleBoxArea() {
 			})
 		close(areax2)
 	}()
-	// add together the (doubled) areas that appear on the channel
+	// add together the areas that appear on the channel
 	var tAreax2 float64
 	for c := range areax2 {
 		tAreax2 += c
 	}
+	// halve for one side
 	fmt.Println(tAreax2 / 2)
 	// Output:
 	// 24

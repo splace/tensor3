@@ -169,7 +169,7 @@ func TestVecRefsStride(t *testing.T) {
 }
 
 func TestVecRefsvectorsFindMin(t *testing.T) {
-	index := vectorrefsFindMin(
+	index := vectorRefsFindMin(
 		VectorRefs{New(1, 2, 3), New(4, 5, 6), New(7, 8, 9), New(10, 11, 12), New(13, 14, 15)},
 		func(v Vector) Scalar { return -v.x },
 	)
@@ -180,7 +180,7 @@ func TestVecRefsvectorsFindMin(t *testing.T) {
 }
 
 func TestVecRefsvectorsFindMinChunked(t *testing.T) {
-	index := vectorrefsFindMinChunked(
+	index := vectorRefsFindMinChunked(
 		VectorRefs{New(1, 2, 3), New(4, 5, 6), New(7, 8, 9), New(10, 11, 12), New(13, 14, 15)},
 		func(v Vector) Scalar { return -v.x },
 	)

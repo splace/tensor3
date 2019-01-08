@@ -83,7 +83,7 @@ func vectorRefsInChunks(vs VectorRefs, cs int) chan VectorRefs {
 }
 
 // return a channel of slices from the passed Vectors.
-// the inner slices are al the same, provided, Length.
+// the inner slices are all the same, provided, Length.
 // the start of each slice is spaced by Stride.
 // if wrap is true then the last Vector is considered to join to the first.
 // notice: wrapped around slices are newly created, modifying their content, unlike non-wrapped, won't change the source Vectors, if consistent behaviour is needed use VectorRefs chunks.
@@ -136,7 +136,7 @@ func vectorSlicesInChunks(vs Vectors, cs, length, stride int, wrap bool) chan []
 func vectorRefsSlicesInChunks(vs VectorRefs, cs, length, stride int, wrap bool) chan []VectorRefs {
 	c := make(chan []VectorRefs, 2) // 2 so that the next chunk is being calculated in parallel, here unlike other chunking it has a significant cost, although if all cores kept 100% busy, not beneficial.
 	go func() {
-		// need to special case last chunk; it might have to include the wrap-round's, but don't know its the last until channel closes, so handle previous loop cycle.
+		// need to special case last chunk; it might have to include the wrap-round's, but don't know its the last until channel closes, so remember current and process the previous.
 		chunkChan := vectorRefsInChunks(vs, cs)
 		firstChunk := <-chunkChan // keep first chunk for potential wrap-round
 		previousChunk := firstChunk
@@ -180,7 +180,7 @@ func vectorRefsSlicesInChunks(vs VectorRefs, cs, length, stride int, wrap bool) 
 func vectorRefsInMatrixChunks(vs VectorRefs, cs, stride int, wrap bool) chan Matrices {
 	c := make(chan Matrices, 2) // 2 so that the next chunk is being calculated in parallel, here unlike other chunking it has a significant cost, although if all cores kept 100% busy, not beneficial.
 	go func() {
-		// need to special case last chunk; it might have to include the wrap-round's, but don't know its the last until channel closes, so handle previous loop cycle.
+		// need to special case last chunk; it might have to include the wrap-round's, but don't know its the last until channel closes, so remember current and process the previous.
 		chunkChan := vectorRefsInChunks(vs, cs)
 		firstChunk := <-chunkChan // keep first chunk for potential wrap-round
 		previousChunk := firstChunk
@@ -227,7 +227,7 @@ func vectorRefsInMatrixChunks(vs VectorRefs, cs, stride int, wrap bool) chan Mat
 func vectorsInMatrixChunks(vs Vectors, cs, stride int, wrap bool) chan Matrices {
 	c := make(chan Matrices, 2) // 2 so that the next chunk is being calculated in parallel, here unlike other chunking it has a significant cost, although if all cores kept 100% busy, not beneficial.
 	go func() {
-		// need to special case last chunk; it might have to include the wrap-round's, but don't know its the last until channel closes, so handle previous loop cycle.
+		// need to special case last chunk; it might have to include the wrap-round's, but don't know its the last until channel closes, so remember current and process the previous.
 		chunkChan := vectorsInChunks(vs, cs)
 		firstChunk := <-chunkChan // keep first chunk for potential wrap-round
 		previousChunk := firstChunk
@@ -273,12 +273,11 @@ func vectorsInMatrixChunks(vs Vectors, cs, stride int, wrap bool) chan Matrices 
 // return a channel of VectorRefs that are chunks of the passed VectorRefs.
 // as an optimisation, which some functions might benefit from, the VectorRefs are split so that each chunk contains all/only the VectorRefs within a spacial region, meaning nearby points are MUCH more likely to be in the same chunk.
 func vectorRefsSplitRegionally(vrs VectorRefs, centre Vector) chan VectorRefs {
-	// TODO continue to subdivide if exceed chunk size?
-	// TODO return, another channel?, boundingbox of chunk?
 	cvr := make(chan VectorRefs, 8) // wont block since a max of 8 VectorRefs from this split function
-	// range over a slice of VectorRefs, returned by the Split function, using a function that splits into 8 regions using which side of the origin Vector, by axis alignment, the point is on.
+	// add to the returned channel the items in the array of VectorRefs returned by the Split function.
 	for _, s := range func() []VectorRefs {
 		return vrs.Split(
+			// function that splits vectors into 8 regions, using which side of the origin Vector, (axis aligned), the point is on.
 			func(v *Vector) (i uint) {
 				i++ // index never zero, since for this all points go somewhere
 				if v.x >= centre.x {
@@ -303,12 +302,11 @@ func vectorRefsSplitRegionally(vrs VectorRefs, centre Vector) chan VectorRefs {
 // return a channel of VectorRefs that are chunks of the passed Vectors.
 // used as an optimisation, which some functions might benefit from, Vectors are split into VectorRefs each containing only refs to Vectors within a spacial region, thereby making nearby points MUCH more likely to be in the same chunk.
 func vectorsSplitRegionally(vs Vectors, centre Vector) chan VectorRefs {
-	// TODO continue to subdivide if exceed chunk size?
-	// TODO return, another channel?, boundingbox of chunk?
 	cvr := make(chan VectorRefs, 8) // non blocking since a max on 8 VectorRefs from this split function
-	// range over a slice of VectorRefs, returned by the Split function, using a function that splits into 8 regions using which side, axis aligned, of the origin Vector, the point is on.
+	// add to the returned channel the items in the array of VectorRefs returned by the Split function.
 	for _, s := range func() []VectorRefs {
 		return vs.Split(
+			// function that splits vectors into 8 regions, using which side of the origin Vector, (axis aligned), the point is on.
 			func(v Vector) (i uint) {
 				i++ // index never zero, since, for this, all points go somewhere
 				if v.x >= centre.x {

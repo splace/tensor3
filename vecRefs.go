@@ -379,7 +379,7 @@ func vectorRefsApplyAllChunked(vrs VectorRefs, fn func(*Vector, Vector), vs2 Vec
 	}
 }
 
-// return a sub selection of a VectorRefs with only refeences to Vector's that return true from the provided function.
+// return a sub selection of a VectorRefs with only references to Vector's that return true from the provided function.
 func (vrs VectorRefs) Select(fn func(Vector) bool) (svs VectorRefs) {
 	for _, vr := range vrs {
 		if fn(*vr) {
@@ -410,7 +410,7 @@ func (vrs VectorRefs) Split(fn func(*Vector) uint) (ssvs []VectorRefs) {
 	for _, vr := range vrs {
 		ind := fn(vr)
 		if ind > 0 {
-			// pad, if needed, with a series of new VectorRefs to fill up to index. (max index not preknown)
+			// pad, if needed, with a series of new VectorRefs to fill up to index. (max index not pre-known)
 			if ind > uint(len(ssvs)) {
 				ssvs = append(ssvs, make([]VectorRefs, ind-uint(len(ssvs)))...)
 			}
@@ -464,13 +464,13 @@ func vectorRefsInSlicesApplyChunked(vrs VectorRefs, length, stride int, wrap boo
 // find the index in the Vectors that produces the lowest value from the function.
 func (vrs VectorRefs) FindMin(toMin func(Vector) Scalar) int {
 	if !Parallel || len(vrs) < chunkSize(len(vrs)) {
-		return vectorrefsFindMin(vrs, toMin)
+		return vectorRefsFindMin(vrs, toMin)
 	} else {
-		return vectorrefsFindMinChunked(vrs, toMin)
+		return vectorRefsFindMinChunked(vrs, toMin)
 	}
 }
 
-func vectorrefsFindMin(vrs VectorRefs, toMin func(Vector) Scalar) (i int) {
+func vectorRefsFindMin(vrs VectorRefs, toMin func(Vector) Scalar) (i int) {
 	value := toMin(*vrs[0])
 	var imv Scalar
 	for j, jv := range vrs[1:] {
@@ -482,13 +482,13 @@ func vectorrefsFindMin(vrs VectorRefs, toMin func(Vector) Scalar) (i int) {
 	return
 }
 
-func vectorrefsFindMinChunked(vrs VectorRefs, toMin func(Vector) Scalar) (i int) {
+func vectorRefsFindMinChunked(vrs VectorRefs, toMin func(Vector) Scalar) (i int) {
 	done := make(chan int, 1)
 	var running uint
 	for chunk := range vectorRefsInChunks(vrs, chunkSize(len(vrs))) {
 		running++
 		go func(c VectorRefs) {
-			done <- vectorrefsFindMin(c, toMin)
+			done <- vectorRefsFindMin(c, toMin)
 		}(chunk)
 	}
 	//	if running==0 {return}
@@ -524,13 +524,15 @@ func (vrs VectorRefs) SearchMin(toMin func(Vector, Vector) Scalar) (i, j int) {
 //}
 
 
+// algorithm used only works when the function always returns a bigger value when points are further apart.
 func (vrs VectorRefs) SearchMinRegionally(toMin func(Vector, Vector) Scalar) (iv, jv *Vector) {
 	return vrs.SearchMinRegionallyCentered(vrs.Middle(), toMin)
 }
 
+// algorithm used only works when the function always returns a bigger value when points are further apart.
 func (vrs VectorRefs) SearchMinRegionallyCentered(splitPoint Vector, toMin func(Vector, Vector) Scalar) (iv, jv *Vector) {
-	// separate search 8 ways, split by point axis separated, regions. then search regions along joins where a min might have been missed. 
-	// if not more than 8 then could have situation where no region has a pair to search, so do non-split search on whole set.
+	// separate search into 8 regions, split by supplied points axes. then search regions along joins where the minimum  might have been missed due to crossing regions. 
+	// if not more than 8 then could have situation where no region has a pair to search, so do non-split search on whole set, in this case.
 	if len(vrs)<9{
 		k, l := vrs.SearchMin(toMin) 
 		iv,jv = vrs[k],vrs[l]
