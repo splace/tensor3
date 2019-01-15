@@ -1,22 +1,27 @@
 /*
 
-Vector, (3-Scalar), and Matrix, (3-Vector) Types.
+**Vector**, (3-**Scalar** x,y,z), and **Matrix**, (3-Vector array) Types.
 
-Useful methods on same, operating in-place ( not returning reference, meaning no single line chained functions.)
+Useful methods on these, mostly operating in-place (with no returned reference no single line method chaining.)
 
-Arrays of both, (called Vectors and Matrices), with their useful methods.
+Arrays of both, (called **Vectors** and **Matrices**), with their useful methods.
 
-single and parallel threaded, can be selected with a global var.
+Vectorized/SIMD methods that accept a function and apply in to all the array.
 
-VectorRefs; array of Vector pointers, with methods to convert to/from Vectors.
+selectable single or parallel threaded, transparently, switched with a global var.
 
-64bit float, 32bit float, or fixed precision (int scaled for 3dp) component value types (separate packages).
+**VectorRefs**; array of Vector pointers, with methods as Vectors but also converters to/from Vectors.
+
+the five main types are available (in separate packages) with their base scalar typed as 64bit float, 32bit float, or fixed precision (int scaled for 3dp)
+
+
+
+notes:
 
 doesn't use "math" package, left to importers, if necessary.
 
-methods that accept a function and apply in to all etc. (in parallel).
+when parallel, array types are acted on in chunks by different threads.
 
-with array types selectively broken into chunks for better parallel performance.
 
 */
 

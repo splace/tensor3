@@ -6,20 +6,22 @@ Useful methods on these, mostly operating in-place (with no returned reference n
 
 Arrays of both, (called **Vectors** and **Matrices**), with their useful methods.
 
-single and parallel threaded, transparently, switched with a global var.
+Vectorized/SIMD methods that accept a function and apply in to all the array.
 
-**VectorRefs**; array of Vector pointers, with methods to convert to/from Vectors.
+selectable single or parallel threaded, transparently, switched with a global var.
 
-all five types available (in separate packages) with components typed as 64bit float, 32bit float, or fixed precision (int scaled for 3dp)
+**VectorRefs**; array of Vector pointers, with methods as Vectors but also converters to/from Vectors.
 
-methods that accept a function and apply in to all etc. (in parallel).
+the five main types are available (in separate packages) with their base scalar typed as 64bit float, 32bit float, or fixed precision (int scaled for 3dp)
+
 
 
 notes:
 
 doesn't use "math" package, left to importers, if necessary.
 
-array types selectively broken into chunks for better parallel performance.
+when parallel, array types are acted on in chunks by different threads.
+
 
 
 installation:
@@ -65,7 +67,9 @@ Example:  100 x 1 million matrix multiplications, single threaded then parallel.
 
 */
 
-package tensor3    note: there are a lot of methods for common operations on the 6 main types, and documentation comments are often missing on methods that appear unambiguous to me, (from their name) or i havent got round to yet.
+package tensor3  
+
+note: there are a lot of methods for common operations on the main types, and documentation comments are often missing on basic methods that appear,to me, unambiguous from their name or i havent got round to yet.
 
 // Overview/docs: [![GoDoc](https://godoc.org/github.com/splace/tensor3?status.svg)](https://godoc.org/github.com/splace/tensor3)
 
